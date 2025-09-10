@@ -798,7 +798,7 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn }: BookingM
           {currentStep !== 'final-confirmation' && (
             <div className="border-t pt-4 mt-4">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-muted-foreground">{stepInfo.label}</span>
+                <span className="text-sm text-muted-foreground">Booking Progress</span>
                 <span className="text-sm font-medium">{stepInfo.current}/{stepInfo.total}</span>
               </div>
               <div className="w-full bg-secondary rounded-full h-2">
