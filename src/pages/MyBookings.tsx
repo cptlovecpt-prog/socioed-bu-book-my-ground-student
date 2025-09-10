@@ -11,7 +11,7 @@ import { QRCodeDialog } from "@/components/QRCodeDialog";
 import { useToast } from "@/hooks/use-toast";
 import { addDays } from "date-fns";
 import { isQRCodeAvailable } from "@/utils/timeUtils";
-import { getBookingStatus, isCancellationAllowed, getActiveBookingsCount } from "@/utils/bookingUtils";
+import { getBookingStatus, isCancellationAllowed, getActiveBookingsCount, isBookingUpcoming } from "@/utils/bookingUtils";
 
 
 // Utility function to convert 24-hour time to AM/PM format
@@ -50,16 +50,24 @@ const MyBookings = ({ isSignedIn, setIsSignedIn, userData, setUserData }: MyBook
   const { bookings, cancelBooking } = useBookings();
   const { toast } = useToast();
 
+  // Filter active bookings exactly like Your Bookings section does
+  const activeBookings = bookings.filter(booking => 
+    booking.status === 'Upcoming' && isBookingUpcoming(booking.date, booking.time)
+  );
+  
   // Calculate active bookings count (matches YourBookings section logic)
-  const activeBookingsCount = getActiveBookingsCount(bookings);
+  const activeBookingsCount = activeBookings.length;
   const maxActiveBookings = 4;
 
   // Sort bookings from latest first and calculate real-time status
+  // Include ALL bookings (active, completed, cancelled) for My Bookings page display
   const sortedBookings = [...bookings]
     .map(booking => ({
       ...booking,
-      // Calculate real-time status based on current date/time
-      realTimeStatus: getBookingStatus(booking.date, booking.time, booking.status)
+      // Calculate real-time status based on current date/time, but preserve original status for cancelled bookings
+      realTimeStatus: booking.status === 'Cancelled' ? 'Cancelled' : getBookingStatus(booking.date, booking.time, booking.status),
+      // Mark if this booking counts as "active" (matches Your Bookings filtering)
+      isActive: booking.status === 'Upcoming' && isBookingUpcoming(booking.date, booking.time)
     }))
     .sort((a, b) => {
       // Helper function to convert booking date/time to Date object for comparison
