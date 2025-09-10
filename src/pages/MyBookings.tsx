@@ -329,33 +329,26 @@ const MyBookings = ({ isSignedIn, setIsSignedIn, userData, setUserData }: MyBook
                                  <span className="hidden sm:inline">QR Code</span>
                                </Button>
                              );
-                           } else if (qrState === 'muted') {
-                             // Muted state: Event is upcoming but more than 1 hour away
-                             return (
-                               <Tooltip>
-                                 <TooltipTrigger asChild>
-                                   <Button 
-                                     variant="outline" 
-                                     size="sm" 
-                                     className="flex items-center gap-2 text-muted-foreground border-muted-foreground/50 opacity-60"
-                                     disabled={false}
-                                     onClick={() => {
-                                       toast({
-                                         title: "QR Code Not Yet Available",
-                                         description: "QR Code will be available from 1 hr before the event",
-                                         duration: 4000,
-                                       });
-                                     }}
-                                   >
-                                     <QrCode className="h-4 w-4" />
-                                     <span className="hidden sm:inline">QR Code</span>
-                                   </Button>
-                                 </TooltipTrigger>
-                                 <TooltipContent>
-                                   <p>QR Code will be available from 1 hr before the event</p>
-                                 </TooltipContent>
-                               </Tooltip>
-                             );
+                            } else if (qrState === 'muted') {
+                              // Disabled state: Event is upcoming but more than 1 hour away
+                              return (
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Button 
+                                      variant="outline" 
+                                      size="sm" 
+                                      className="flex items-center gap-2 text-[#ac909c] border-[#ac909c] opacity-50 cursor-not-allowed"
+                                      disabled={true}
+                                    >
+                                      <QrCode className="h-4 w-4" />
+                                      <span className="hidden sm:inline">QR Code</span>
+                                    </Button>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>QR Code will be available from 1 hr before the event</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              );
                            } else {
                              // Disabled state: Event has passed the 20-minute window
                              return (
@@ -387,47 +380,25 @@ const MyBookings = ({ isSignedIn, setIsSignedIn, userData, setUserData }: MyBook
                          })()
                        )}
                        
-                       {/* Cancel button - only show for upcoming bookings */}
-                       {booking.realTimeStatus === 'Upcoming' && (
-                         (() => {
-                           const canCancel = isCancellationAllowed(booking.date, booking.time);
-                            return canCancel ? (
+                        {/* Cancel button - only show for upcoming bookings - always disabled */}
+                        {booking.realTimeStatus === 'Upcoming' && (
+                          <Tooltip>
+                            <TooltipTrigger asChild>
                               <Button 
                                 variant="outline" 
                                 size="sm" 
-                                className="flex items-center gap-2 text-destructive hover:text-white hover:bg-destructive border-destructive"
-                                onClick={() => handleCancelClick(booking.id)}
+                                className="flex items-center gap-2 text-[#ac909c] border-[#ac909c] opacity-50 cursor-not-allowed"
+                                disabled={true}
                               >
                                 <X className="h-4 w-4" />
                                 <span className="hidden sm:inline">Cancel</span>
                               </Button>
-                            ) : (
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button 
-                                    variant="outline" 
-                                    size="sm" 
-                                    className="flex items-center gap-2 text-[#ab909c] border-[#ab909c] opacity-50 cursor-not-allowed"
-                                    disabled={true}
-                                    onClick={() => {
-                                      toast({
-                                        title: "Cancellation Not Allowed",
-                                        description: "Booking cannot be cancelled within 1 hr from event starting time",
-                                        duration: 4000,
-                                      });
-                                    }}
-                                  >
-                                    <X className="h-4 w-4" />
-                                    <span className="hidden sm:inline">Cancel</span>
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>Cannot cancel within 1 hour of event start</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            );
-                         })()
-                       )}
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Cancellation not allowed</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        )}
                      </div>
                   </CardContent>
                 </Card>
