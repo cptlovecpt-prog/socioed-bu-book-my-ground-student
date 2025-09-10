@@ -332,19 +332,19 @@ const MyBookings = ({ isSignedIn, setIsSignedIn, userData, setUserData }: MyBook
                          </Tooltip>
                        )}
                       
-                      {booking.status === 'Upcoming' && (
-                        (() => {
-                          const canCancel = isCancellationAllowed(booking.date, booking.time);
-                           return canCancel ? (
-                             <Button 
-                               variant="outline" 
-                               size="sm" 
-                               className="flex items-center gap-2 text-destructive hover:text-white hover:bg-destructive border-destructive"
-                               onClick={() => handleCancelClick(booking.id)}
-                             >
-                               <X className="h-4 w-4" />
-                               <span className="hidden sm:inline">Cancel</span>
-                             </Button>
+                       {booking.status === 'Upcoming' && (
+                         (() => {
+                           const canCancel = isCancellationAllowed(booking.date, booking.time);
+                            return canCancel ? (
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                className="flex items-center gap-2 text-destructive hover:text-white hover:bg-destructive border-destructive"
+                                onClick={() => handleCancelClick(booking.id)}
+                              >
+                                <X className="h-4 w-4" />
+                                <span className="hidden sm:inline">Cancel</span>
+                              </Button>
                             ) : (
                               <Button 
                                 variant="outline" 
@@ -362,8 +362,8 @@ const MyBookings = ({ isSignedIn, setIsSignedIn, userData, setUserData }: MyBook
                                 <span className="hidden sm:inline">Cancel</span>
                               </Button>
                             );
-                        })()
-                      )}
+                         })()
+                       )}
                     </div>
                   </CardContent>
                 </Card>
