@@ -210,24 +210,31 @@ const MyBookings = ({ isSignedIn, setIsSignedIn, userData, setUserData }: MyBook
                           <QrCode className="h-4 w-4" />
                           <span className="hidden sm:inline">QR Code</span>
                         </Button>
-                      ) : (
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button 
-                              variant="outline" 
-                              size="sm" 
-                              className="flex items-center gap-2 opacity-50 cursor-not-allowed"
-                              disabled={true}
-                            >
-                              <QrCode className="h-4 w-4" />
-                              <span className="hidden sm:inline">QR Code</span>
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>QR Code will be available 1 hr before event starts</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      )}
+                       ) : (
+                         <Tooltip>
+                           <TooltipTrigger asChild>
+                             <Button 
+                               variant="outline" 
+                               size="sm" 
+                               className="flex items-center gap-2 opacity-50 cursor-not-allowed"
+                               disabled={true}
+                               onClick={() => {
+                                 toast({
+                                   title: "QR Code Not Available",
+                                   description: "QR Code will be available from 1 hr before the event till 20 mins after event starts",
+                                   duration: 4000,
+                                 });
+                               }}
+                             >
+                               <QrCode className="h-4 w-4" />
+                               <span className="hidden sm:inline">QR Code</span>
+                             </Button>
+                           </TooltipTrigger>
+                           <TooltipContent>
+                             <p>QR Code will be available 1 hr before event starts</p>
+                           </TooltipContent>
+                         </Tooltip>
+                       )}
                       
                       {booking.status === 'Upcoming' && (
                         (() => {
