@@ -58,13 +58,13 @@ export const UserDashboard = () => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'upcoming':
-        return <Badge className="bg-accent/10 text-accent border-accent/20">Upcoming</Badge>;
+        return <Badge className="bg-accent/10 text-accent border-accent/20 hover:bg-accent/10 hover:text-accent">Upcoming</Badge>;
       case 'active':
-        return <Badge className="bg-green-100 text-green-700 border-green-200">Active</Badge>;
+        return <Badge className="bg-green-100 text-green-700 border-green-200 hover:bg-green-100 hover:text-green-700">Active</Badge>;
       case 'completed':
-        return <Badge variant="secondary">Completed</Badge>;
+        return <Badge variant="secondary" className="hover:bg-secondary hover:text-secondary-foreground">Completed</Badge>;
       default:
-        return <Badge variant="secondary">{status}</Badge>;
+        return <Badge variant="secondary" className="hover:bg-secondary hover:text-secondary-foreground">{status}</Badge>;
     }
   };
 

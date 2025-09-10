@@ -198,10 +198,10 @@ const MyBookings = ({ isSignedIn, setIsSignedIn, userData, setUserData }: MyBook
                             variant="secondary" 
                             className={
                               booking.status === 'Upcoming' 
-                                ? "bg-green-100 text-green-800 border-green-200" 
+                                ? "bg-green-100 text-green-800 border-green-200 hover:bg-green-100 hover:text-green-800" 
                                 : booking.status === 'Cancelled'
-                                ? "bg-red-100 text-red-800 border-red-200"
-                                : "bg-gray-100 text-gray-800 border-gray-200"
+                                ? "bg-red-100 text-red-800 border-red-200 hover:bg-red-100 hover:text-red-800"
+                                : "bg-gray-100 text-gray-800 border-gray-200 hover:bg-gray-100 hover:text-gray-800"
                             }
                           >
                             {booking.status}
