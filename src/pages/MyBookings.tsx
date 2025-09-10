@@ -34,66 +34,6 @@ const convertTo12HourFormat = (timeRange: string) => {
   return `${convertTime(startTime)} - ${convertTime(endTime)}`;
 };
 
-// Utility function to get QR code state for booking
-const getQRCodeState = (eventDate: string, eventTime: string) => {
-  const now = new Date();
-  let eventStartTime: Date;
-
-  // Parse event date
-  if (eventDate === "Today") {
-    eventStartTime = new Date();
-  } else if (eventDate === "Tomorrow") {
-    eventStartTime = addDays(new Date(), 1);
-  } else {
-    try {
-      if (eventDate.includes(',')) {
-        eventStartTime = new Date(eventDate);
-      } else {
-        const currentYear = new Date().getFullYear();
-        const dateWithYear = `${eventDate}, ${currentYear}`;
-        eventStartTime = new Date(dateWithYear);
-        
-        if (isNaN(eventStartTime.getTime())) {
-          const nextYear = currentYear + 1;
-          const dateWithNextYear = `${eventDate}, ${nextYear}`;
-          eventStartTime = new Date(dateWithNextYear);
-        }
-      }
-    } catch (error) {
-      return 'disabled'; // Default to disabled on parse error
-    }
-  }
-
-  // Parse event time (start time)
-  const startTime = eventTime.split(' - ')[0];
-  const timeParts = startTime.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
-  if (timeParts) {
-    let hours = parseInt(timeParts[1]);
-    const minutes = parseInt(timeParts[2]);
-    const ampm = timeParts[3];
-    
-    if (ampm) {
-      if (ampm.toUpperCase() === 'PM' && hours !== 12) {
-        hours += 12;
-      } else if (ampm.toUpperCase() === 'AM' && hours === 12) {
-        hours = 0;
-      }
-    }
-    
-    eventStartTime.setHours(hours, minutes, 0, 0);
-  }
-
-  const oneHourBefore = new Date(eventStartTime.getTime() - 60 * 60 * 1000);
-  const twentyMinutesAfter = new Date(eventStartTime.getTime() + 20 * 60 * 1000);
-
-  if (now < oneHourBefore) {
-    return 'muted'; // More than 1 hour before event
-  } else if (now >= oneHourBefore && now <= twentyMinutesAfter) {
-    return 'active'; // Within QR code availability window
-  } else {
-    return 'disabled'; // Event has passed the 20-minute window
-  }
-};
 
 interface MyBookingsProps {
   isSignedIn: boolean;
@@ -311,13 +251,55 @@ const MyBookings = ({ isSignedIn, setIsSignedIn, userData, setUserData }: MyBook
                     </div>
 
                      <div className="flex gap-3">
-                       {/* QR Code button - only show for bookings that aren't cancelled */}
-                       {booking.realTimeStatus !== 'Cancelled' && (
+                       {/* QR Code button logic */}
+                       {booking.realTimeStatus === 'Upcoming' ? (
+                         // For upcoming events, follow Your Bookings section logic
                          (() => {
-                           const qrState = getQRCodeState(booking.date, booking.time);
+                           const isQRAvailable = isQRCodeAvailable(booking.date, booking.time);
+                           const isMoreThanOneHourAway = (() => {
+                             try {
+                               const now = new Date();
+                               let bookingDate: Date;
+                               
+                               if (booking.date === "Today") {
+                                 bookingDate = new Date();
+                               } else if (booking.date === "Tomorrow") {
+                                 bookingDate = addDays(new Date(), 1);
+                               } else {
+                                 const currentYear = new Date().getFullYear();
+                                 const dateWithYear = booking.date.includes(',') ? booking.date : `${booking.date}, ${currentYear}`;
+                                 bookingDate = new Date(dateWithYear);
+                               }
+                               
+                               const startTime = booking.time.split(' - ')[0];
+                               const timeParts = startTime.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
+                               if (timeParts) {
+                                 let hours = parseInt(timeParts[1]);
+                                 const minutes = parseInt(timeParts[2]);
+                                 const ampm = timeParts[3];
+                                 
+                                 if (ampm) {
+                                   if (ampm.toUpperCase() === 'PM' && hours !== 12) {
+                                     hours += 12;
+                                   } else if (ampm.toUpperCase() === 'AM' && hours === 12) {
+                                     hours = 0;
+                                   }
+                                 }
+                                 
+                                 bookingDate.setHours(hours, minutes, 0, 0);
+                               }
+                               
+                               const oneHourFromNow = addDays(now, 0);
+                               oneHourFromNow.setHours(now.getHours() + 1, now.getMinutes(), 0, 0);
+                               
+                               return bookingDate > oneHourFromNow;
+                             } catch (error) {
+                               return false;
+                             }
+                           })();
                            
-                           if (qrState === 'active') {
-                             // Active state: Event is within 1 hour before to 20 minutes after start
+                           if (isQRAvailable) {
+                             // Active state: QR code is available
                              return (
                                <Button 
                                  variant="outline" 
@@ -329,26 +311,25 @@ const MyBookings = ({ isSignedIn, setIsSignedIn, userData, setUserData }: MyBook
                                  <span className="hidden sm:inline">QR Code</span>
                                </Button>
                              );
-                            } else if (qrState === 'muted') {
-                              // Disabled state: Event is upcoming but more than 1 hour away
-                              return (
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <Button 
-                                      variant="outline" 
-                                      size="sm" 
-                                      className="flex items-center gap-2 text-[#ac909c] border-[#ac909c] opacity-50 cursor-not-allowed"
-                                      disabled={true}
-                                    >
-                                      <QrCode className="h-4 w-4" />
-                                      <span className="hidden sm:inline">QR Code</span>
-                                    </Button>
-                                  </TooltipTrigger>
-                                  <TooltipContent>
-                                    <p>QR Code will be available from 1 hr before the event</p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              );
+                           } else if (isMoreThanOneHourAway) {
+                             // Muted state: More than 1 hour away
+                             return (
+                               <Button 
+                                 variant="outline" 
+                                 size="sm" 
+                                 className="flex items-center gap-2 text-[#ac909c] border-[#ac909c] hover:bg-[#ac909c] hover:text-white"
+                                 onClick={() => {
+                                   toast({
+                                     title: "QR Code Not Available",
+                                     description: "QR Code will be available from 1 hr before the event till 20 mins after event starts",
+                                     duration: 4000,
+                                   });
+                                 }}
+                               >
+                                 <QrCode className="h-4 w-4" />
+                                 <span className="hidden sm:inline">QR Code</span>
+                               </Button>
+                             );
                            } else {
                              // Disabled state: Event has passed the 20-minute window
                              return (
@@ -359,46 +340,136 @@ const MyBookings = ({ isSignedIn, setIsSignedIn, userData, setUserData }: MyBook
                                      size="sm" 
                                      className="flex items-center gap-2 text-[#ac909c] border-[#ac909c] opacity-50 cursor-not-allowed"
                                      disabled={true}
-                                     onClick={() => {
-                                       toast({
-                                         title: "QR Code Expired",
-                                         description: "QR Code is no longer available for this event",
-                                         duration: 4000,
-                                       });
-                                     }}
                                    >
                                      <QrCode className="h-4 w-4" />
                                      <span className="hidden sm:inline">QR Code</span>
                                    </Button>
                                  </TooltipTrigger>
                                  <TooltipContent>
-                                   <p>QR Code has expired for this event</p>
+                                   <p>QR Code is no longer available for this event</p>
                                  </TooltipContent>
                                </Tooltip>
                              );
                            }
                          })()
-                       )}
+                       ) : booking.realTimeStatus === 'Completed' ? (
+                         // For completed events, show disabled QR Code button
+                         <Tooltip>
+                           <TooltipTrigger asChild>
+                             <Button 
+                               variant="outline" 
+                               size="sm" 
+                               className="flex items-center gap-2 text-[#ac909c] border-[#ac909c] opacity-50 cursor-not-allowed"
+                               disabled={true}
+                             >
+                               <QrCode className="h-4 w-4" />
+                               <span className="hidden sm:inline">QR Code</span>
+                             </Button>
+                           </TooltipTrigger>
+                           <TooltipContent>
+                             <p>QR Code is no longer available for this event</p>
+                           </TooltipContent>
+                         </Tooltip>
+                       ) : null}
                        
-                        {/* Cancel button - only show for upcoming bookings - always disabled */}
-                        {booking.realTimeStatus === 'Upcoming' && (
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button 
-                                variant="outline" 
-                                size="sm" 
-                                className="flex items-center gap-2 text-[#ac909c] border-[#ac909c] opacity-50 cursor-not-allowed"
-                                disabled={true}
-                              >
-                                <X className="h-4 w-4" />
-                                <span className="hidden sm:inline">Cancel</span>
-                              </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Cancellation not allowed</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        )}
+                       {/* Cancel button logic */}
+                       {booking.realTimeStatus === 'Upcoming' ? (
+                         // For upcoming events, follow Your Bookings section logic
+                         (() => {
+                           const canCancel = (() => {
+                             try {
+                               const now = new Date();
+                               let bookingDate: Date;
+                               
+                               if (booking.date === "Today") {
+                                 bookingDate = new Date();
+                               } else if (booking.date === "Tomorrow") {
+                                 bookingDate = addDays(new Date(), 1);
+                               } else {
+                                 const currentYear = new Date().getFullYear();
+                                 const dateWithYear = booking.date.includes(',') ? booking.date : `${booking.date}, ${currentYear}`;
+                                 bookingDate = new Date(dateWithYear);
+                               }
+                               
+                               const startTime = booking.time.split(' - ')[0];
+                               const timeParts = startTime.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
+                               if (timeParts) {
+                                 let hours = parseInt(timeParts[1]);
+                                 const minutes = parseInt(timeParts[2]);
+                                 const ampm = timeParts[3];
+                                 
+                                 if (ampm) {
+                                   if (ampm.toUpperCase() === 'PM' && hours !== 12) {
+                                     hours += 12;
+                                   } else if (ampm.toUpperCase() === 'AM' && hours === 12) {
+                                     hours = 0;
+                                   }
+                                 }
+                                 
+                                 bookingDate.setHours(hours, minutes, 0, 0);
+                               }
+                               
+                               const oneHourBeforeBooking = new Date(bookingDate.getTime() - 60 * 60 * 1000);
+                               
+                               return now < oneHourBeforeBooking;
+                             } catch (error) {
+                               return true;
+                             }
+                           })();
+                           
+                           if (canCancel) {
+                             // Active state: Cancellation allowed
+                             return (
+                               <Button 
+                                 variant="outline" 
+                                 size="sm" 
+                                 className="flex items-center gap-2 text-destructive hover:text-white hover:bg-destructive border-destructive"
+                                 onClick={() => handleCancelClick(booking.id)}
+                               >
+                                 <X className="h-4 w-4" />
+                                 <span className="hidden sm:inline">Cancel</span>
+                               </Button>
+                             );
+                           } else {
+                             // Muted state: Cancellation not allowed
+                             return (
+                               <Button 
+                                 variant="outline" 
+                                 size="sm" 
+                                 className="flex items-center gap-2 text-[#ab909c] border-[#ab909c] hover:bg-[#ab909c] hover:text-white"
+                                 onClick={() => {
+                                   toast({
+                                     title: "Cancellation Not Allowed",
+                                     description: "Booking cannot be cancelled within 1 hr from event starting time",
+                                     duration: 4000,
+                                   });
+                                 }}
+                               >
+                                 <X className="h-4 w-4" />
+                                 <span className="hidden sm:inline">Cancel</span>
+                               </Button>
+                             );
+                           }
+                         })()
+                       ) : booking.realTimeStatus === 'Completed' ? (
+                         // For completed events, show disabled Cancel button
+                         <Tooltip>
+                           <TooltipTrigger asChild>
+                             <Button 
+                               variant="outline" 
+                               size="sm" 
+                               className="flex items-center gap-2 text-[#ac909c] border-[#ac909c] opacity-50 cursor-not-allowed"
+                               disabled={true}
+                             >
+                               <X className="h-4 w-4" />
+                               <span className="hidden sm:inline">Cancel</span>
+                             </Button>
+                           </TooltipTrigger>
+                           <TooltipContent>
+                             <p>Cancellation not allowed for completed events</p>
+                           </TooltipContent>
+                         </Tooltip>
+                       ) : null}
                      </div>
                   </CardContent>
                 </Card>
