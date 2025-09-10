@@ -40,7 +40,7 @@ export const FacilityCard = ({
       case 'full':
         return <Badge className="facility-full">Not Available</Badge>;
       case 'maintenance':
-        return <Badge className="facility-full">Down for Maintenance</Badge>;
+        return <Badge className="facility-maintenance">Down for Maintenance</Badge>;
     }
   };
 

@@ -151,12 +151,30 @@
     @apply !bg-red-500 !text-white !border-red-500 font-bold;
   }
   
+  .facility-maintenance {
+    @apply !text-white font-bold;
+    background-color: #8B4513 !important;
+    border-color: #8B4513 !important;
+  }
+  
   .light .facility-full {
     @apply !bg-red-500 !text-white !border-red-500 font-bold;
   }
   
+  .light .facility-maintenance {
+    @apply !text-white font-bold;
+    background-color: #8B4513 !important;
+    border-color: #8B4513 !important;
+  }
+  
   .dark .facility-full {
     @apply !bg-red-500 !text-white !border-red-500 font-bold;
+  }
+  
+  .dark .facility-maintenance {
+    @apply !text-white font-bold;
+    background-color: #8B4513 !important;
+    border-color: #8B4513 !important;
   }
   
   .slot-unavailable {
