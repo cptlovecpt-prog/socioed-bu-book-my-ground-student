@@ -738,7 +738,7 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn }: BookingM
                   />
                   <div className="absolute inset-0 bg-black/90 dark:bg-white/90 rounded-lg flex flex-col items-center justify-center text-white dark:text-black text-center p-4">
                     <div className="text-sm font-medium">QR Code will be available</div>
-                    <div className="text-sm">from 1 hr before till 20 mins after event starts</div>
+                    <div className="text-sm">from 1 hr before the event till 20 mins after event starts</div>
                   </div>
                 </div>
               )}
