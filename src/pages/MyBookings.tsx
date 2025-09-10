@@ -9,79 +9,10 @@ import { useState } from "react";
 import { useBookings } from "@/contexts/BookingContext";
 import { QRCodeDialog } from "@/components/QRCodeDialog";
 import { useToast } from "@/hooks/use-toast";
-import { addDays, parseISO, parse, isBefore, addHours } from "date-fns";
-import { isWithinOneHourOfEvent, isQRCodeAvailable } from "@/utils/timeUtils";
+import { addDays } from "date-fns";
+import { isQRCodeAvailable } from "@/utils/timeUtils";
+import { getBookingStatus, isCancellationAllowed } from "@/utils/bookingUtils";
 
-// Utility function to check if event is more than 1 hour away
-const isEventMoreThanOneHourAway = (date: string, time: string): boolean => {
-  try {
-    const now = new Date();
-    let bookingDate: Date;
-    
-    // Parse the date
-    if (date === "Today") {
-      bookingDate = new Date();
-    } else if (date === "Tomorrow") {
-      bookingDate = addDays(new Date(), 1);
-    } else {
-      // Try to parse date formats like "Dec 12" or "Dec 12, 2024"
-      const currentYear = new Date().getFullYear();
-      const dateWithYear = date.includes(',') ? date : `${date}, ${currentYear}`;
-      bookingDate = parse(dateWithYear, 'MMM dd, yyyy', new Date());
-    }
-    
-    // Parse the start time
-    const startTime = time.split(' - ')[0];
-    const [hours, minutes] = startTime.split(':').map(Number);
-    
-    // Set the booking time
-    bookingDate.setHours(hours, minutes, 0, 0);
-    
-    // Check if event is more than 1 hour away
-    const oneHourFromNow = addHours(now, 1);
-    
-    return bookingDate > oneHourFromNow;
-  } catch (error) {
-    console.error('Error parsing booking time:', error);
-    return false;
-  }
-};
-
-// Utility function to check if cancellation is allowed (more than 1 hour before event)
-const isCancellationAllowed = (date: string, time: string): boolean => {
-  try {
-    const now = new Date();
-    let bookingDate: Date;
-    
-    // Parse the date
-    if (date === "Today") {
-      bookingDate = new Date();
-    } else if (date === "Tomorrow") {
-      bookingDate = addDays(new Date(), 1);
-    } else {
-      // Try to parse date formats like "Dec 12" or "Dec 12, 2024"
-      const currentYear = new Date().getFullYear();
-      const dateWithYear = date.includes(',') ? date : `${date}, ${currentYear}`;
-      bookingDate = parse(dateWithYear, 'MMM dd, yyyy', new Date());
-    }
-    
-    // Parse the start time (we only care about start time for cancellation)
-    const startTime = time.split(' - ')[0];
-    const [hours, minutes] = startTime.split(':').map(Number);
-    
-    // Set the booking time
-    bookingDate.setHours(hours, minutes, 0, 0);
-    
-    // Check if current time is more than 1 hour before booking time
-    const oneHourBeforeBooking = addHours(bookingDate, -1);
-    
-    return isBefore(now, oneHourBeforeBooking);
-  } catch (error) {
-    console.error('Error parsing booking time:', error);
-    // If parsing fails, allow cancellation to be safe
-    return true;
-  }
-};
 
 // Utility function to convert 24-hour time to AM/PM format
 const convertTo12HourFormat = (timeRange: string) => {
@@ -119,75 +50,80 @@ const MyBookings = ({ isSignedIn, setIsSignedIn, userData, setUserData }: MyBook
   const { bookings, cancelBooking } = useBookings();
   const { toast } = useToast();
 
-  // Sort bookings from latest first
-  const sortedBookings = [...bookings].sort((a, b) => {
-    // Helper function to convert booking date/time to Date object for comparison
-    const getBookingDateTime = (booking: any) => {
-      let bookingDate: Date;
-      
-      if (booking.date === "Today") {
-        bookingDate = new Date();
-      } else if (booking.date === "Tomorrow") {
-        bookingDate = addDays(new Date(), 1);
-      } else {
-        // Try different date formats
-        try {
-          // First try parsing as full date (e.g., "Sep 12, 2025")
-          if (booking.date.includes(',')) {
-            bookingDate = new Date(booking.date);
-          } else {
-            // Try parsing formats like "Dec 12" by adding current year
-            const currentYear = new Date().getFullYear();
-            const dateWithYear = `${booking.date}, ${currentYear}`;
-            bookingDate = new Date(dateWithYear);
-            
-            // If the parsed date is invalid, try next year
-            if (isNaN(bookingDate.getTime())) {
-              const nextYear = currentYear + 1;
-              const dateWithNextYear = `${booking.date}, ${nextYear}`;
-              bookingDate = new Date(dateWithNextYear);
-            }
-          }
-        } catch (error) {
-          console.error('Error parsing date:', booking.date, error);
-          bookingDate = new Date(); // Fallback to current date
-        }
-      }
-      
-      // Add time information for more precise sorting
-      if (booking.time && typeof booking.time === 'string') {
-        const startTime = booking.time.split(' - ')[0];
-        if (startTime) {
-          // Handle both 12-hour and 24-hour formats
-          const timeParts = startTime.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
-          if (timeParts) {
-            let hours = parseInt(timeParts[1]);
-            const minutes = parseInt(timeParts[2]);
-            const ampm = timeParts[3];
-            
-            if (ampm) {
-              // 12-hour format
-              if (ampm.toUpperCase() === 'PM' && hours !== 12) {
-                hours += 12;
-              } else if (ampm.toUpperCase() === 'AM' && hours === 12) {
-                hours = 0;
+  // Sort bookings from latest first and calculate real-time status
+  const sortedBookings = [...bookings]
+    .map(booking => ({
+      ...booking,
+      // Calculate real-time status based on current date/time
+      realTimeStatus: getBookingStatus(booking.date, booking.time, booking.status)
+    }))
+    .sort((a, b) => {
+      // Helper function to convert booking date/time to Date object for comparison
+      const getBookingDateTime = (booking: any) => {
+        let bookingDate: Date;
+        
+        if (booking.date === "Today") {
+          bookingDate = new Date();
+        } else if (booking.date === "Tomorrow") {
+          bookingDate = addDays(new Date(), 1);
+        } else {
+          try {
+            // First try parsing as full date (e.g., "Sep 12, 2025")
+            if (booking.date.includes(',')) {
+              bookingDate = new Date(booking.date);
+            } else {
+              // Try parsing formats like "Dec 12" by adding current year
+              const currentYear = new Date().getFullYear();
+              const dateWithYear = `${booking.date}, ${currentYear}`;
+              bookingDate = new Date(dateWithYear);
+              
+              // If the parsed date is invalid, try next year
+              if (isNaN(bookingDate.getTime())) {
+                const nextYear = currentYear + 1;
+                const dateWithNextYear = `${booking.date}, ${nextYear}`;
+                bookingDate = new Date(dateWithNextYear);
               }
             }
-            
-            bookingDate.setHours(hours, minutes, 0, 0);
+          } catch (error) {
+            console.error('Error parsing date:', booking.date, error);
+            bookingDate = new Date(); // Fallback to current date
           }
         }
-      }
+        
+        // Add time information for more precise sorting
+        if (booking.time && typeof booking.time === 'string') {
+          const startTime = booking.time.split(' - ')[0];
+          if (startTime) {
+            // Handle both 12-hour and 24-hour formats
+            const timeParts = startTime.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
+            if (timeParts) {
+              let hours = parseInt(timeParts[1]);
+              const minutes = parseInt(timeParts[2]);
+              const ampm = timeParts[3];
+              
+              if (ampm) {
+                // 12-hour format
+                if (ampm.toUpperCase() === 'PM' && hours !== 12) {
+                  hours += 12;
+                } else if (ampm.toUpperCase() === 'AM' && hours === 12) {
+                  hours = 0;
+                }
+              }
+              
+              bookingDate.setHours(hours, minutes, 0, 0);
+            }
+          }
+        }
+        
+        return bookingDate;
+      };
       
-      return bookingDate;
-    };
-    
-    const dateA = getBookingDateTime(a);
-    const dateB = getBookingDateTime(b);
-    
-    // Sort by date/time in descending order (latest first)
-    return dateB.getTime() - dateA.getTime();
-  });
+      const dateA = getBookingDateTime(a);
+      const dateB = getBookingDateTime(b);
+      
+      // Sort by date/time in descending order (latest first)
+      return dateB.getTime() - dateA.getTime();
+    });
 
   const handleCancelClick = (bookingId: string) => {
     setBookingToCancel(bookingId);
@@ -249,14 +185,14 @@ const MyBookings = ({ isSignedIn, setIsSignedIn, userData, setUserData }: MyBook
                           <Badge 
                             variant="secondary" 
                             className={
-                              booking.status === 'Upcoming' 
+                              booking.realTimeStatus === 'Upcoming' 
                                 ? "bg-green-100 text-green-800 border-green-200 hover:bg-green-100 hover:text-green-800" 
-                                : booking.status === 'Cancelled'
+                                : booking.realTimeStatus === 'Cancelled'
                                 ? "bg-red-100 text-red-800 border-red-200 hover:bg-red-100 hover:text-red-800"
                                 : "bg-gray-100 text-gray-800 border-gray-200 hover:bg-gray-100 hover:text-gray-800"
                             }
                           >
-                            {booking.status}
+                            {booking.realTimeStatus}
                           </Badge>
                         </div>
                         <p className="text-muted-foreground mb-3">{booking.sport}</p>
@@ -288,7 +224,7 @@ const MyBookings = ({ isSignedIn, setIsSignedIn, userData, setUserData }: MyBook
 
                      <div className="flex gap-3">
                        {/* QR Code button - only show for bookings that aren't cancelled */}
-                       {booking.status !== 'Cancelled' && (
+                       {booking.realTimeStatus !== 'Cancelled' && (
                          isQRCodeAvailable(booking.date, booking.time) ? (
                            <Button 
                              variant="outline" 
@@ -299,44 +235,35 @@ const MyBookings = ({ isSignedIn, setIsSignedIn, userData, setUserData }: MyBook
                              <QrCode className="h-4 w-4" />
                              <span className="hidden sm:inline">QR Code</span>
                            </Button>
-                         ) : isEventMoreThanOneHourAway(booking.date, booking.time) ? (
-                           <Button 
-                             variant="outline" 
-                             size="sm" 
-                             className="flex items-center gap-2 text-[#ac909c] border-[#ac909c] hover:bg-[#ac909c] hover:text-white"
-                             onClick={() => {
-                               toast({
-                                 title: "QR Code Not Available",
-                                 description: "QR Code will be available from 1 hr before the event till 20 mins after event starts",
-                                 duration: 4000,
-                               });
-                             }}
-                           >
-                             <QrCode className="h-4 w-4" />
-                             <span className="hidden sm:inline">QR Code</span>
-                           </Button>
-                          ) : (
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button 
-                                  variant="outline" 
-                                  size="sm" 
-                                  className="flex items-center gap-2 text-[#ac909c] border-[#ac909c] opacity-50 cursor-not-allowed"
-                                  disabled={true}
-                                >
-                                  <QrCode className="h-4 w-4" />
-                                  <span className="hidden sm:inline">QR Code</span>
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>QR Code is no longer available for this event</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          )
+                         ) : (
+                           <Tooltip>
+                             <TooltipTrigger asChild>
+                               <Button 
+                                 variant="outline" 
+                                 size="sm" 
+                                 className="flex items-center gap-2 text-[#ac909c] border-[#ac909c] opacity-50 cursor-not-allowed"
+                                 disabled={true}
+                                 onClick={() => {
+                                   toast({
+                                     title: "QR Code Not Available",
+                                     description: "QR Code will be available from 1 hr before the event till 20 mins after event starts",
+                                     duration: 4000,
+                                   });
+                                 }}
+                               >
+                                 <QrCode className="h-4 w-4" />
+                                 <span className="hidden sm:inline">QR Code</span>
+                               </Button>
+                             </TooltipTrigger>
+                             <TooltipContent>
+                               <p>QR Code will be available from 1 hr before till 20 mins after event start</p>
+                             </TooltipContent>
+                           </Tooltip>
+                         )
                        )}
                        
                        {/* Cancel button - only show for upcoming bookings */}
-                       {booking.status === 'Upcoming' && (
+                       {booking.realTimeStatus === 'Upcoming' && (
                          (() => {
                            const canCancel = isCancellationAllowed(booking.date, booking.time);
                             return canCancel ? (
@@ -350,21 +277,29 @@ const MyBookings = ({ isSignedIn, setIsSignedIn, userData, setUserData }: MyBook
                                 <span className="hidden sm:inline">Cancel</span>
                               </Button>
                             ) : (
-                              <Button 
-                                variant="outline" 
-                                size="sm" 
-                                className="flex items-center gap-2 text-[#ab909c] border-[#ab909c] hover:bg-[#ab909c] hover:text-white"
-                                onClick={() => {
-                                  toast({
-                                    title: "Cancellation Not Allowed",
-                                    description: "Booking cannot be cancelled within 1 hr from event starting time",
-                                    duration: 4000,
-                                  });
-                                }}
-                              >
-                                <X className="h-4 w-4" />
-                                <span className="hidden sm:inline">Cancel</span>
-                              </Button>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm" 
+                                    className="flex items-center gap-2 text-[#ab909c] border-[#ab909c] opacity-50 cursor-not-allowed"
+                                    disabled={true}
+                                    onClick={() => {
+                                      toast({
+                                        title: "Cancellation Not Allowed",
+                                        description: "Booking cannot be cancelled within 1 hr from event starting time",
+                                        duration: 4000,
+                                      });
+                                    }}
+                                  >
+                                    <X className="h-4 w-4" />
+                                    <span className="hidden sm:inline">Cancel</span>
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Cannot cancel within 1 hour of event start</p>
+                                </TooltipContent>
+                              </Tooltip>
                             );
                          })()
                        )}
