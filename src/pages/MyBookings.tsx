@@ -119,22 +119,36 @@ const MyBookings = ({ isSignedIn, setIsSignedIn, userData, setUserData }: MyBook
   const { bookings, cancelBooking } = useBookings();
   const { toast } = useToast();
 
-  // Sort bookings by latest first, prioritizing "Today" and "Tomorrow"
+  // Sort bookings from latest first
   const sortedBookings = [...bookings].sort((a, b) => {
-    const dateOrder = { "Today": 0, "Tomorrow": 1 };
-    const aOrder = dateOrder[a.date as keyof typeof dateOrder] ?? 2;
-    const bOrder = dateOrder[b.date as keyof typeof dateOrder] ?? 2;
+    // Helper function to convert booking date/time to Date object for comparison
+    const getBookingDateTime = (booking: any) => {
+      let bookingDate: Date;
+      
+      if (booking.date === "Today") {
+        bookingDate = new Date();
+      } else if (booking.date === "Tomorrow") {
+        bookingDate = addDays(new Date(), 1);
+      } else {
+        // Parse regular dates like "Dec 12" or "Dec 12, 2024"
+        const currentYear = new Date().getFullYear();
+        const dateWithYear = booking.date.includes(',') ? booking.date : `${booking.date}, ${currentYear}`;
+        bookingDate = parse(dateWithYear, 'MMM dd, yyyy', new Date());
+      }
+      
+      // Add time information for more precise sorting
+      const startTime = booking.time.split(' - ')[0];
+      const [hours, minutes] = startTime.split(':').map(Number);
+      bookingDate.setHours(hours, minutes, 0, 0);
+      
+      return bookingDate;
+    };
     
-    if (aOrder !== bOrder) {
-      return aOrder - bOrder;
-    }
+    const dateA = getBookingDateTime(a);
+    const dateB = getBookingDateTime(b);
     
-    // For same category, sort by date string (newest first for regular dates)
-    if (aOrder === 2 && bOrder === 2) {
-      return new Date(b.date) > new Date(a.date) ? 1 : -1;
-    }
-    
-    return 0;
+    // Sort by date/time in descending order (latest first)
+    return dateB.getTime() - dateA.getTime();
   });
 
   const handleCancelClick = (bookingId: string) => {
