@@ -7,56 +7,13 @@ import { QrCode, X, ChevronLeft, ChevronRight, Clock } from "lucide-react";
 import { useBookings } from "@/contexts/BookingContext";
 import { QRCodeDialog } from "./QRCodeDialog";
 import { useToast } from "@/hooks/use-toast";
-import { addDays, parseISO, parse, isBefore, addHours } from "date-fns";
+import { addDays } from "date-fns";
 import { isQRCodeAvailable } from "@/utils/timeUtils";
 import { isBookingUpcoming, isCancellationAllowed } from "@/utils/bookingUtils";
 
 interface YourBookingsProps {
   isSignedIn: boolean;
 }
-
-// Utility function to check if event is more than 1 hour away (matches MyBookings logic)
-const isEventMoreThanOneHourAway = (date: string, time: string): boolean => {
-  try {
-    const now = new Date();
-    let bookingDate: Date;
-    
-    if (date === "Today") {
-      bookingDate = new Date();
-    } else if (date === "Tomorrow") {
-      bookingDate = addDays(new Date(), 1);
-    } else {
-      const currentYear = new Date().getFullYear();
-      const dateWithYear = date.includes(',') ? date : `${date}, ${currentYear}`;
-      bookingDate = new Date(dateWithYear);
-    }
-    
-    const startTime = time.split(' - ')[0];
-    const timeParts = startTime.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
-    if (timeParts) {
-      let hours = parseInt(timeParts[1]);
-      const minutes = parseInt(timeParts[2]);
-      const ampm = timeParts[3];
-      
-      if (ampm) {
-        if (ampm.toUpperCase() === 'PM' && hours !== 12) {
-          hours += 12;
-        } else if (ampm.toUpperCase() === 'AM' && hours === 12) {
-          hours = 0;
-        }
-      }
-      
-      bookingDate.setHours(hours, minutes, 0, 0);
-    }
-    
-    const oneHourFromNow = addDays(now, 0);
-    oneHourFromNow.setHours(now.getHours() + 1, now.getMinutes(), 0, 0);
-    
-    return bookingDate > oneHourFromNow;
-  } catch (error) {
-    return false;
-  }
-};
 
 // Utility function to convert 24-hour time to AM/PM format
 const convertTo12HourFormat = (timeRange: string) => {
@@ -129,8 +86,48 @@ const YourBookings = ({ isSignedIn }: YourBookingsProps) => {
   // Check if QR code is available (1 hour before to 20 minutes after event start)
   const isQRAvailable = currentBooking ? isQRCodeAvailable(currentBooking.date, currentBooking.time) : false;
   
-  // Check if event is more than 1 hour away
-  const isMoreThanOneHourAway = currentBooking ? isEventMoreThanOneHourAway(currentBooking.date, currentBooking.time) : false;
+  // Check if event is more than 1 hour away (using same logic as MyBookings)
+  const isMoreThanOneHourAway = currentBooking ? (() => {
+    try {
+      const now = new Date();
+      let bookingDate: Date;
+      
+      if (currentBooking.date === "Today") {
+        bookingDate = new Date();
+      } else if (currentBooking.date === "Tomorrow") {
+        bookingDate = addDays(new Date(), 1);
+      } else {
+        const currentYear = new Date().getFullYear();
+        const dateWithYear = currentBooking.date.includes(',') ? currentBooking.date : `${currentBooking.date}, ${currentYear}`;
+        bookingDate = new Date(dateWithYear);
+      }
+      
+      const startTime = currentBooking.time.split(' - ')[0];
+      const timeParts = startTime.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
+      if (timeParts) {
+        let hours = parseInt(timeParts[1]);
+        const minutes = parseInt(timeParts[2]);
+        const ampm = timeParts[3];
+        
+        if (ampm) {
+          if (ampm.toUpperCase() === 'PM' && hours !== 12) {
+            hours += 12;
+          } else if (ampm.toUpperCase() === 'AM' && hours === 12) {
+            hours = 0;
+          }
+        }
+        
+        bookingDate.setHours(hours, minutes, 0, 0);
+      }
+      
+      const oneHourFromNow = addDays(now, 0);
+      oneHourFromNow.setHours(now.getHours() + 1, now.getMinutes(), 0, 0);
+      
+      return bookingDate > oneHourFromNow;
+    } catch (error) {
+      return false;
+    }
+  })() : false;
 
   const nextBooking = () => {
     setCurrentIndex((prev) => (prev + 1) % sortedBookings.length);
