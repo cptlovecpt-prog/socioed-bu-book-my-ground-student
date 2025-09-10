@@ -731,7 +731,7 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn }: BookingM
               <img 
                 src={getImageForFacility(facility)} 
                 alt={facility.sport}
-                className="w-full h-48 object-cover rounded-lg"
+                className="w-full h-48 object-cover rounded-xl"
               />
             </div>
             
