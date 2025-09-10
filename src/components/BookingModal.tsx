@@ -568,7 +568,7 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn }: BookingM
             
             {/* Available Time Slots */}
             <div>
-              <h3 className="font-medium mb-3">Available Time Slots</h3>
+              <h3 className="font-medium mb-3">Available Time Slots: Click on available slot to proceed</h3>
               <div className="grid gap-2">
                  {timeSlots.map((slot) => {
                    const isAvailable = slot.available > 0 && !slot.isExpired;
