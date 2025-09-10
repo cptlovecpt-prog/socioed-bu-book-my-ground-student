@@ -721,19 +721,22 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn }: BookingM
               <h2 className="text-2xl font-semibold text-green-600 dark:text-green-400">Booking Confirmed</h2>
             </div>
             
-            {/* Full width image with checkmark */}
-            <div className="relative -mx-6 mb-6">
+            {/* Green checkmark above image */}
+            <div className="flex justify-end mb-2">
+              <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+            </div>
+            
+            {/* Full width image */}
+            <div className="-mx-6 mb-6">
               <img 
                 src={getImageForFacility(facility)} 
                 alt={facility.sport}
                 className="w-full h-48 object-cover rounded-lg"
               />
-              {/* Green checkmark on top right */}
-              <div className="absolute top-2 right-2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
             </div>
             
             {/* Facility details - left aligned */}
