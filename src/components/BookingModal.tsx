@@ -716,13 +716,9 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn }: BookingM
         
         return (
           <div className="space-y-6 py-4">
-            {/* Heading */}
-            <div className="text-left mb-6">
+            {/* Heading with checkbox aligned */}
+            <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-semibold text-green-600 dark:text-green-400">Booking Confirmed</h2>
-            </div>
-            
-            {/* Green checkmark above image */}
-            <div className="flex justify-end mb-2">
               <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
                 <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
