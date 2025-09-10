@@ -215,37 +215,45 @@ const MyBookings = ({ isSignedIn, setIsSignedIn, userData, setUserData }: MyBook
                             <span className="hidden sm:inline">QR Code</span>
                           </Button>
                         </TooltipTrigger>
-                        {!isQRCodeAvailable(booking.date, booking.time) && (
-                          <TooltipContent>
-                            <p>QR Code available 1 hr before event starts till 20 mins after event starts</p>
-                          </TooltipContent>
-                        )}
+                         {!isQRCodeAvailable(booking.date, booking.time) && (
+                           <TooltipContent>
+                             <p>QR Code will be available 1 hr before event starts</p>
+                           </TooltipContent>
+                         )}
                       </Tooltip>
                     </TooltipProvider>
-                    {booking.status === 'Upcoming' && (
-                      (() => {
-                        const canCancel = isCancellationAllowed(booking.date, booking.time);
-                        return (
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            className={`flex items-center gap-2 ${
-                              canCancel 
-                                ? "text-destructive hover:text-white hover:bg-destructive border-destructive" 
-                                : "text-muted-foreground cursor-not-allowed opacity-50"
-                            }`}
-                            onClick={() => canCancel && handleCancelClick(booking.id)}
-                            disabled={!canCancel}
-                            title={!canCancel ? "Cannot cancel within 1 hour of booking time" : "Cancel booking"}
-                            style={{ cursor: canCancel ? 'pointer' : 'not-allowed' }}
-                          >
-                            {!canCancel && <Clock className="h-4 w-4" />}
-                            {canCancel && <X className="h-4 w-4" />}
-                            <span className="hidden sm:inline">{canCancel ? "Cancel" : "Cannot Cancel"}</span>
-                          </Button>
-                        );
-                      })()
-                    )}
+                     {booking.status === 'Upcoming' && (
+                       (() => {
+                         const canCancel = isCancellationAllowed(booking.date, booking.time);
+                         return (
+                           <TooltipProvider>
+                             <Tooltip>
+                               <TooltipTrigger asChild>
+                                 <Button 
+                                   variant="outline" 
+                                   size="sm" 
+                                   className={`flex items-center gap-2 ${
+                                     canCancel 
+                                       ? "text-destructive hover:text-white hover:bg-destructive border-destructive" 
+                                       : "text-muted-foreground cursor-not-allowed opacity-50"
+                                   }`}
+                                   onClick={() => canCancel && handleCancelClick(booking.id)}
+                                   disabled={!canCancel}
+                                 >
+                                   <X className="h-4 w-4" />
+                                   <span className="hidden sm:inline">Cancel</span>
+                                 </Button>
+                               </TooltipTrigger>
+                               {!canCancel && (
+                                 <TooltipContent>
+                                   <p>Event cannot be cancelled within 1 hr of starting</p>
+                                 </TooltipContent>
+                               )}
+                             </Tooltip>
+                           </TooltipProvider>
+                         );
+                       })()
+                     )}
                   </div>
                 </CardContent>
               </Card>

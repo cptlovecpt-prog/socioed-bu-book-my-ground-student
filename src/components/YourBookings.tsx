@@ -219,30 +219,38 @@ const YourBookings = ({ isSignedIn }: YourBookingsProps) => {
                       <span className="hidden sm:inline">QR Code</span>
                     </Button>
                   </TooltipTrigger>
-                  {!isQRAvailable && (
-                    <TooltipContent>
-                      <p>QR Code available 1 hr before event starts till 20 mins after event starts</p>
-                    </TooltipContent>
-                  )}
+                   {!isQRAvailable && (
+                     <TooltipContent>
+                       <p>QR Code will be available 1 hr before event starts</p>
+                     </TooltipContent>
+                   )}
                 </Tooltip>
-              </TooltipProvider>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className={`flex items-center space-x-1 ${
-                  canCancel 
-                    ? "text-destructive hover:text-white hover:bg-destructive border-destructive" 
-                    : "text-muted-foreground cursor-not-allowed opacity-50"
-                }`}
-                onClick={() => canCancel && handleCancelClick(currentBooking.id)}
-                disabled={!canCancel}
-                title={!canCancel ? "Cannot cancel within 1 hour of booking time" : "Cancel booking"}
-                style={{ cursor: canCancel ? 'pointer' : 'not-allowed' }}
-              >
-                {!canCancel && <Clock className="h-4 w-4" />}
-                {canCancel && <X className="h-4 w-4" />}
-                <span className="hidden sm:inline">{canCancel ? "Cancel" : "Cannot Cancel"}</span>
-              </Button>
+               </TooltipProvider>
+               <TooltipProvider>
+                 <Tooltip>
+                   <TooltipTrigger asChild>
+                     <Button 
+                       variant="outline" 
+                       size="sm" 
+                       className={`flex items-center space-x-1 ${
+                         canCancel 
+                           ? "text-destructive hover:text-white hover:bg-destructive border-destructive" 
+                           : "text-muted-foreground cursor-not-allowed opacity-50"
+                       }`}
+                       onClick={() => canCancel && handleCancelClick(currentBooking.id)}
+                       disabled={!canCancel}
+                     >
+                       <X className="h-4 w-4" />
+                       <span className="hidden sm:inline">Cancel</span>
+                     </Button>
+                   </TooltipTrigger>
+                   {!canCancel && (
+                     <TooltipContent>
+                       <p>Event cannot be cancelled within 1 hr of starting</p>
+                     </TooltipContent>
+                   )}
+                 </Tooltip>
+               </TooltipProvider>
             </div>
           </Card>
         </div>
