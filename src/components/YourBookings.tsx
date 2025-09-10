@@ -6,6 +6,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { QrCode, X, ChevronLeft, ChevronRight, Clock } from "lucide-react";
 import { useBookings } from "@/contexts/BookingContext";
 import { QRCodeDialog } from "./QRCodeDialog";
+import { useToast } from "@/hooks/use-toast";
 import { addDays, parseISO, parse, isBefore, addHours } from "date-fns";
 import { isWithinOneHourOfEvent, isQRCodeAvailable } from "@/utils/timeUtils";
 
@@ -71,6 +72,7 @@ const convertTo12HourFormat = (timeRange: string) => {
 
 const YourBookings = ({ isSignedIn }: YourBookingsProps) => {
   const { bookings, cancelBooking } = useBookings();
+  const { toast } = useToast();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   
@@ -139,6 +141,11 @@ const YourBookings = ({ isSignedIn }: YourBookingsProps) => {
   const handleConfirmCancel = () => {
     if (bookingToCancel) {
       cancelBooking(bookingToCancel);
+      toast({
+        title: "Booking Cancellation",
+        description: "Booking cancelled successfully, details have been shared on mail",
+        duration: 4000,
+      });
       if (currentIndex >= sortedBookings.length - 1) {
         setCurrentIndex(Math.max(0, sortedBookings.length - 2));
       }

@@ -118,8 +118,8 @@ const MyBookings = ({ isSignedIn, setIsSignedIn, userData, setUserData }: MyBook
     if (bookingToCancel) {
       cancelBooking(bookingToCancel);
       toast({
-        title: "Alert",
-        description: "Your booking was canceled as requested, cancellation mail has been sent to all participants.",
+        title: "Booking Cancellation",
+        description: "Booking cancelled successfully, details have been shared on mail",
         duration: 4000,
       });
     }
