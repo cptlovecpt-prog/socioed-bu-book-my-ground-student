@@ -592,26 +592,28 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn }: BookingM
                             <span className="font-medium text-foreground">{slot.time}</span>
                           </div>
                          <div className="flex items-center gap-2">
-                             {slot.isExpired || slot.available === 0 ? (
-                               slot.unavailableReason === 'blocked' ? (
+                              {slot.isExpired || slot.available === 0 ? (
+                                slot.unavailableReason === 'blocked' ? (
+                                   <Badge 
+                                     className="text-white border-[#063970] font-bold relative z-50"
+                                     style={{ backgroundColor: '#063970' }}
+                                   >
+                                    Blocked by Admin
+                                  </Badge>
+                                ) : slot.unavailableReason === 'maintenance' ? (
+                                   <Badge 
+                                     className="text-white border-[#873e23] font-bold relative z-50"
+                                     style={{ backgroundColor: '#873e23' }}
+                                   >
+                                    Down for Maintenance
+                                  </Badge>
+                                ) : (
                                   <Badge 
                                     className="slot-unavailable"
                                   >
-                                   Blocked by Admin
-                                 </Badge>
-                               ) : slot.unavailableReason === 'maintenance' ? (
-                                  <Badge 
-                                    className="bg-orange-600 text-white border-orange-600 font-bold relative z-50"
-                                  >
-                                   Down for Maintenance
-                                 </Badge>
-                               ) : (
-                                 <Badge 
-                                   className="slot-unavailable"
-                                 >
-                                   No Spots Available
-                                 </Badge>
-                               )
+                                    No Spots Available
+                                  </Badge>
+                                )
                              ) : slot.available === slot.capacity ? (
                                <Badge 
                                  className="facility-available"
