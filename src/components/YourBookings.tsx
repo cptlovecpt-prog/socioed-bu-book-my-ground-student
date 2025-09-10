@@ -304,31 +304,23 @@ const YourBookings = ({ isSignedIn }: YourBookingsProps) => {
                     <X className="h-4 w-4" />
                     <span className="hidden sm:inline">Cancel</span>
                   </Button>
-                 ) : (
-                   <Tooltip>
-                     <TooltipTrigger asChild>
-                       <Button 
-                         variant="outline" 
-                         size="sm" 
-                         className="flex items-center space-x-1 text-muted-foreground cursor-not-allowed opacity-50"
-                         disabled={true}
-                         onClick={() => {
-                           toast({
-                             title: "Cancellation Not Allowed",
-                             description: "Booking cannot be cancelled within 1 hr from event starting time",
-                             duration: 4000,
-                           });
-                         }}
-                       >
-                         <X className="h-4 w-4" />
-                         <span className="hidden sm:inline">Cancel</span>
-                       </Button>
-                     </TooltipTrigger>
-                     <TooltipContent>
-                       <p>Event cannot be cancelled within 1 hr of starting</p>
-                     </TooltipContent>
-                   </Tooltip>
-                 )}
+                ) : (
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="flex items-center space-x-1 text-muted-foreground border-muted-foreground"
+                    onClick={() => {
+                      toast({
+                        title: "Cancellation Not Allowed",
+                        description: "Booking cannot be cancelled within 1 hr from event starting time",
+                        duration: 4000,
+                      });
+                    }}
+                  >
+                    <X className="h-4 w-4" />
+                    <span className="hidden sm:inline">Cancel</span>
+                  </Button>
+                )}
               </div>
             </Card>
           </div>

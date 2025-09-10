@@ -283,41 +283,33 @@ const MyBookings = ({ isSignedIn, setIsSignedIn, userData, setUserData }: MyBook
                       {booking.status === 'Upcoming' && (
                         (() => {
                           const canCancel = isCancellationAllowed(booking.date, booking.time);
-                          return canCancel ? (
-                            <Button 
-                              variant="outline" 
-                              size="sm" 
-                              className="flex items-center gap-2 text-destructive hover:text-white hover:bg-destructive border-destructive"
-                              onClick={() => handleCancelClick(booking.id)}
-                            >
-                              <X className="h-4 w-4" />
-                              <span className="hidden sm:inline">Cancel</span>
-                            </Button>
-                          ) : (
-                             <Tooltip>
-                               <TooltipTrigger asChild>
-                                 <Button 
-                                   variant="outline" 
-                                   size="sm" 
-                                   className="flex items-center gap-2 text-muted-foreground cursor-not-allowed opacity-50"
-                                   disabled={true}
-                                   onClick={() => {
-                                     toast({
-                                       title: "Cancellation Not Allowed",
-                                       description: "Booking cannot be cancelled within 1 hr from event starting time",
-                                       duration: 4000,
-                                     });
-                                   }}
-                                 >
-                                   <X className="h-4 w-4" />
-                                   <span className="hidden sm:inline">Cancel</span>
-                                 </Button>
-                               </TooltipTrigger>
-                               <TooltipContent>
-                                 <p>Event cannot be cancelled within 1 hr of starting</p>
-                               </TooltipContent>
-                             </Tooltip>
-                          );
+                           return canCancel ? (
+                             <Button 
+                               variant="outline" 
+                               size="sm" 
+                               className="flex items-center gap-2 text-destructive hover:text-white hover:bg-destructive border-destructive"
+                               onClick={() => handleCancelClick(booking.id)}
+                             >
+                               <X className="h-4 w-4" />
+                               <span className="hidden sm:inline">Cancel</span>
+                             </Button>
+                           ) : (
+                             <Button 
+                               variant="outline" 
+                               size="sm" 
+                               className="flex items-center gap-2 text-muted-foreground border-muted-foreground"
+                               onClick={() => {
+                                 toast({
+                                   title: "Cancellation Not Allowed",
+                                   description: "Booking cannot be cancelled within 1 hr from event starting time",
+                                   duration: 4000,
+                                 });
+                               }}
+                             >
+                               <X className="h-4 w-4" />
+                               <span className="hidden sm:inline">Cancel</span>
+                             </Button>
+                           );
                         })()
                       )}
                     </div>
