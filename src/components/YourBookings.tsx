@@ -259,22 +259,22 @@ const YourBookings = ({ isSignedIn }: YourBookingsProps) => {
                     <QrCode className="h-4 w-4" />
                     <span className="hidden sm:inline">QR Code</span>
                   </Button>
-                ) : isMoreThanOneHourAway ? (
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="flex items-center space-x-1"
-                    onClick={() => {
-                      toast({
-                        title: "QR Code Not Available",
-                        description: "QR Code will be available from 1 hr before the event till 20 mins after event starts",
-                        duration: 4000,
-                      });
-                    }}
-                  >
-                    <QrCode className="h-4 w-4" />
-                    <span className="hidden sm:inline">QR Code</span>
-                  </Button>
+                 ) : isMoreThanOneHourAway ? (
+                   <Button 
+                     variant="outline" 
+                     size="sm" 
+                     className="flex items-center space-x-1 text-muted-foreground border-muted-foreground"
+                     onClick={() => {
+                       toast({
+                         title: "QR Code Not Available",
+                         description: "QR Code will be available from 1 hr before the event till 20 mins after event starts",
+                         duration: 4000,
+                       });
+                     }}
+                   >
+                     <QrCode className="h-4 w-4" />
+                     <span className="hidden sm:inline">QR Code</span>
+                   </Button>
                  ) : (
                    <Tooltip>
                      <TooltipTrigger asChild>

@@ -249,7 +249,7 @@ const MyBookings = ({ isSignedIn, setIsSignedIn, userData, setUserData }: MyBook
                         <Button 
                           variant="outline" 
                           size="sm" 
-                          className="flex items-center gap-2"
+                          className="flex items-center gap-2 text-muted-foreground border-muted-foreground"
                           onClick={() => {
                             toast({
                               title: "QR Code Not Available",
