@@ -264,9 +264,9 @@ const YourBookings = ({ isSignedIn }: YourBookingsProps) => {
           </div>
           
           <div className="flex items-center h-full max-h-[180px]">
-            <Card className="flex items-center space-x-4 p-4 bg-card/80 backdrop-blur-sm border border-border/50 w-full max-w-4xl">
+            <Card className="flex items-center space-x-4 p-4 bg-card/80 backdrop-blur-sm border border-border/50 w-full">
               {/* Booking Image */}
-              <div className="relative w-32 h-20 rounded-lg overflow-hidden flex-shrink-0">
+              <div className="relative w-64 h-20 rounded-lg overflow-hidden flex-shrink-0">
                 <img 
                   src={currentBooking.image} 
                   alt={currentBooking.facilityName}
