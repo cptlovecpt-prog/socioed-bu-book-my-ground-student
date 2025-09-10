@@ -97,8 +97,32 @@ export const isBookingUpcoming = (eventDate: string, eventTime: string): boolean
     }
     
     // Parse the end time to check if event has completely finished
-    const endTime = eventTime.split(' - ')[1];
-    const [hours, minutes] = endTime.split(':').map(Number);
+    const timeRange = eventTime.split(' - ');
+    const endTime = timeRange[1] || timeRange[0]; // fallback to start time if no range
+    
+    // Handle both 12-hour and 24-hour formats
+    let hours: number, minutes: number;
+    
+    const timeMatch = endTime.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
+    if (timeMatch) {
+      hours = parseInt(timeMatch[1]);
+      minutes = parseInt(timeMatch[2]);
+      const ampm = timeMatch[3];
+      
+      // Convert 12-hour to 24-hour format if needed
+      if (ampm) {
+        if (ampm.toUpperCase() === 'PM' && hours !== 12) {
+          hours += 12;
+        } else if (ampm.toUpperCase() === 'AM' && hours === 12) {
+          hours = 0;
+        }
+      }
+    } else {
+      // Fallback parsing for 24-hour format
+      const [h, m] = endTime.split(':').map(Number);
+      hours = h;
+      minutes = m || 0;
+    }
     
     // Set the booking end time
     bookingDate.setHours(hours, minutes, 0, 0);
