@@ -28,7 +28,7 @@ const Footer = ({ isSignedIn }: FooterProps) => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       toast({
         title: "Please Sign-In to view your bookings",
-        duration: 3000,
+        duration: 4000,
       });
     }
   };

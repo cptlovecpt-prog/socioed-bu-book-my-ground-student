@@ -17,6 +17,7 @@ const HelpSupportModal = ({ isOpen, onClose }: HelpSupportModalProps) => {
       toast({
         title: "Copied!",
         description: `${type} copied to clipboard`,
+        duration: 4000,
       });
     });
   };

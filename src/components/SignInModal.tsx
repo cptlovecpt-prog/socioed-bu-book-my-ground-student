@@ -53,6 +53,7 @@ const SignInModal = ({ isOpen, onClose, onSignIn }: SignInModalProps) => {
       toast({
         title: "Welcome to Book My Ground",
         description: "You have successfully signed in.",
+        duration: 4000,
       });
       
       onClose();

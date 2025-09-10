@@ -29,12 +29,14 @@ export const ShareDialog = ({ isOpen, onClose, booking }: ShareDialogProps) => {
       toast({
         title: "Link copied!",
         description: "Share link has been copied to clipboard",
+        duration: 4000,
       });
     } catch (error) {
       toast({
         title: "Failed to copy",
         description: "Please try again",
         variant: "destructive",
+        duration: 4000,
       });
     }
   };

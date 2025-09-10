@@ -336,7 +336,7 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn }: BookingM
     if (!isSignedIn) {
       toast({
         title: "Please Sign-In to continue with booking",
-        duration: 3000,
+        duration: 4000,
       });
       return;
     }
@@ -386,7 +386,7 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn }: BookingM
       toast({
         title: "Booking Confirmed",
         description: "Your booking details have been shared on your university e-mail address",
-        duration: 5000,
+        duration: 4000,
       });
     }
     
@@ -465,6 +465,7 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn }: BookingM
     toast({
       title: "Share Link Copied!",
       description: "Your friends can now join your booking using this link.",
+      duration: 4000,
     });
   };
 

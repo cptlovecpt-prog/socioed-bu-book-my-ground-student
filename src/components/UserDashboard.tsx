@@ -52,6 +52,7 @@ export const UserDashboard = () => {
     toast({
       title: "Share Link Copied!",
       description: "Your friends can now join your booking using this link.",
+      duration: 4000,
     });
   };
 
