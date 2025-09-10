@@ -264,9 +264,9 @@ const YourBookings = ({ isSignedIn }: YourBookingsProps) => {
           </div>
           
           <div className="flex items-center h-full max-h-[180px]">
-            <Card className="flex items-center space-x-4 p-4 bg-card/80 backdrop-blur-sm border border-border/50 w-full">
+            <Card className="flex items-center bg-card/80 backdrop-blur-sm border border-border/50 w-full overflow-hidden">
               {/* Booking Image */}
-              <div className="relative w-64 h-20 rounded-lg overflow-hidden flex-shrink-0">
+              <div className="relative w-64 h-full flex-shrink-0">
                 <img 
                   src={currentBooking.image} 
                   alt={currentBooking.facilityName}
@@ -275,7 +275,7 @@ const YourBookings = ({ isSignedIn }: YourBookingsProps) => {
               </div>
               
               {/* Booking Details */}
-              <div className="flex-1 min-w-0">
+              <div className="flex-1 min-w-0 p-4">
                 <h3 className="font-semibold text-foreground truncate">{currentBooking.facilityName}</h3>
                 <p className="text-sm text-muted-foreground">{currentBooking.location}</p>
                 <p className="text-sm text-muted-foreground">{currentBooking.participants} • {currentBooking.facilitySize} sq mtrs.</p>
@@ -283,7 +283,7 @@ const YourBookings = ({ isSignedIn }: YourBookingsProps) => {
               </div>
               
               {/* Action Buttons */}
-              <div className="flex items-center space-x-2 flex-shrink-0">
+              <div className="flex items-center space-x-2 flex-shrink-0 p-4 pl-0">
                 {isQRAvailable ? (
                   <Button 
                     variant="outline" 
