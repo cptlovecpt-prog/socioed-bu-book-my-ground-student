@@ -64,9 +64,13 @@ const MyBookings = ({ isSignedIn, setIsSignedIn, userData, setUserData }: MyBook
   const sortedBookings = [...bookings]
     .map(booking => ({
       ...booking,
-      // Calculate real-time status based on current date/time, but preserve original status for cancelled bookings
-      realTimeStatus: booking.status === 'Cancelled' ? 'Cancelled' : getBookingStatus(booking.date, booking.time, booking.status),
-      // Mark if this booking counts as "active" (matches Your Bookings filtering)
+      // Calculate real-time status using the EXACT same logic as Your Bookings section
+      realTimeStatus: booking.status === 'Cancelled' 
+        ? 'Cancelled' 
+        : (booking.status === 'Upcoming' && isBookingUpcoming(booking.date, booking.time))
+          ? 'Upcoming'
+          : 'Completed',
+      // Mark if this booking counts as "active" (matches Your Bookings filtering exactly)
       isActive: booking.status === 'Upcoming' && isBookingUpcoming(booking.date, booking.time)
     }))
     .sort((a, b) => {
