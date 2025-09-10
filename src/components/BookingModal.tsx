@@ -577,82 +577,54 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn }: BookingM
                      <div
                        key={slot.id}
                        onClick={() => isAvailable && handleSlotSelect(slot.id)}
-                       className={`p-3 rounded-lg border transition-all ${
-                         selectedSlot === slot.id
-                           ? 'border-primary bg-primary/5 cursor-pointer'
-                            : isAvailable 
-                              ? 'border-border hover:border-primary/50 cursor-pointer' 
-                              : 'border-red-200 bg-red-50 cursor-default'
-                       }`}
+                        className={`p-3 rounded-lg border transition-all ${
+                          selectedSlot === slot.id
+                            ? 'border-primary bg-primary/5 cursor-pointer'
+                             : isAvailable 
+                               ? 'border-border hover:border-primary/50 cursor-pointer' 
+                               : 'border-destructive/30 bg-destructive/5 cursor-default'
+                        }`}
                        style={{ cursor: isAvailable ? 'pointer' : 'default' }}
                      >
-                       <div className="flex items-center justify-between">
-                         <div className="flex items-center gap-3">
-                           <Clock className="h-4 w-4" />
-                           <span className="font-medium">{slot.time}</span>
-                         </div>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <Clock className="h-4 w-4 text-foreground" />
+                            <span className="font-medium text-foreground">{slot.time}</span>
+                          </div>
                          <div className="flex items-center gap-2">
-                            {slot.isExpired || slot.available === 0 ? (
-                              slot.unavailableReason === 'blocked' ? (
+                             {slot.isExpired || slot.available === 0 ? (
+                               slot.unavailableReason === 'blocked' ? (
+                                  <Badge 
+                                    className="slot-unavailable"
+                                  >
+                                   Blocked by Admin
+                                 </Badge>
+                               ) : slot.unavailableReason === 'maintenance' ? (
+                                  <Badge 
+                                    className="bg-orange-600 text-white border-orange-600 font-bold relative z-50"
+                                  >
+                                   Down for Maintenance
+                                 </Badge>
+                               ) : (
                                  <Badge 
-                                   className="font-bold relative"
-                                   style={{ 
-                                     backgroundColor: '#141d24', 
-                                     borderColor: '#141d24',
-                                     color: '#ffffff',
-                                     zIndex: 50 
-                                   }}
+                                   className="slot-unavailable"
                                  >
-                                  Blocked by Admin
-                                </Badge>
-                              ) : slot.unavailableReason === 'maintenance' ? (
-                                 <Badge 
-                                   className="font-bold relative"
-                                   style={{ 
-                                     backgroundColor: '#9c7464', 
-                                     borderColor: '#9c7464',
-                                     color: '#ffffff',
-                                     zIndex: 50 
-                                   }}
-                                 >
-                                  Down for Maintenance
-                                </Badge>
-                              ) : (
-                                <Badge 
-                                  className="text-white font-bold relative"
-                                  style={{ 
-                                    backgroundColor: '#ef4444', 
-                                    borderColor: '#ef4444',
-                                    zIndex: 50 
-                                  }}
-                                >
-                                  No Spots Available
-                                </Badge>
-                              )
-                            ) : slot.available === slot.capacity ? (
-                              <Badge 
-                                className="text-white font-bold relative"
-                                style={{ 
-                                  backgroundColor: '#10b981', 
-                                  borderColor: '#10b981',
-                                  zIndex: 50 
-                                }}
-                              >
-                                {slot.available}/{slot.capacity} Spots Available
-                              </Badge>
-                            ) : (
+                                   No Spots Available
+                                 </Badge>
+                               )
+                             ) : slot.available === slot.capacity ? (
                                <Badge 
-                                 className="font-bold relative"
-                                 style={{ 
-                                   backgroundColor: '#9c23b3', 
-                                   borderColor: '#9c23b3',
-                                   color: '#ffffff',
-                                   zIndex: 50 
-                                 }}
+                                 className="facility-available"
                                >
-                                {slot.available}/{slot.capacity} Spots Available
-                              </Badge>
-                            )}
+                                 {slot.available}/{slot.capacity} Spots Available
+                               </Badge>
+                             ) : (
+                                <Badge 
+                                  className="slot-partial"
+                                >
+                                 {slot.available}/{slot.capacity} Spots Available
+                               </Badge>
+                             )}
                          </div>
                        </div>
                      </div>
@@ -745,7 +717,7 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn }: BookingM
         return (
           <div className="space-y-6 py-4">
             <div className="text-center">
-              <h3 className="text-lg font-semibold text-green-600 mb-2">Booking Confirmed!</h3>
+              <h3 className="text-lg font-semibold text-green-600 dark:text-green-400 mb-2">Booking Confirmed!</h3>
             </div>
             
             <div className="flex justify-center relative mb-4">
@@ -764,7 +736,7 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn }: BookingM
                     alt={facility.sport}
                     className="w-48 h-48 rounded-lg object-cover"
                   />
-                  <div className="absolute inset-0 bg-black/90 rounded-lg flex flex-col items-center justify-center text-white text-center p-4">
+                  <div className="absolute inset-0 bg-black/90 dark:bg-white/90 rounded-lg flex flex-col items-center justify-center text-white dark:text-black text-center p-4">
                     <div className="text-sm font-medium">QR Code will be available</div>
                     <div className="text-sm">from 1 hr before till 20 mins after event starts</div>
                   </div>
@@ -778,21 +750,20 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn }: BookingM
               <p className="text-sm text-muted-foreground">{participantCount} participant{participantCount > 1 ? 's' : ''} • {getSizeForSport(facility.sport)} sq mtrs.</p>
             </div>
             
-            <div className="text-center text-sm leading-tight px-4 py-3 bg-red-50 border border-red-200 rounded-lg space-y-1">
+            <div className="text-center text-sm leading-tight px-4 py-3 bg-destructive/10 border border-destructive/30 rounded-lg space-y-1">
               <div>
-                <span className="text-red-600 font-bold">* </span>
-                <span className="text-red-800">Show this QR Code at the entrance to get access to your booked facility</span>
+                <span className="text-destructive font-bold">* </span>
+                <span className="text-destructive-foreground">Show this QR Code at the entrance to get access to your booked facility</span>
               </div>
               <div>
-                <span className="text-red-600 font-bold">* </span>
-                <span className="text-red-800">QR Code is only valid from 10 mins before the booked slot to 20 mins after slot starts</span>
+                <span className="text-destructive font-bold">* </span>
+                <span className="text-destructive-foreground">QR Code is only valid from 10 mins before the booked slot to 20 mins after slot starts</span>
               </div>
             </div>
             
             <Button
               onClick={handleShareWhatsApp}
-              className="w-full flex items-center gap-2 h-12 text-white"
-              style={{ backgroundColor: '#25D366' }}
+              className="w-full flex items-center gap-2 h-12 text-white bg-[#25D366] hover:bg-[#20BA5A] dark:bg-[#25D366] dark:hover:bg-[#20BA5A] border-0"
             >
               <MessageCircle className="h-5 w-5" />
               Share on WhatsApp
