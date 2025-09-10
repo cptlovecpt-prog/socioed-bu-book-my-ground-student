@@ -8,8 +8,8 @@ import { addDays, parse, addHours, isBefore, isAfter } from "date-fns";
  * @returns 'Upcoming' | 'Completed' | 'Cancelled'
  */
 export const getBookingStatus = (
-  eventDate: string,
-  eventTime: string,
+  eventDate: string, 
+  eventTime: string, 
   currentStatus?: string
 ): 'Upcoming' | 'Completed' | 'Cancelled' => {
   // If booking is cancelled, keep it cancelled
@@ -71,6 +71,55 @@ export const getBookingStatus = (
     // Default to current status or Upcoming if parsing fails
     return (currentStatus as 'Upcoming' | 'Completed' | 'Cancelled') || 'Upcoming';
   }
+};
+
+/**
+ * Check if booking is truly upcoming (not expired) - matches YourBookings logic
+ * @param eventDate - Event date
+ * @param eventTime - Event time string
+ * @returns boolean - true if booking is still upcoming and not expired
+ */
+export const isBookingUpcoming = (eventDate: string, eventTime: string): boolean => {
+  try {
+    const now = new Date();
+    let bookingDate: Date;
+    
+    // Parse the date
+    if (eventDate === "Today") {
+      bookingDate = new Date();
+    } else if (eventDate === "Tomorrow") {
+      bookingDate = addDays(new Date(), 1);
+    } else {
+      // Try to parse date formats like "Dec 12" or "Dec 12, 2024"
+      const currentYear = new Date().getFullYear();
+      const dateWithYear = eventDate.includes(',') ? eventDate : `${eventDate}, ${currentYear}`;
+      bookingDate = parse(dateWithYear, 'MMM dd, yyyy', new Date());
+    }
+    
+    // Parse the end time to check if event has completely finished
+    const endTime = eventTime.split(' - ')[1];
+    const [hours, minutes] = endTime.split(':').map(Number);
+    
+    // Set the booking end time
+    bookingDate.setHours(hours, minutes, 0, 0);
+    
+    // Check if event end time is in the future
+    return bookingDate > now;
+  } catch (error) {
+    console.error('Error parsing booking time:', error);
+    return true; // Default to showing if parse fails
+  }
+};
+
+/**
+ * Get count of active bookings (upcoming and not expired) - matches YourBookings logic
+ * @param bookings - Array of bookings
+ * @returns number - count of active bookings
+ */
+export const getActiveBookingsCount = (bookings: any[]): number => {
+  return bookings.filter(booking => 
+    booking.status === 'Upcoming' && isBookingUpcoming(booking.date, booking.time)
+  ).length;
 };
 
 /**
