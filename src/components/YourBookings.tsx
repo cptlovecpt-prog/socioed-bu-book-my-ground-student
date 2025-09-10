@@ -255,7 +255,7 @@ const YourBookings = ({ isSignedIn }: YourBookingsProps) => {
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    className="flex items-center space-x-1"
+                    className="flex items-center space-x-1 text-[#05a35d] border-[#05a35d] hover:bg-[#05a35d] hover:text-white"
                     onClick={handleQRCodeClick}
                   >
                     <QrCode className="h-4 w-4" />

@@ -239,7 +239,7 @@ const MyBookings = ({ isSignedIn, setIsSignedIn, userData, setUserData }: MyBook
                         <Button 
                           variant="outline" 
                           size="sm" 
-                          className="flex items-center gap-2"
+                          className="flex items-center gap-2 text-[#05a35d] border-[#05a35d] hover:bg-[#05a35d] hover:text-white"
                           onClick={() => handleQRCodeClick(booking)}
                         >
                           <QrCode className="h-4 w-4" />
