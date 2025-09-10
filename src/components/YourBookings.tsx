@@ -9,6 +9,7 @@ import { QRCodeDialog } from "./QRCodeDialog";
 import { useToast } from "@/hooks/use-toast";
 import { addDays, parseISO, parse, isBefore, addHours } from "date-fns";
 import { isWithinOneHourOfEvent, isQRCodeAvailable } from "@/utils/timeUtils";
+import { isBookingUpcoming } from "@/utils/bookingUtils";
 
 interface YourBookingsProps {
   isSignedIn: boolean;
@@ -46,39 +47,6 @@ const isEventMoreThanOneHourAway = (date: string, time: string): boolean => {
   } catch (error) {
     console.error('Error parsing booking time:', error);
     return false;
-  }
-};
-
-// Utility function to check if booking is truly upcoming (not expired)
-const isBookingUpcoming = (date: string, time: string): boolean => {
-  try {
-    const now = new Date();
-    let bookingDate: Date;
-    
-    // Parse the date
-    if (date === "Today") {
-      bookingDate = new Date();
-    } else if (date === "Tomorrow") {
-      bookingDate = addDays(new Date(), 1);
-    } else {
-      // Try to parse date formats like "Dec 12" or "Dec 12, 2024"
-      const currentYear = new Date().getFullYear();
-      const dateWithYear = date.includes(',') ? date : `${date}, ${currentYear}`;
-      bookingDate = parse(dateWithYear, 'MMM dd, yyyy', new Date());
-    }
-    
-    // Parse the end time to check if event has completely finished
-    const endTime = time.split(' - ')[1];
-    const [hours, minutes] = endTime.split(':').map(Number);
-    
-    // Set the booking end time
-    bookingDate.setHours(hours, minutes, 0, 0);
-    
-    // Check if event end time is in the future
-    return bookingDate > now;
-  } catch (error) {
-    console.error('Error parsing booking time:', error);
-    return true; // Default to showing if parse fails
   }
 };
 
