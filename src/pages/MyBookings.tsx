@@ -12,6 +12,41 @@ import { useToast } from "@/hooks/use-toast";
 import { addDays, parseISO, parse, isBefore, addHours } from "date-fns";
 import { isWithinOneHourOfEvent, isQRCodeAvailable } from "@/utils/timeUtils";
 
+// Utility function to check if event is more than 1 hour away
+const isEventMoreThanOneHourAway = (date: string, time: string): boolean => {
+  try {
+    const now = new Date();
+    let bookingDate: Date;
+    
+    // Parse the date
+    if (date === "Today") {
+      bookingDate = new Date();
+    } else if (date === "Tomorrow") {
+      bookingDate = addDays(new Date(), 1);
+    } else {
+      // Try to parse date formats like "Dec 12" or "Dec 12, 2024"
+      const currentYear = new Date().getFullYear();
+      const dateWithYear = date.includes(',') ? date : `${date}, ${currentYear}`;
+      bookingDate = parse(dateWithYear, 'MMM dd, yyyy', new Date());
+    }
+    
+    // Parse the start time
+    const startTime = time.split(' - ')[0];
+    const [hours, minutes] = startTime.split(':').map(Number);
+    
+    // Set the booking time
+    bookingDate.setHours(hours, minutes, 0, 0);
+    
+    // Check if event is more than 1 hour away
+    const oneHourFromNow = addHours(now, 1);
+    
+    return bookingDate > oneHourFromNow;
+  } catch (error) {
+    console.error('Error parsing booking time:', error);
+    return false;
+  }
+};
+
 // Utility function to check if cancellation is allowed (more than 1 hour before event)
 const isCancellationAllowed = (date: string, time: string): boolean => {
   try {
@@ -210,6 +245,22 @@ const MyBookings = ({ isSignedIn, setIsSignedIn, userData, setUserData }: MyBook
                           <QrCode className="h-4 w-4" />
                           <span className="hidden sm:inline">QR Code</span>
                         </Button>
+                      ) : isEventMoreThanOneHourAway(booking.date, booking.time) ? (
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="flex items-center gap-2"
+                          onClick={() => {
+                            toast({
+                              title: "QR Code Not Available",
+                              description: "QR Code will be available from 1 hr before the event till 20 mins after event starts",
+                              duration: 4000,
+                            });
+                          }}
+                        >
+                          <QrCode className="h-4 w-4" />
+                          <span className="hidden sm:inline">QR Code</span>
+                        </Button>
                        ) : (
                          <Tooltip>
                            <TooltipTrigger asChild>
@@ -218,20 +269,13 @@ const MyBookings = ({ isSignedIn, setIsSignedIn, userData, setUserData }: MyBook
                                size="sm" 
                                className="flex items-center gap-2 opacity-50 cursor-not-allowed"
                                disabled={true}
-                               onClick={() => {
-                                 toast({
-                                   title: "QR Code Not Available",
-                                   description: "QR Code will be available from 1 hr before the event till 20 mins after event starts",
-                                   duration: 4000,
-                                 });
-                               }}
                              >
                                <QrCode className="h-4 w-4" />
                                <span className="hidden sm:inline">QR Code</span>
                              </Button>
                            </TooltipTrigger>
                            <TooltipContent>
-                             <p>QR Code will be available 1 hr before event starts</p>
+                             <p>QR Code is no longer available for this event</p>
                            </TooltipContent>
                          </Tooltip>
                        )}
