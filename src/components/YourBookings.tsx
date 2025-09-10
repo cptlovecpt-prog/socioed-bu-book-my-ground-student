@@ -186,7 +186,7 @@ const YourBookings = ({ isSignedIn }: YourBookingsProps) => {
           <div className="flex items-center h-full max-h-[180px]">
             <Card className="flex items-center space-x-4 p-4 bg-card/80 backdrop-blur-sm border border-border/50 w-full max-w-4xl">
               {/* Booking Image */}
-              <div className="relative w-24 h-20 rounded-lg overflow-hidden flex-shrink-0">
+              <div className="relative w-32 h-20 rounded-lg overflow-hidden flex-shrink-0">
                 <img 
                   src={currentBooking.image} 
                   alt={currentBooking.facilityName}
@@ -204,50 +204,63 @@ const YourBookings = ({ isSignedIn }: YourBookingsProps) => {
               
               {/* Action Buttons */}
               <div className="flex items-center space-x-2 flex-shrink-0">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className={`flex items-center space-x-1 ${
-                        !isQRAvailable ? "opacity-50 cursor-not-allowed" : ""
-                      }`}
-                      onClick={handleQRCodeClick}
-                      disabled={!isQRAvailable}
-                    >
-                      <QrCode className="h-4 w-4" />
-                      <span className="hidden sm:inline">QR Code</span>
-                    </Button>
-                  </TooltipTrigger>
-                  {!isQRAvailable && (
+                {isQRAvailable ? (
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="flex items-center space-x-1"
+                    onClick={handleQRCodeClick}
+                  >
+                    <QrCode className="h-4 w-4" />
+                    <span className="hidden sm:inline">QR Code</span>
+                  </Button>
+                ) : (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="flex items-center space-x-1 opacity-50 cursor-not-allowed"
+                        disabled={true}
+                      >
+                        <QrCode className="h-4 w-4" />
+                        <span className="hidden sm:inline">QR Code</span>
+                      </Button>
+                    </TooltipTrigger>
                     <TooltipContent>
                       <p>QR Code will be available 1 hr before event starts</p>
                     </TooltipContent>
-                  )}
-                </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className={`flex items-center space-x-1 ${
-                        canCancel 
-                          ? "text-destructive hover:text-white hover:bg-destructive border-destructive" 
-                          : "text-muted-foreground cursor-not-allowed opacity-50"
-                      }`}
-                      onClick={() => canCancel && handleCancelClick(currentBooking.id)}
-                      disabled={!canCancel}
-                    >
-                      <X className="h-4 w-4" />
-                      <span className="hidden sm:inline">Cancel</span>
-                    </Button>
-                  </TooltipTrigger>
-                  {!canCancel && (
+                  </Tooltip>
+                )}
+                
+                {canCancel ? (
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="flex items-center space-x-1 text-destructive hover:text-white hover:bg-destructive border-destructive"
+                    onClick={() => handleCancelClick(currentBooking.id)}
+                  >
+                    <X className="h-4 w-4" />
+                    <span className="hidden sm:inline">Cancel</span>
+                  </Button>
+                ) : (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="flex items-center space-x-1 text-muted-foreground cursor-not-allowed opacity-50"
+                        disabled={true}
+                      >
+                        <X className="h-4 w-4" />
+                        <span className="hidden sm:inline">Cancel</span>
+                      </Button>
+                    </TooltipTrigger>
                     <TooltipContent>
                       <p>Event cannot be cancelled within 1 hr of starting</p>
                     </TooltipContent>
-                  )}
-                </Tooltip>
+                  </Tooltip>
+                )}
               </div>
             </Card>
           </div>

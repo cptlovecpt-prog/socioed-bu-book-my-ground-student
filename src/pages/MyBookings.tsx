@@ -200,53 +200,64 @@ const MyBookings = ({ isSignedIn, setIsSignedIn, userData, setUserData }: MyBook
                     </div>
 
                     <div className="flex gap-3">
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            className={`flex items-center gap-2 ${
-                              !isQRCodeAvailable(booking.date, booking.time) ? "opacity-50 cursor-not-allowed" : ""
-                            }`}
-                            onClick={() => handleQRCodeClick(booking)}
-                            disabled={!isQRCodeAvailable(booking.date, booking.time)}
-                          >
-                            <QrCode className="h-4 w-4" />
-                            <span className="hidden sm:inline">QR Code</span>
-                          </Button>
-                        </TooltipTrigger>
-                        {!isQRCodeAvailable(booking.date, booking.time) && (
+                      {isQRCodeAvailable(booking.date, booking.time) ? (
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="flex items-center gap-2"
+                          onClick={() => handleQRCodeClick(booking)}
+                        >
+                          <QrCode className="h-4 w-4" />
+                          <span className="hidden sm:inline">QR Code</span>
+                        </Button>
+                      ) : (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="flex items-center gap-2 opacity-50 cursor-not-allowed"
+                              disabled={true}
+                            >
+                              <QrCode className="h-4 w-4" />
+                              <span className="hidden sm:inline">QR Code</span>
+                            </Button>
+                          </TooltipTrigger>
                           <TooltipContent>
                             <p>QR Code will be available 1 hr before event starts</p>
                           </TooltipContent>
-                        )}
-                      </Tooltip>
+                        </Tooltip>
+                      )}
+                      
                       {booking.status === 'Upcoming' && (
                         (() => {
                           const canCancel = isCancellationAllowed(booking.date, booking.time);
-                          return (
+                          return canCancel ? (
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="flex items-center gap-2 text-destructive hover:text-white hover:bg-destructive border-destructive"
+                              onClick={() => handleCancelClick(booking.id)}
+                            >
+                              <X className="h-4 w-4" />
+                              <span className="hidden sm:inline">Cancel</span>
+                            </Button>
+                          ) : (
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <Button 
                                   variant="outline" 
                                   size="sm" 
-                                  className={`flex items-center gap-2 ${
-                                    canCancel 
-                                      ? "text-destructive hover:text-white hover:bg-destructive border-destructive" 
-                                      : "text-muted-foreground cursor-not-allowed opacity-50"
-                                  }`}
-                                  onClick={() => canCancel && handleCancelClick(booking.id)}
-                                  disabled={!canCancel}
+                                  className="flex items-center gap-2 text-muted-foreground cursor-not-allowed opacity-50"
+                                  disabled={true}
                                 >
                                   <X className="h-4 w-4" />
                                   <span className="hidden sm:inline">Cancel</span>
                                 </Button>
                               </TooltipTrigger>
-                              {!canCancel && (
-                                <TooltipContent>
-                                  <p>Event cannot be cancelled within 1 hr of starting</p>
-                                </TooltipContent>
-                              )}
+                              <TooltipContent>
+                                <p>Event cannot be cancelled within 1 hr of starting</p>
+                              </TooltipContent>
                             </Tooltip>
                           );
                         })()
