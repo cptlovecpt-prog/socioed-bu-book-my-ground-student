@@ -716,48 +716,62 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn }: BookingM
         
         return (
           <div className="space-y-6 py-4">
-            <div className="text-center">
-              <h3 className="text-lg font-semibold text-green-600 dark:text-green-400 mb-2">Booking Confirmed!</h3>
-            </div>
-            
-            <div className="flex justify-center relative mb-4">
-              {qrCodeUrl && isConfirmationQRAvailable ? (
-                <div className="p-4 bg-white rounded-lg border">
-                  <img 
-                    src={qrCodeUrl} 
-                    alt="QR Code" 
-                    className="w-48 h-48"
-                  />
-                </div>
-              ) : (
+            {/* Top section with title and image */}
+            <div className="bg-muted rounded-lg p-4 relative">
+              <div className="text-center mb-4">
+                <h3 className="text-lg font-semibold text-green-600 dark:text-green-400">Booking Confirmed</h3>
+              </div>
+              
+              <div className="flex justify-center relative">
                 <div className="relative w-48 h-48 bg-muted rounded-lg flex items-center justify-center">
                   <img 
                     src={getImageForFacility(facility)} 
                     alt={facility.sport}
                     className="w-48 h-48 rounded-lg object-cover"
                   />
-                  <div className="absolute inset-0 bg-black/90 dark:bg-white/90 rounded-lg flex flex-col items-center justify-center text-white dark:text-black text-center p-4">
-                    <div className="text-sm font-medium">QR Code will be available</div>
-                    <div className="text-sm">from 1 hr before the event till 20 mins after event starts</div>
+                  {/* Green checkmark on top right */}
+                  <div className="absolute -top-2 -right-2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
                   </div>
                 </div>
-              )}
-            </div>
-            
-            <div className="text-center space-y-2">
-              <h3 className="font-medium">{facility.name} • {facility.location}</h3>
-              <p className="text-sm text-muted-foreground">{finalDateDisplay} • {finalTimeDisplay}</p>
-              <p className="text-sm text-muted-foreground">{participantCount} participant{participantCount > 1 ? 's' : ''} • {getSizeForSport(facility.sport)} sq mtrs.</p>
-            </div>
-            
-            <div className="text-center text-sm leading-tight px-4 py-3 bg-destructive/10 border border-destructive/30 rounded-lg space-y-1">
-              <div>
-                <span className="text-destructive font-bold">* </span>
-                <span className="text-destructive-foreground">Show this QR Code at the entrance to get access to your booked facility</span>
               </div>
-              <div>
-                <span className="text-destructive font-bold">* </span>
-                <span className="text-destructive-foreground">QR Code is only valid from 10 mins before the booked slot to 20 mins after slot starts</span>
+              
+              <div className="text-center space-y-2 mt-4">
+                <h3 className="font-medium">{facility.name}</h3>
+                <p className="text-sm text-muted-foreground">Near {facility.location} • {getSizeForSport(facility.sport)} sq mtrs.</p>
+                <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-1">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span>{finalDateDisplay}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>{finalTimeDisplay}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom section with QR code information */}
+            <div className="bg-muted rounded-lg p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <svg className="w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                <span className="font-medium">Available Spots</span>
+              </div>
+              <p className="text-lg font-semibold mb-4">{participantCount}/{participantCount} spots available</p>
+              
+              <div className="space-y-2 text-sm text-muted-foreground">
+                <div>*QR Code will be available from 1 hr before the event till 20 mins after event starts</div>
+                <div>*Please check Your Bookings section for QR Code</div>
+                <div>*QR Code can be scanned at venue from 10 mins before the event till 20 mins after event starts</div>
               </div>
             </div>
             
