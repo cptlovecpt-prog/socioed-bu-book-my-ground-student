@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { QrCode, MessageCircle, Mail, X } from "lucide-react";
+import { QrCode, MessageCircle, X } from "lucide-react";
 import QRCodeLib from "qrcode";
 
 interface QRCodeDialogProps {
@@ -73,11 +73,6 @@ export const QRCodeDialog = ({ isOpen, onClose, booking, isQRAvailable = true }:
     window.open(whatsappUrl, '_blank');
   };
 
-  const handleEmail = () => {
-    const emailUrl = `mailto:?subject=${encodeURIComponent(`Join me for ${booking.sport}`)}&body=${encodeURIComponent(shareText + '\n\n' + shareUrl)}`;
-    window.open(emailUrl);
-  };
-
   return (
     <Dialog 
       open={isOpen} 
@@ -138,16 +133,6 @@ export const QRCodeDialog = ({ isOpen, onClose, booking, isQRAvailable = true }:
             >
               <MessageCircle className="h-5 w-5" />
               Share on WhatsApp
-            </Button>
-            
-            <Button
-              onClick={handleEmail}
-              variant="outline"
-              className="w-full flex items-center gap-2 h-12"
-              disabled={!isQRAvailable}
-            >
-              <Mail className="h-5 w-5" />
-              Share on Mail
             </Button>
           </div>
         </div>
