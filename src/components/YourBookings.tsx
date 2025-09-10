@@ -288,7 +288,7 @@ const YourBookings = ({ isSignedIn }: YourBookingsProps) => {
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    className="flex items-center space-x-1 text-[#05a35d] border-[#05a35d] hover:bg-[#05a35d] hover:text-white"
+                    className="flex items-center space-x-1 text-[#05a25b] border-[#05a25b] hover:bg-[#05a25b] hover:text-white"
                     onClick={handleQRCodeClick}
                   >
                     <QrCode className="h-4 w-4" />
@@ -298,7 +298,7 @@ const YourBookings = ({ isSignedIn }: YourBookingsProps) => {
                    <Button 
                      variant="outline" 
                      size="sm" 
-                     className="flex items-center space-x-1 text-muted-foreground border-muted-foreground"
+                     className="flex items-center space-x-1 text-[#ac909c] border-[#ac909c] hover:bg-[#ac909c] hover:text-white"
                      onClick={() => {
                        toast({
                          title: "QR Code Not Available",
@@ -310,24 +310,24 @@ const YourBookings = ({ isSignedIn }: YourBookingsProps) => {
                      <QrCode className="h-4 w-4" />
                      <span className="hidden sm:inline">QR Code</span>
                    </Button>
-                 ) : (
-                   <Tooltip>
-                     <TooltipTrigger asChild>
-                       <Button 
-                         variant="outline" 
-                         size="sm" 
-                         className="flex items-center space-x-1 opacity-50 cursor-not-allowed"
-                         disabled={true}
-                       >
-                         <QrCode className="h-4 w-4" />
-                         <span className="hidden sm:inline">QR Code</span>
-                       </Button>
-                     </TooltipTrigger>
-                     <TooltipContent>
-                       <p>QR Code is no longer available for this event</p>
-                     </TooltipContent>
-                   </Tooltip>
-                 )}
+                  ) : (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="flex items-center space-x-1 text-[#ac909c] border-[#ac909c] opacity-50 cursor-not-allowed"
+                          disabled={true}
+                        >
+                          <QrCode className="h-4 w-4" />
+                          <span className="hidden sm:inline">QR Code</span>
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>QR Code is no longer available for this event</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
                 
                 {canCancel ? (
                   <Button 
