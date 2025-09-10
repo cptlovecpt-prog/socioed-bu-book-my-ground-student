@@ -186,10 +186,10 @@ const MyBookings = ({ isSignedIn, setIsSignedIn, userData, setUserData }: MyBook
         />
         
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="text-center mb-8">
+          <div className="text-left mb-8">
             <h1 className="text-3xl font-bold mb-2">Your Bookings</h1>
             <p className="text-muted-foreground">
-              You have {sortedBookings.length} booking{sortedBookings.length !== 1 ? 's' : ''} • 
+              You have {sortedBookings.length} booking{sortedBookings.length !== 1 ? 's' : ''} • {' '}
               {activeBookingsCount}/{maxActiveBookings} active this week
             </p>
           </div>
