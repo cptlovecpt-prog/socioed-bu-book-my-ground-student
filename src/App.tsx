@@ -15,6 +15,9 @@ const queryClient = new QueryClient();
 const App = () => {
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [userData, setUserData] = useState<{ name: string; email: string } | null>(null);
+  
+  // Debug logging to track sign-in state changes
+  console.log("App state - isSignedIn:", isSignedIn, "userData:", userData);
 
   return (
     <QueryClientProvider client={queryClient}>

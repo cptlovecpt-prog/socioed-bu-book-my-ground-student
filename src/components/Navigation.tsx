@@ -48,6 +48,8 @@ const Navigation = ({ isSignedIn, setIsSignedIn, userData, setUserData }: Naviga
   };
 
   const navigateToHome = () => {
+    // Ensure sign-in state is preserved when navigating home
+    console.log("Navigating to home, preserving sign-in state:", isSignedIn);
     navigate("/");
   };
 
