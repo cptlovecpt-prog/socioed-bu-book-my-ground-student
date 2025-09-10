@@ -148,62 +148,62 @@ const YourBookings = ({ isSignedIn }: YourBookingsProps) => {
   };
 
   return (
-    <section 
-      className="h-[250px] bg-primary/10 border-y border-border"
-      style={{ backgroundColor: "hsl(var(--primary) / 0.08)" }}
-    >
-      <div className="max-w-6xl mx-auto px-4 py-6 h-full">
-        <div className="flex items-center justify-between mb-0.5">
-          <h2 className="text-3xl font-bold text-foreground">Your Bookings</h2>
-          {sortedBookings.length > 1 && (
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">
-                {safeCurrentIndex + 1} of {sortedBookings.length}
-              </span>
-              <div className="flex gap-1">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={prevBooking}
-                  className="h-8 w-8 p-0"
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={nextBooking}
-                  className="h-8 w-8 p-0"
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
+    <TooltipProvider>
+      <section 
+        className="h-[250px] bg-primary/10 border-y border-border"
+        style={{ backgroundColor: "hsl(var(--primary) / 0.08)" }}
+      >
+        <div className="max-w-6xl mx-auto px-4 py-6 h-full">
+          <div className="flex items-center justify-between mb-0.5">
+            <h2 className="text-3xl font-bold text-foreground">Your Bookings</h2>
+            {sortedBookings.length > 1 && (
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">
+                  {safeCurrentIndex + 1} of {sortedBookings.length}
+                </span>
+                <div className="flex gap-1">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={prevBooking}
+                    className="h-8 w-8 p-0"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={nextBooking}
+                    className="h-8 w-8 p-0"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
-            </div>
-          )}
-        </div>
-        
-        <div className="flex items-center h-full max-h-[180px]">
-          <Card className="flex items-center space-x-4 p-4 bg-card/80 backdrop-blur-sm border border-border/50 w-full max-w-4xl">
-            {/* Booking Image */}
-            <div className="relative w-24 h-20 rounded-lg overflow-hidden flex-shrink-0">
-              <img 
-                src={currentBooking.image} 
-                alt={currentBooking.facilityName}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            
-            {/* Booking Details */}
-            <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-foreground truncate">{currentBooking.facilityName}</h3>
-              <p className="text-sm text-muted-foreground">{currentBooking.location}</p>
-              <p className="text-sm text-muted-foreground">{currentBooking.participants} • {currentBooking.facilitySize} sq mtrs.</p>
-              <p className="text-sm text-muted-foreground">{currentBooking.date} • {convertTo12HourFormat(currentBooking.time)}</p>
-            </div>
-            
-            {/* Action Buttons */}
-            <div className="flex items-center space-x-2 flex-shrink-0">
-              <TooltipProvider>
+            )}
+          </div>
+          
+          <div className="flex items-center h-full max-h-[180px]">
+            <Card className="flex items-center space-x-4 p-4 bg-card/80 backdrop-blur-sm border border-border/50 w-full max-w-4xl">
+              {/* Booking Image */}
+              <div className="relative w-24 h-20 rounded-lg overflow-hidden flex-shrink-0">
+                <img 
+                  src={currentBooking.image} 
+                  alt={currentBooking.facilityName}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              
+              {/* Booking Details */}
+              <div className="flex-1 min-w-0">
+                <h3 className="font-semibold text-foreground truncate">{currentBooking.facilityName}</h3>
+                <p className="text-sm text-muted-foreground">{currentBooking.location}</p>
+                <p className="text-sm text-muted-foreground">{currentBooking.participants} • {currentBooking.facilitySize} sq mtrs.</p>
+                <p className="text-sm text-muted-foreground">{currentBooking.date} • {convertTo12HourFormat(currentBooking.time)}</p>
+              </div>
+              
+              {/* Action Buttons */}
+              <div className="flex items-center space-x-2 flex-shrink-0">
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button 
@@ -219,67 +219,65 @@ const YourBookings = ({ isSignedIn }: YourBookingsProps) => {
                       <span className="hidden sm:inline">QR Code</span>
                     </Button>
                   </TooltipTrigger>
-                   {!isQRAvailable && (
-                     <TooltipContent>
-                       <p>QR Code will be available 1 hr before event starts</p>
-                     </TooltipContent>
-                   )}
+                  {!isQRAvailable && (
+                    <TooltipContent>
+                      <p>QR Code will be available 1 hr before event starts</p>
+                    </TooltipContent>
+                  )}
                 </Tooltip>
-               </TooltipProvider>
-               <TooltipProvider>
-                 <Tooltip>
-                   <TooltipTrigger asChild>
-                     <Button 
-                       variant="outline" 
-                       size="sm" 
-                       className={`flex items-center space-x-1 ${
-                         canCancel 
-                           ? "text-destructive hover:text-white hover:bg-destructive border-destructive" 
-                           : "text-muted-foreground cursor-not-allowed opacity-50"
-                       }`}
-                       onClick={() => canCancel && handleCancelClick(currentBooking.id)}
-                       disabled={!canCancel}
-                     >
-                       <X className="h-4 w-4" />
-                       <span className="hidden sm:inline">Cancel</span>
-                     </Button>
-                   </TooltipTrigger>
-                   {!canCancel && (
-                     <TooltipContent>
-                       <p>Event cannot be cancelled within 1 hr of starting</p>
-                     </TooltipContent>
-                   )}
-                 </Tooltip>
-               </TooltipProvider>
-            </div>
-          </Card>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className={`flex items-center space-x-1 ${
+                        canCancel 
+                          ? "text-destructive hover:text-white hover:bg-destructive border-destructive" 
+                          : "text-muted-foreground cursor-not-allowed opacity-50"
+                      }`}
+                      onClick={() => canCancel && handleCancelClick(currentBooking.id)}
+                      disabled={!canCancel}
+                    >
+                      <X className="h-4 w-4" />
+                      <span className="hidden sm:inline">Cancel</span>
+                    </Button>
+                  </TooltipTrigger>
+                  {!canCancel && (
+                    <TooltipContent>
+                      <p>Event cannot be cancelled within 1 hr of starting</p>
+                    </TooltipContent>
+                  )}
+                </Tooltip>
+              </div>
+            </Card>
+          </div>
         </div>
-      </div>
-      
+        
         <QRCodeDialog
-        isOpen={showQRCodeDialog}
-        onClose={() => setShowQRCodeDialog(false)}
-        booking={currentBooking}
-        isQRAvailable={isQRAvailable}
-      />
-      
-      <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Alert</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to cancel your reservation?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirmCancel}>
-              Yes, Cancel Reservation
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </section>
+          isOpen={showQRCodeDialog}
+          onClose={() => setShowQRCodeDialog(false)}
+          booking={currentBooking}
+          isQRAvailable={isQRAvailable}
+        />
+        
+        <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Alert</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to cancel your reservation?
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleConfirmCancel}>
+                Yes, Cancel Reservation
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </section>
+    </TooltipProvider>
   );
 };
 

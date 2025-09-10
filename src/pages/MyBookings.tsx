@@ -128,78 +128,78 @@ const MyBookings = ({ isSignedIn, setIsSignedIn, userData, setUserData }: MyBook
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navigation 
-        isSignedIn={isSignedIn}
-        setIsSignedIn={setIsSignedIn}
-        userData={userData}
-        setUserData={setUserData}
-      />
-      
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-2">Your Bookings</h1>
-          <p className="text-muted-foreground">You have {sortedBookings.length} booking{sortedBookings.length !== 1 ? 's' : ''}</p>
-        </div>
+    <TooltipProvider>
+      <div className="min-h-screen bg-background">
+        <Navigation 
+          isSignedIn={isSignedIn}
+          setIsSignedIn={setIsSignedIn}
+          userData={userData}
+          setUserData={setUserData}
+        />
+        
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold mb-2">Your Bookings</h1>
+            <p className="text-muted-foreground">You have {sortedBookings.length} booking{sortedBookings.length !== 1 ? 's' : ''}</p>
+          </div>
 
-        <div className="space-y-6">
-          {sortedBookings.length === 0 ? (
-            <Card className="w-full">
-              <CardContent className="p-12 text-center">
-                <p className="text-muted-foreground text-lg">No bookings found</p>
-                <p className="text-muted-foreground text-sm mt-2">Book a facility to see it here</p>
-              </CardContent>
-            </Card>
-          ) : (
-            sortedBookings.map((booking) => (
-              <Card key={booking.id} className="w-full relative">
-                <CardContent className="p-6">
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-xl font-semibold">{booking.facilityName}</h3>
-                        <Badge 
-                          variant="secondary" 
-                          className={
-                            booking.status === 'Upcoming' 
-                              ? "bg-green-100 text-green-800 border-green-200" 
-                              : booking.status === 'Cancelled'
-                              ? "bg-red-100 text-red-800 border-red-200"
-                              : "bg-gray-100 text-gray-800 border-gray-200"
-                          }
-                        >
-                          {booking.status}
-                        </Badge>
+          <div className="space-y-6">
+            {sortedBookings.length === 0 ? (
+              <Card className="w-full">
+                <CardContent className="p-12 text-center">
+                  <p className="text-muted-foreground text-lg">No bookings found</p>
+                  <p className="text-muted-foreground text-sm mt-2">Book a facility to see it here</p>
+                </CardContent>
+              </Card>
+            ) : (
+              sortedBookings.map((booking) => (
+                <Card key={booking.id} className="w-full relative">
+                  <CardContent className="p-6">
+                    <div className="flex justify-between items-start mb-4">
+                      <div>
+                        <div className="flex items-center gap-3 mb-2">
+                          <h3 className="text-xl font-semibold">{booking.facilityName}</h3>
+                          <Badge 
+                            variant="secondary" 
+                            className={
+                              booking.status === 'Upcoming' 
+                                ? "bg-green-100 text-green-800 border-green-200" 
+                                : booking.status === 'Cancelled'
+                                ? "bg-red-100 text-red-800 border-red-200"
+                                : "bg-gray-100 text-gray-800 border-gray-200"
+                            }
+                          >
+                            {booking.status}
+                          </Badge>
+                        </div>
+                        <p className="text-muted-foreground mb-3">{booking.sport}</p>
                       </div>
-                      <p className="text-muted-foreground mb-3">{booking.sport}</p>
+                      <span className="text-sm text-muted-foreground font-mono">{booking.id}</span>
                     </div>
-                    <span className="text-sm text-muted-foreground font-mono">{booking.id}</span>
-                  </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-                    <div className="flex items-center gap-2">
-                      <Clock className="h-4 w-4 text-green-600" />
-                      <span className="text-sm">{booking.date} • {convertTo12HourFormat(booking.time)}</span>
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                      <div className="flex items-center gap-2">
+                        <Clock className="h-4 w-4 text-green-600" />
+                        <span className="text-sm">{booking.date} • {convertTo12HourFormat(booking.time)}</span>
+                      </div>
+                      
+                      <div className="flex items-center gap-2">
+                        <MapPin className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm">{booking.location}</span>
+                      </div>
+                      
+                      <div className="flex items-center gap-2">
+                        <Users className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm">{booking.participants}</span>
+                      </div>
+                      
+                      <div className="flex items-center gap-2">
+                        <Building className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm">{booking.facilitySize} sq mtrs.</span>
+                      </div>
                     </div>
-                    
-                    <div className="flex items-center gap-2">
-                      <MapPin className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm">{booking.location}</span>
-                    </div>
-                    
-                    <div className="flex items-center gap-2">
-                      <Users className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm">{booking.participants}</span>
-                    </div>
-                    
-                    <div className="flex items-center gap-2">
-                      <Building className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm">{booking.facilitySize} sq mtrs.</span>
-                    </div>
-                  </div>
 
-                  <div className="flex gap-3">
-                    <TooltipProvider>
+                    <div className="flex gap-3">
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Button 
@@ -215,82 +215,80 @@ const MyBookings = ({ isSignedIn, setIsSignedIn, userData, setUserData }: MyBook
                             <span className="hidden sm:inline">QR Code</span>
                           </Button>
                         </TooltipTrigger>
-                         {!isQRCodeAvailable(booking.date, booking.time) && (
-                           <TooltipContent>
-                             <p>QR Code will be available 1 hr before event starts</p>
-                           </TooltipContent>
-                         )}
+                        {!isQRCodeAvailable(booking.date, booking.time) && (
+                          <TooltipContent>
+                            <p>QR Code will be available 1 hr before event starts</p>
+                          </TooltipContent>
+                        )}
                       </Tooltip>
-                    </TooltipProvider>
-                     {booking.status === 'Upcoming' && (
-                       (() => {
-                         const canCancel = isCancellationAllowed(booking.date, booking.time);
-                         return (
-                           <TooltipProvider>
-                             <Tooltip>
-                               <TooltipTrigger asChild>
-                                 <Button 
-                                   variant="outline" 
-                                   size="sm" 
-                                   className={`flex items-center gap-2 ${
-                                     canCancel 
-                                       ? "text-destructive hover:text-white hover:bg-destructive border-destructive" 
-                                       : "text-muted-foreground cursor-not-allowed opacity-50"
-                                   }`}
-                                   onClick={() => canCancel && handleCancelClick(booking.id)}
-                                   disabled={!canCancel}
-                                 >
-                                   <X className="h-4 w-4" />
-                                   <span className="hidden sm:inline">Cancel</span>
-                                 </Button>
-                               </TooltipTrigger>
-                               {!canCancel && (
-                                 <TooltipContent>
-                                   <p>Event cannot be cancelled within 1 hr of starting</p>
-                                 </TooltipContent>
-                               )}
-                             </Tooltip>
-                           </TooltipProvider>
-                         );
-                       })()
-                     )}
-                  </div>
-                </CardContent>
-              </Card>
-            ))
-          )}
-        </div>
-      </main>
-      
-      {bookingForQRCode && (
-        <QRCodeDialog
-          isOpen={showQRCodeDialog}
-          onClose={() => {
-            setShowQRCodeDialog(false);
-            setBookingForQRCode(null);
-          }}
-          booking={bookingForQRCode}
-          isQRAvailable={isQRCodeAvailable(bookingForQRCode.date, bookingForQRCode.time)}
-        />
-      )}
-      
-      <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Alert</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to cancel your reservation?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirmCancel}>
-              Yes, Cancel Reservation
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </div>
+                      {booking.status === 'Upcoming' && (
+                        (() => {
+                          const canCancel = isCancellationAllowed(booking.date, booking.time);
+                          return (
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button 
+                                  variant="outline" 
+                                  size="sm" 
+                                  className={`flex items-center gap-2 ${
+                                    canCancel 
+                                      ? "text-destructive hover:text-white hover:bg-destructive border-destructive" 
+                                      : "text-muted-foreground cursor-not-allowed opacity-50"
+                                  }`}
+                                  onClick={() => canCancel && handleCancelClick(booking.id)}
+                                  disabled={!canCancel}
+                                >
+                                  <X className="h-4 w-4" />
+                                  <span className="hidden sm:inline">Cancel</span>
+                                </Button>
+                              </TooltipTrigger>
+                              {!canCancel && (
+                                <TooltipContent>
+                                  <p>Event cannot be cancelled within 1 hr of starting</p>
+                                </TooltipContent>
+                              )}
+                            </Tooltip>
+                          );
+                        })()
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            )}
+          </div>
+        </main>
+        
+        {bookingForQRCode && (
+          <QRCodeDialog
+            isOpen={showQRCodeDialog}
+            onClose={() => {
+              setShowQRCodeDialog(false);
+              setBookingForQRCode(null);
+            }}
+            booking={bookingForQRCode}
+            isQRAvailable={isQRCodeAvailable(bookingForQRCode.date, bookingForQRCode.time)}
+          />
+        )}
+        
+        <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Alert</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to cancel your reservation?
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleConfirmCancel}>
+                Yes, Cancel Reservation
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
+    </TooltipProvider>
   );
 };
 
