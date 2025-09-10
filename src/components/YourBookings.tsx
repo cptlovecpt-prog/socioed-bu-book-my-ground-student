@@ -343,7 +343,7 @@ const YourBookings = ({ isSignedIn }: YourBookingsProps) => {
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    className="flex items-center space-x-1 text-muted-foreground border-muted-foreground"
+                    className="flex items-center space-x-1 text-[#ab909c] border-[#ab909c] hover:bg-[#ab909c] hover:text-white"
                     onClick={() => {
                       toast({
                         title: "Cancellation Not Allowed",
