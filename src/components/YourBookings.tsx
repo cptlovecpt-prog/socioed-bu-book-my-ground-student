@@ -114,8 +114,10 @@ const YourBookings = ({ isSignedIn }: YourBookingsProps) => {
   const [showQRCodeDialog, setShowQRCodeDialog] = useState(false);
   const [bookingToCancel, setBookingToCancel] = useState<string | null>(null);
   
-  // Filter to only show upcoming bookings
-  const upcomingBookings = bookings.filter(booking => booking.status === 'Upcoming');
+  // Filter to only show upcoming bookings (strict filter for this section only)
+  const upcomingBookings = bookings.filter(booking => 
+    booking.status === 'Upcoming'
+  );
   
   // Reset currentIndex if it exceeds the available bookings
   useEffect(() => {
