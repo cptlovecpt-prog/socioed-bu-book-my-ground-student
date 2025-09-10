@@ -132,13 +132,14 @@ const indoorFacilities = [
     name: "Table Tennis",
     sport: "Table Tennis",
     capacity: 48,
-    available: 35,
+    available: 0,
     location: "Hostel Blocks",
     nextSlot: "18:00 - 20:00",
     image: "https://images.unsplash.com/photo-1609710228159-0fa9bd7c0827?w=400&h=300&fit=crop",
-    status: 'available' as const,
+    status: 'maintenance' as const,
     rating: 4.5,
-    votes: 1200
+    votes: 1200,
+    maintenanceMessage: "This facility is unavailable till Dec 15, 2025 due to maintenance activities"
   }
 ];
 
@@ -213,13 +214,14 @@ const outdoorFacilities = [
     name: "Swimming Pool",
     sport: "Swimming",
     capacity: 35,
-    available: 25,
+    available: 0,
     location: "K block",
     nextSlot: "10:00 - 12:00",
     image: "https://images.unsplash.com/photo-1530549387789-4c1017266635?w=400&h=300&fit=crop",
-    status: 'available' as const,
+    status: 'maintenance' as const,
     rating: 4.9,
-    votes: 1474
+    votes: 1474,
+    maintenanceMessage: "This facility is unavailable till Nov 20, 2025 due to maintenance activities"
   },
   {
     id: "outdoor-7",
@@ -309,9 +311,10 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
     location: string;
     nextSlot: string;
     image: string;
-    status: 'available' | 'full';
+    status: 'available' | 'full' | 'maintenance';
     rating: number;
     votes: number;
+    maintenanceMessage?: string;
   }>) => {
     let filtered = facilities;
     

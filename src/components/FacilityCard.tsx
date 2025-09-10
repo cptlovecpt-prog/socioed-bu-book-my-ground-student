@@ -11,10 +11,11 @@ interface FacilityCardProps {
   location: string;
   nextSlot: string;
   image: string;
-  status: 'available' | 'full';
+  status: 'available' | 'full' | 'maintenance';
   rating: number;
   votes: number;
   onBook: (facilityId: string) => void;
+  maintenanceMessage?: string;
 }
 
 export const FacilityCard = ({ 
@@ -29,7 +30,8 @@ export const FacilityCard = ({
   status,
   rating,
   votes,
-  onBook 
+  onBook,
+  maintenanceMessage
 }: FacilityCardProps) => {
   const getStatusBadge = () => {
     switch (status) {
@@ -37,6 +39,8 @@ export const FacilityCard = ({
         return <Badge className="facility-available">Available</Badge>;
       case 'full':
         return <Badge className="facility-full">Not Available</Badge>;
+      case 'maintenance':
+        return <Badge className="facility-full">Down for Maintenance</Badge>;
     }
   };
 
@@ -77,12 +81,25 @@ export const FacilityCard = ({
           {status === 'full' && (
             <div className="absolute inset-0 bg-gray-500/90 z-10" />
           )}
+          {/* Gray overlay for maintenance status */}
+          {status === 'maintenance' && (
+            <div className="absolute inset-0 bg-gray-500/90 z-10" />
+          )}
           {/* Drop shadow overlay for text visibility */}
           <div className="absolute inset-x-0 bottom-0 h-[120px] sm:h-[150px] lg:h-[175px] bg-gradient-to-t from-black/95 via-black/70 to-transparent z-20" />
           
           <div className="absolute top-2 left-2 z-30">
             {getStatusBadge()}
           </div>
+          
+          {/* Maintenance message */}
+          {status === 'maintenance' && maintenanceMessage && (
+            <div className="absolute inset-0 flex items-center justify-center z-30 p-4">
+              <p className="text-center font-medium leading-relaxed" style={{ color: '#000000' }}>
+                {maintenanceMessage}
+              </p>
+            </div>
+          )}
           
           <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4 space-y-1 text-white z-30">
             <p className="text-xs sm:text-sm text-white/90">{capacity} persons</p>
