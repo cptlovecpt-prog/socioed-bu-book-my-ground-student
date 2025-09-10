@@ -757,9 +757,10 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn }: BookingM
 
             {/* QR code information - no background box */}
             <div className="space-y-2 text-sm text-foreground/80 mb-6">
-              <div>*QR Code will be available from 1 hr before the event till 20 mins after event starts</div>
-              <div>*Please check Your Bookings section for QR Code</div>
-              <div>*QR Code can be scanned at venue from 10 mins before the event till 20 mins after event starts</div>
+              <div className="font-bold"><span className="text-red-500">*</span>QR Code will be available from 1 hr before the event till 20 mins after event starts</div>
+              <div className="font-bold"><span className="text-red-500">*</span>Please check Your Bookings section for QR Code</div>
+              <div className="font-bold"><span className="text-red-500">*</span>QR Code can be scanned at venue from 10 mins before the event till 20 mins after event starts</div>
+              <div className="font-bold"><span className="text-red-500">*</span>Bookings can only be cancelled up to 1 hr before event starts</div>
             </div>
             
             <Button
