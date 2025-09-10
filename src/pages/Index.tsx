@@ -443,36 +443,38 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
             </div>
             
             {/* Filter Tags */}
-            {(selectedSports.length > 0 || showOnlyAvailable) && (
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-sm text-muted-foreground">Active filters:</span>
-                {showOnlyAvailable && (
-                  <span className="inline-flex items-center gap-1 bg-secondary text-secondary-foreground text-xs px-2 py-1 rounded-md">
-                    Show only available
-                    <button
-                      onClick={() => setShowOnlyAvailable(false)}
-                      className="hover:bg-secondary/80 rounded-full p-0.5"
+            <div className="flex flex-wrap items-center gap-2 min-h-[28px]">
+              {(selectedSports.length > 0 || showOnlyAvailable) && (
+                <>
+                  <span className="text-sm text-muted-foreground">Active filters:</span>
+                  {showOnlyAvailable && (
+                    <span className="inline-flex items-center gap-1 bg-secondary text-secondary-foreground text-xs px-2 py-1 rounded-md">
+                      Show only available
+                      <button
+                        onClick={() => setShowOnlyAvailable(false)}
+                        className="hover:bg-secondary/80 rounded-full p-0.5"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </span>
+                  )}
+                  {selectedSports.map((sport) => (
+                    <span
+                      key={sport}
+                      className="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs px-2 py-1 rounded-md"
                     >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </span>
-                )}
-                {selectedSports.map((sport) => (
-                  <span
-                    key={sport}
-                    className="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs px-2 py-1 rounded-md"
-                  >
-                    {sport}
-                    <button
-                      onClick={() => handleSportToggle(sport)}
-                      className="hover:bg-primary/20 rounded-full p-0.5"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </span>
-                ))}
-              </div>
-            )}
+                      {sport}
+                      <button
+                        onClick={() => handleSportToggle(sport)}
+                        className="hover:bg-primary/20 rounded-full p-0.5"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </span>
+                  ))}
+                </>
+              )}
+            </div>
             
             <TabsContent value="outdoor">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-x-6 sm:gap-y-8 lg:gap-y-12 justify-items-center">
