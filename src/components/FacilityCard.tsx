@@ -95,7 +95,7 @@ export const FacilityCard = ({
           {/* Maintenance message */}
           {status === 'maintenance' && maintenanceMessage && (
             <div className="absolute inset-0 flex items-center justify-center z-30 p-4">
-              <p className="text-center font-medium leading-relaxed" style={{ color: '#000000' }}>
+              <p className="text-center font-bold leading-relaxed" style={{ color: '#000000' }}>
                 {maintenanceMessage}
               </p>
             </div>
