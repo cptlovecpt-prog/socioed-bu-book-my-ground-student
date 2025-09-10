@@ -130,16 +130,54 @@ const MyBookings = ({ isSignedIn, setIsSignedIn, userData, setUserData }: MyBook
       } else if (booking.date === "Tomorrow") {
         bookingDate = addDays(new Date(), 1);
       } else {
-        // Parse regular dates like "Dec 12" or "Dec 12, 2024"
-        const currentYear = new Date().getFullYear();
-        const dateWithYear = booking.date.includes(',') ? booking.date : `${booking.date}, ${currentYear}`;
-        bookingDate = parse(dateWithYear, 'MMM dd, yyyy', new Date());
+        // Try different date formats
+        try {
+          // First try parsing as full date (e.g., "Sep 12, 2025")
+          if (booking.date.includes(',')) {
+            bookingDate = new Date(booking.date);
+          } else {
+            // Try parsing formats like "Dec 12" by adding current year
+            const currentYear = new Date().getFullYear();
+            const dateWithYear = `${booking.date}, ${currentYear}`;
+            bookingDate = new Date(dateWithYear);
+            
+            // If the parsed date is invalid, try next year
+            if (isNaN(bookingDate.getTime())) {
+              const nextYear = currentYear + 1;
+              const dateWithNextYear = `${booking.date}, ${nextYear}`;
+              bookingDate = new Date(dateWithNextYear);
+            }
+          }
+        } catch (error) {
+          console.error('Error parsing date:', booking.date, error);
+          bookingDate = new Date(); // Fallback to current date
+        }
       }
       
       // Add time information for more precise sorting
-      const startTime = booking.time.split(' - ')[0];
-      const [hours, minutes] = startTime.split(':').map(Number);
-      bookingDate.setHours(hours, minutes, 0, 0);
+      if (booking.time && typeof booking.time === 'string') {
+        const startTime = booking.time.split(' - ')[0];
+        if (startTime) {
+          // Handle both 12-hour and 24-hour formats
+          const timeParts = startTime.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
+          if (timeParts) {
+            let hours = parseInt(timeParts[1]);
+            const minutes = parseInt(timeParts[2]);
+            const ampm = timeParts[3];
+            
+            if (ampm) {
+              // 12-hour format
+              if (ampm.toUpperCase() === 'PM' && hours !== 12) {
+                hours += 12;
+              } else if (ampm.toUpperCase() === 'AM' && hours === 12) {
+                hours = 0;
+              }
+            }
+            
+            bookingDate.setHours(hours, minutes, 0, 0);
+          }
+        }
+      }
       
       return bookingDate;
     };
