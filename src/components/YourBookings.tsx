@@ -377,7 +377,7 @@ const YourBookings = ({ isSignedIn }: YourBookingsProps) => {
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogCancel>Keep Reservation</AlertDialogCancel>
               <AlertDialogAction onClick={handleConfirmCancel}>
                 Yes, Cancel Reservation
               </AlertDialogAction>
