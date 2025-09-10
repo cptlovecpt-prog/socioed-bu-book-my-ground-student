@@ -8,81 +8,53 @@ import { useBookings } from "@/contexts/BookingContext";
 import { QRCodeDialog } from "./QRCodeDialog";
 import { useToast } from "@/hooks/use-toast";
 import { addDays, parseISO, parse, isBefore, addHours } from "date-fns";
-import { isWithinOneHourOfEvent, isQRCodeAvailable } from "@/utils/timeUtils";
-import { isBookingUpcoming } from "@/utils/bookingUtils";
+import { isQRCodeAvailable } from "@/utils/timeUtils";
+import { isBookingUpcoming, isCancellationAllowed } from "@/utils/bookingUtils";
 
 interface YourBookingsProps {
   isSignedIn: boolean;
 }
 
-// Utility function to check if event is more than 1 hour away
+// Utility function to check if event is more than 1 hour away (matches MyBookings logic)
 const isEventMoreThanOneHourAway = (date: string, time: string): boolean => {
   try {
     const now = new Date();
     let bookingDate: Date;
     
-    // Parse the date
     if (date === "Today") {
       bookingDate = new Date();
     } else if (date === "Tomorrow") {
       bookingDate = addDays(new Date(), 1);
     } else {
-      // Try to parse date formats like "Dec 12" or "Dec 12, 2024"
       const currentYear = new Date().getFullYear();
       const dateWithYear = date.includes(',') ? date : `${date}, ${currentYear}`;
-      bookingDate = parse(dateWithYear, 'MMM dd, yyyy', new Date());
+      bookingDate = new Date(dateWithYear);
     }
     
-    // Parse the start time
     const startTime = time.split(' - ')[0];
-    const [hours, minutes] = startTime.split(':').map(Number);
+    const timeParts = startTime.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
+    if (timeParts) {
+      let hours = parseInt(timeParts[1]);
+      const minutes = parseInt(timeParts[2]);
+      const ampm = timeParts[3];
+      
+      if (ampm) {
+        if (ampm.toUpperCase() === 'PM' && hours !== 12) {
+          hours += 12;
+        } else if (ampm.toUpperCase() === 'AM' && hours === 12) {
+          hours = 0;
+        }
+      }
+      
+      bookingDate.setHours(hours, minutes, 0, 0);
+    }
     
-    // Set the booking time
-    bookingDate.setHours(hours, minutes, 0, 0);
-    
-    // Check if event is more than 1 hour away
-    const oneHourFromNow = addHours(now, 1);
+    const oneHourFromNow = addDays(now, 0);
+    oneHourFromNow.setHours(now.getHours() + 1, now.getMinutes(), 0, 0);
     
     return bookingDate > oneHourFromNow;
   } catch (error) {
-    console.error('Error parsing booking time:', error);
     return false;
-  }
-};
-
-// Utility function to check if cancellation is allowed (more than 1 hour before event)
-const isCancellationAllowed = (date: string, time: string): boolean => {
-  try {
-    const now = new Date();
-    let bookingDate: Date;
-    
-    // Parse the date
-    if (date === "Today") {
-      bookingDate = new Date();
-    } else if (date === "Tomorrow") {
-      bookingDate = addDays(new Date(), 1);
-    } else {
-      // Try to parse date formats like "Dec 12" or "Dec 12, 2024"
-      const currentYear = new Date().getFullYear();
-      const dateWithYear = date.includes(',') ? date : `${date}, ${currentYear}`;
-      bookingDate = parse(dateWithYear, 'MMM dd, yyyy', new Date());
-    }
-    
-    // Parse the start time (we only care about start time for cancellation)
-    const startTime = time.split(' - ')[0];
-    const [hours, minutes] = startTime.split(':').map(Number);
-    
-    // Set the booking time
-    bookingDate.setHours(hours, minutes, 0, 0);
-    
-    // Check if current time is more than 1 hour before booking time
-    const oneHourBeforeBooking = addHours(bookingDate, -1);
-    
-    return isBefore(now, oneHourBeforeBooking);
-  } catch (error) {
-    console.error('Error parsing booking time:', error);
-    // If parsing fails, allow cancellation to be safe
-    return true;
   }
 };
 
