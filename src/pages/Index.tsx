@@ -9,7 +9,6 @@ import { FacilityCard } from "@/components/FacilityCard";
 import { BookingModal } from "@/components/BookingModal";
 import { UserDashboard } from "@/components/UserDashboard";
 import Navigation from "@/components/Navigation";
-import HeroCarousel from "@/components/HeroCarousel";
 import Footer from "@/components/Footer";
 import YourBookings from "@/components/YourBookings";
 import { useToast } from "@/hooks/use-toast";
@@ -357,9 +356,6 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
         setUserData={setUserData}
       />
       
-      {/* Hero Carousel */}
-      <HeroCarousel />
-
       {/* Your Bookings Section - shown when signed in */}
       <div id="your-bookings-section" className="scroll-mt-20">
         <YourBookings isSignedIn={isSignedIn} />
