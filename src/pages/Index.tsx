@@ -375,7 +375,7 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
       {/* Book Your Sport Section */}
       <section id="book-your-sport-section" className="py-6 sm:py-8 px-3 sm:px-4 scroll-mt-20">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-6 sm:mb-8">Book Your Sport</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-6 sm:mb-8">Book Your Slot</h2>
           
           <Tabs defaultValue="outdoor" className="space-y-4 sm:space-y-6">
             <div className="flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
