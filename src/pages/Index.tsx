@@ -380,8 +380,8 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
           <Tabs defaultValue="outdoor" className="space-y-4 sm:space-y-6">
             <div className="flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
               <TabsList className="grid w-full grid-cols-2 max-w-md">
-                <TabsTrigger value="outdoor" className="text-base sm:text-lg font-bold">Outdoor</TabsTrigger>
-                <TabsTrigger value="indoor" className="text-base sm:text-lg font-bold">Indoor</TabsTrigger>
+                <TabsTrigger value="outdoor" className="text-base sm:text-lg font-bold">Sports & Games</TabsTrigger>
+                <TabsTrigger value="indoor" className="text-base sm:text-lg font-bold">Fitness</TabsTrigger>
               </TabsList>
               
               {/* Filters */}
