@@ -283,6 +283,7 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
   const [selectedSports, setSelectedSports] = useState<string[]>([]);
   const [showOnlyAvailable, setShowOnlyAvailable] = useState(false);
   const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
+  const [pendingFacilityId, setPendingFacilityId] = useState<string | null>(null);
   const { toast } = useToast();
 
   const allSports = [
@@ -334,7 +335,8 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
 
   const handleBooking = (facilityId: string) => {
     if (!isSignedIn) {
-      // Open sign-in modal instead of showing toast
+      // Store the facility they wanted to book and open sign-in modal
+      setPendingFacilityId(facilityId);
       setIsSignInModalOpen(true);
       return;
     }
@@ -355,6 +357,17 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
     setUserData(data);
     setIsSignedIn(true);
     setIsSignInModalOpen(false);
+    
+    // If there's a pending facility booking, open the booking modal
+    if (pendingFacilityId) {
+      const allFacilities = [...indoorFacilities, ...outdoorFacilities];
+      const facility = allFacilities.find(f => f.id === pendingFacilityId);
+      if (facility) {
+        setSelectedFacility(facility);
+        setIsBookingModalOpen(true);
+      }
+      setPendingFacilityId(null); // Clear the pending facility
+    }
   };
 
   return (
