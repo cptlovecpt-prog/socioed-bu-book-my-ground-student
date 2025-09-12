@@ -3,6 +3,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { Moon, Sun, User, Menu, ChevronDown } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useState } from "react";
+import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import SignInModal from "./SignInModal";
 import HelpSupportModal from "./HelpSupportModal";
@@ -13,9 +14,10 @@ interface NavigationProps {
   setIsSignedIn: (value: boolean) => void;
   userData: { name: string; email: string } | null;
   setUserData: (data: { name: string; email: string } | null) => void;
+  onOpenSignInModal?: () => void;
 }
 
-const Navigation = ({ isSignedIn, setIsSignedIn, userData, setUserData }: NavigationProps) => {
+const Navigation = ({ isSignedIn, setIsSignedIn, userData, setUserData, onOpenSignInModal }: NavigationProps) => {
   const { theme, setTheme } = useTheme();
   const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
   const [isHelpSupportModalOpen, setIsHelpSupportModalOpen] = useState(false);
@@ -46,6 +48,9 @@ const Navigation = ({ isSignedIn, setIsSignedIn, userData, setUserData }: Naviga
       setIsSignInModalOpen(true);
     }
   };
+
+  // Use the external trigger if provided, otherwise use internal
+  const triggerSignInModal = onOpenSignInModal || openSignInModal;
 
   const navigateToHome = () => {
     // Ensure sign-in state is preserved when navigating home
@@ -102,7 +107,7 @@ const Navigation = ({ isSignedIn, setIsSignedIn, userData, setUserData }: Naviga
             ) : (
               <Button
                 variant="outline"
-                onClick={openSignInModal}
+                onClick={triggerSignInModal}
                 className="flex items-center space-x-1 sm:space-x-2 text-sm sm:text-base"
               >
                 <User className="h-4 w-4" />

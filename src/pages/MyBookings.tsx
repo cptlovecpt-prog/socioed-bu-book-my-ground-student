@@ -183,6 +183,7 @@ const MyBookings = ({ isSignedIn, setIsSignedIn, userData, setUserData }: MyBook
           setIsSignedIn={setIsSignedIn}
           userData={userData}
           setUserData={setUserData}
+          onOpenSignInModal={() => {}}
         />
         
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

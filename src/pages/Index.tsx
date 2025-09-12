@@ -11,6 +11,7 @@ import { UserDashboard } from "@/components/UserDashboard";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import YourBookings from "@/components/YourBookings";
+import SignInModal from "@/components/SignInModal";
 import { useToast } from "@/hooks/use-toast";
 import { SPORT_IMAGES } from "@/constants/images";
 
@@ -281,6 +282,7 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [selectedSports, setSelectedSports] = useState<string[]>([]);
   const [showOnlyAvailable, setShowOnlyAvailable] = useState(false);
+  const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
   const { toast } = useToast();
 
   const allSports = [
@@ -332,10 +334,8 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
 
   const handleBooking = (facilityId: string) => {
     if (!isSignedIn) {
-      toast({
-        title: "Please sign-in to continue your booking",
-        duration: 4000,
-      });
+      // Open sign-in modal instead of showing toast
+      setIsSignInModalOpen(true);
       return;
     }
     
@@ -347,6 +347,16 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
     }
   };
 
+  const handleSignInModalTrigger = () => {
+    setIsSignInModalOpen(true);
+  };
+
+  const handleSignIn = (data: { name: string; email: string }) => {
+    setUserData(data);
+    setIsSignedIn(true);
+    setIsSignInModalOpen(false);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation 
@@ -354,6 +364,7 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
         setIsSignedIn={setIsSignedIn}
         userData={userData}
         setUserData={setUserData}
+        onOpenSignInModal={handleSignInModalTrigger}
       />
       
       {/* Your Bookings Section - shown when signed in */}
@@ -517,6 +528,19 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
         onClose={() => setIsBookingModalOpen(false)}
         facility={selectedFacility}
         isSignedIn={isSignedIn}
+      />
+      
+      <BookingModal
+        isOpen={isBookingModalOpen}
+        onClose={() => setIsBookingModalOpen(false)}
+        facility={selectedFacility}
+        isSignedIn={isSignedIn}
+      />
+      
+      <SignInModal
+        isOpen={isSignInModalOpen}
+        onClose={() => setIsSignInModalOpen(false)}
+        onSignIn={handleSignIn}
       />
       
       <Footer isSignedIn={isSignedIn} />
