@@ -24,9 +24,11 @@ interface TimeSlot {
 
 interface ParticipantData {
   enrollmentId: string;
+  email: string;
+  name?: string;
 }
 
-type BookingStep = 'slot-selection' | 'booking-confirmation' | 'final-confirmation';
+type BookingStep = 'slot-selection' | 'participant-selection' | 'participant-details' | 'booking-confirmation' | 'final-confirmation';
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -41,25 +43,24 @@ interface BookingModalProps {
   } | null;
 }
 
-// Sport configuration with max participants based on Excel data
-const sportConfig: { [key: string]: number } = {
-  'Football': 22,
-  'Cricket': 22,
-  'Basketball': 20,
-  'Volleyball': 24,
-  'Tennis': 8,
-  'Badminton': 12,
-  'Squash': 6,
-  'Swimming': 35,
-  'Pickleball': 40,
-  'Gym': 40,
-  'Field Court': 8,
-  'Hockey': 10,
-  'Table Tennis': 48,
-  'Chess': 10,
-  'Padel': 8,
-  'Padel Court': 8,
-  'Basket Court': 12
+// Sport configuration with max participants and minimum requirements based on Excel data
+const sportConfig: { [key: string]: { min: number; max: number } } = {
+  'Basketball': { min: 6, max: 10 },
+  'Tennis': { min: 2, max: 4 },
+  'Badminton': { min: 2, max: 4 },
+  'Squash': { min: 1, max: 2 },
+  'Swimming': { min: 1, max: 50 },
+  'Pickleball': { min: 2, max: 4 },
+  'Gym': { min: 1, max: 50 },
+  'Table Tennis': { min: 2, max: 4 },
+  'Foot Court': { min: 2, max: 4 },
+  'Kabaddi': { min: 2, max: 10 },
+  'Volleyball': { min: 6, max: 12 },
+  'Football': { min: 11, max: 22 },
+  'Cricket': { min: 11, max: 22 },
+  'Hockey': { min: 6, max: 11 },
+  'Chess': { min: 2, max: 2 },
+  'Padel': { min: 2, max: 4 }
 };
 
 // Generate facility-specific slots based on name and location from the schedule
@@ -408,7 +409,7 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [selectedCourt, setSelectedCourt] = useState<number | null>(null);
   const [participantCount, setParticipantCount] = useState<number>(1);
-  const [participants, setParticipants] = useState<ParticipantData[]>([{ enrollmentId: '' }]);
+  const [participants, setParticipants] = useState<ParticipantData[]>([{ enrollmentId: '', email: '' }]);
   const [sendEmailConfirmation, setSendEmailConfirmation] = useState<boolean>(false);
   const [shareToken] = useState("BK-" + Math.random().toString(36).substr(2, 8).toUpperCase());
   const [showExitConfirm, setShowExitConfirm] = useState(false);
@@ -564,33 +565,53 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
     resetModal();
   };
   
-  const timeSlots = selectedCourt && facility ? generateTimeSlotsForCourt(selectedDate, facility ? sportConfig[facility.sport] || 10 : 10, selectedCourt, facility) : [];
-  const maxParticipants = facility ? sportConfig[facility.sport] || 10 : 10;
+  const timeSlots = selectedCourt && facility ? generateTimeSlotsForCourt(selectedDate, facility ? sportConfig[facility.sport]?.max || 10 : 10, selectedCourt, facility) : [];
+  const maxParticipants = facility ? sportConfig[facility.sport]?.max || 10 : 10;
+  const minParticipants = facility ? sportConfig[facility.sport]?.min || 1 : 1;
   const availableCourts = facility ? getAvailableCourts(facility) : 1;
 
   const handleSlotSelect = async (slotId: string) => {
     const selectedTimeSlot = timeSlots.find(s => s.id === slotId);
     if (!selectedTimeSlot) return;
 
-    // Check if this is a consecutive slot for today/tomorrow
-    const isToday = isSameDay(selectedDate, new Date());
-    const isTomorrow = isSameDay(selectedDate, addDays(new Date(), 1));
+    setSelectedSlot(slotId);
+    setCurrentStep('participant-selection');
+  };
+
+  const handleParticipantCountChange = (count: number) => {
+    setParticipantCount(count);
+    // Initialize participants array with pre-filled first email
+    const newParticipants: ParticipantData[] = Array.from({ length: count }, (_, index) => ({
+      enrollmentId: '',
+      email: index === 0 ? 'user@university.edu' : '', // Pre-fill first participant with mock user email
+      name: ''
+    }));
+    setParticipants(newParticipants);
+  };
+
+  const handleParticipantDetailsNext = () => {
+    // Validate all participants have university email
+    const allEmailsValid = participants.every(p => 
+      p.email.trim() !== '' && p.email.includes('@') && p.email.toLowerCase().includes('university.edu')
+    );
     
-    if ((isToday || isTomorrow) && isConsecutiveSlot(selectedTimeSlot.time)) {
+    if (!allEmailsValid) {
       toast({
-        title: "Alert",
-        description: "Consecutive slot booking is not allowed, please book any other slot of your choice",
+        title: "Invalid Email",
+        description: "All participants must have valid university email addresses",
+        variant: "destructive",
         duration: 4000,
       });
       return;
     }
     
-    setSelectedSlot(slotId);
-    
-    // Update availability after selection (API call placeholder)
-    await updateSlotAvailability(slotId);
-    
     setCurrentStep('booking-confirmation');
+  };
+
+  const updateParticipantEmail = (index: number, email: string) => {
+    const updatedParticipants = [...participants];
+    updatedParticipants[index] = { ...updatedParticipants[index], email };
+    setParticipants(updatedParticipants);
   };
 
   // Placeholder function for updating slot availability via API
@@ -749,7 +770,7 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
     setSelectedSlot(null);
     setSelectedCourt(null);
     setParticipantCount(1);
-    setParticipants([{ enrollmentId: '' }]);
+    setParticipants([{ enrollmentId: '', email: '' }]);
     setSendEmailConfirmation(false);
     onClose();
   };
@@ -805,8 +826,14 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
 
   const handleGoBack = () => {
     switch (currentStep) {
-      case 'booking-confirmation':
+      case 'participant-selection':
         setCurrentStep('slot-selection');
+        break;
+      case 'participant-details':
+        setCurrentStep('participant-selection');
+        break;
+      case 'booking-confirmation':
+        setCurrentStep('participant-details');
         break;
       default:
         break;
@@ -838,13 +865,17 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
   const getStepInfo = () => {
     switch (currentStep) {
       case 'slot-selection':
-        return { current: 1, total: 2, label: 'Select Court & Time Slot' };
+        return { current: 1, total: 5, label: 'Select Court & Time Slot' };
+      case 'participant-selection':
+        return { current: 2, total: 5, label: 'Number of Participants' };
+      case 'participant-details':
+        return { current: 3, total: 5, label: 'Participant Details' };
       case 'booking-confirmation':
-        return { current: 2, total: 2, label: 'Confirm Booking' };
+        return { current: 4, total: 5, label: 'Confirm Booking' };
       case 'final-confirmation':
-        return { current: 2, total: 2, label: 'Confirmed' };
+        return { current: 5, total: 5, label: 'Confirmed' };
       default:
-        return { current: 1, total: 2, label: 'Select Court & Time Slot' };
+        return { current: 1, total: 5, label: 'Select Court & Time Slot' };
     }
   };
 
@@ -1001,6 +1032,116 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
                 </div>
               </div>
             )}
+          </div>
+        );
+
+      case 'participant-selection':
+        return (
+          <div className="space-y-6">
+            <div className="bg-muted/50 rounded-lg p-4">
+              <div className="flex items-center gap-2">
+                <Users className="h-5 w-5 text-primary" />
+                <span className="font-medium">Select Number of Participants</span>
+              </div>
+            </div>
+            
+            <div className="space-y-4">
+              <div className="text-center space-y-2">
+                <p className="text-muted-foreground">
+                  For {facility.sport}: Minimum {minParticipants} participants, Maximum {maxParticipants} participants
+                </p>
+              </div>
+              
+              <div className="space-y-3">
+                <Label htmlFor="participant-count">Number of Participants</Label>
+                <div className="flex items-center justify-center space-x-4">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleParticipantCountChange(Math.max(minParticipants, participantCount - 1))}
+                    disabled={participantCount <= minParticipants}
+                  >
+                    -
+                  </Button>
+                  <span className="text-2xl font-bold w-12 text-center">{participantCount}</span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleParticipantCountChange(Math.min(maxParticipants, participantCount + 1))}
+                    disabled={participantCount >= maxParticipants}
+                  >
+                    +
+                  </Button>
+                </div>
+              </div>
+              
+              <div className="flex gap-3 pt-4">
+                <Button 
+                  onClick={handleGoBack}
+                  variant="outline"
+                  className="flex-1 h-12 text-lg font-semibold"
+                >
+                  Back
+                </Button>
+                <Button 
+                  onClick={() => setCurrentStep('participant-details')}
+                  className="flex-1 bg-gradient-primary h-12 text-lg font-semibold"
+                  disabled={participantCount < minParticipants || participantCount > maxParticipants}
+                >
+                  Next: Add Details
+                </Button>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'participant-details':
+        return (
+          <div className="space-y-6">
+            <div className="bg-muted/50 rounded-lg p-4">
+              <div className="flex items-center gap-2">
+                <Mail className="h-5 w-5 text-primary" />
+                <span className="font-medium">Enter University Email for All Participants</span>
+              </div>
+            </div>
+            
+            <div className="space-y-4">
+              <p className="text-sm text-muted-foreground text-center">
+                All participants must provide their university email address
+              </p>
+              
+              {participants.map((participant, index) => (
+                <div key={index} className="space-y-2">
+                  <Label htmlFor={`participant-${index}`}>
+                    Participant {index + 1} {index === 0 && '(You)'}
+                  </Label>
+                  <Input
+                    id={`participant-${index}`}
+                    type="email"
+                    placeholder="university.edu email address"
+                    value={participant.email}
+                    onChange={(e) => updateParticipantEmail(index, e.target.value)}
+                    className="w-full"
+                  />
+                </div>
+              ))}
+              
+              <div className="flex gap-3 pt-4">
+                <Button 
+                  onClick={handleGoBack}
+                  variant="outline"
+                  className="flex-1 h-12 text-lg font-semibold"
+                >
+                  Back
+                </Button>
+                <Button 
+                  onClick={handleParticipantDetailsNext}
+                  className="flex-1 bg-gradient-primary h-12 text-lg font-semibold"
+                >
+                  Review Booking
+                </Button>
+              </div>
+            </div>
           </div>
         );
 
