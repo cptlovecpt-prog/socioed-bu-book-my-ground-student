@@ -310,13 +310,13 @@ const YourBookings = ({ isSignedIn }: YourBookingsProps) => {
             <AlertDialogHeader>
               <AlertDialogTitle>Alert</AlertDialogTitle>
               <AlertDialogDescription>
-                Are you sure you want to cancel your reservation?
+                Are you sure you want to cancel your booking?
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Keep Reservation</AlertDialogCancel>
+              <AlertDialogCancel>Keep Booking</AlertDialogCancel>
               <AlertDialogAction onClick={handleConfirmCancel}>
-                Yes, Cancel Reservation
+                Yes, Cancel Booking
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
