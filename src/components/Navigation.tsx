@@ -60,81 +60,78 @@ const Navigation = ({ isSignedIn, setIsSignedIn, userData, setUserData, onOpenSi
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16 sm:h-20">
-          {/* Logo and Name */}
-          <div className="flex items-center space-x-2 sm:space-x-3 cursor-pointer" onClick={navigateToHome}>
-            <img src={LOGO_IMAGE} alt="Courtside" className="h-16 sm:h-24 w-auto" />
-            <span className="text-lg sm:text-xl font-bold hover:text-primary transition-colors">Courtside</span>
-          </div>
+      <div className="flex justify-between items-center h-16 sm:h-20 w-full">
+        {/* Logo - Extreme Left */}
+        <div className="flex items-center cursor-pointer pl-3 sm:pl-6" onClick={navigateToHome}>
+          <img src={LOGO_IMAGE} alt="Courtside" className="h-16 sm:h-20 w-auto" />
+        </div>
 
-          {/* Right side controls */}
-          <div className="flex items-center space-x-2 sm:space-x-3">
-            {/* Dark mode toggle */}
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={toggleTheme}
-              className="w-9 h-9"
-            >
-              {theme === "dark" ? (
-                <Sun className="h-4 w-4" />
-              ) : (
-                <Moon className="h-4 w-4" />
-              )}
-            </Button>
-
-            {/* User sign-in/profile */}
-            {isSignedIn ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="flex items-center space-x-1 sm:space-x-2 text-sm sm:text-base"
-                  >
-                    <User className="h-4 w-4" />
-                    <span className="hidden sm:inline">{userData?.name}</span>
-                    <span className="sm:hidden">{userData?.name?.split(' ')[0]}</span>
-                    <ChevronDown className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuItem onClick={handleSignOut}>
-                    Logout
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+        {/* Right side controls - Extreme Right */}
+        <div className="flex items-center space-x-2 sm:space-x-3 pr-3 sm:pr-6">
+          {/* Dark mode toggle */}
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={toggleTheme}
+            className="w-9 h-9"
+          >
+            {theme === "dark" ? (
+              <Sun className="h-4 w-4" />
             ) : (
-              <Button
-                variant="outline"
-                onClick={triggerSignInModal}
-                className="flex items-center space-x-1 sm:space-x-2 text-sm sm:text-base"
-              >
-                <User className="h-4 w-4" />
-                <span className="hidden sm:inline">Sign In</span>
-                <span className="sm:hidden">Sign</span>
-              </Button>
+              <Moon className="h-4 w-4" />
             )}
+          </Button>
 
-            {/* Hamburger Menu */}
+          {/* User sign-in/profile */}
+          {isSignedIn ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon" className="w-9 h-9">
-                  <Menu className="h-4 w-4" />
+                <Button
+                  variant="outline"
+                  className="flex items-center space-x-1 sm:space-x-2 text-sm sm:text-base"
+                >
+                  <User className="h-4 w-4" />
+                  <span className="hidden sm:inline">{userData?.name}</span>
+                  <span className="sm:hidden">{userData?.name?.split(' ')[0]}</span>
+                  <ChevronDown className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
-                {isSignedIn && (
-                  <DropdownMenuItem onClick={() => navigate("/my-bookings")}>
-                    My Bookings
-                  </DropdownMenuItem>
-                )}
-                <DropdownMenuItem onClick={() => setIsHelpSupportModalOpen(true)}>
-                  Help & Support
+                <DropdownMenuItem onClick={handleSignOut}>
+                  Logout
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          </div>
+          ) : (
+            <Button
+              variant="outline"
+              onClick={triggerSignInModal}
+              className="flex items-center space-x-1 sm:space-x-2 text-sm sm:text-base"
+            >
+              <User className="h-4 w-4" />
+              <span className="hidden sm:inline">Sign In</span>
+              <span className="sm:hidden">Sign</span>
+            </Button>
+          )}
+
+          {/* Hamburger Menu */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="icon" className="w-9 h-9">
+                <Menu className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              {isSignedIn && (
+                <DropdownMenuItem onClick={() => navigate("/my-bookings")}>
+                  My Bookings
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuItem onClick={() => setIsHelpSupportModalOpen(true)}>
+                Help & Support
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
       
