@@ -579,7 +579,7 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
     // Skip participant selection for gym and swimming
     if (facility?.sport === 'Gym' || facility?.sport === 'Swimming') {
       setParticipantCount(1);
-      setParticipants([{ enrollmentId: '', email: 'user@university.edu', name: '' }]);
+      setParticipants([{ enrollmentId: '', email: 'user@bennett.edu.in', name: '' }]);
       setCurrentStep('booking-confirmation');
     } else {
       setCurrentStep('participant-selection');
@@ -591,22 +591,22 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
     // Initialize participants array with pre-filled first email
     const newParticipants: ParticipantData[] = Array.from({ length: count }, (_, index) => ({
       enrollmentId: '',
-      email: index === 0 ? 'user@university.edu' : '', // Pre-fill first participant with mock user email
+      email: index === 0 ? 'user@bennett.edu.in' : '', // Pre-fill first participant with Bennett email
       name: ''
     }));
     setParticipants(newParticipants);
   };
 
   const handleParticipantDetailsNext = () => {
-    // Validate all participants have university email
+    // Validate all participants have Bennett University email
     const allEmailsValid = participants.every(p => 
-      p.email.trim() !== '' && p.email.includes('@') && p.email.toLowerCase().includes('university.edu')
+      p.email.trim() !== '' && p.email.includes('@') && p.email.toLowerCase().endsWith('@bennett.edu.in')
     );
     
     if (!allEmailsValid) {
       toast({
         title: "Invalid Email",
-        description: "All participants must have valid university email addresses",
+        description: "All participants must have valid @bennett.edu.in email addresses",
         variant: "destructive",
         duration: 4000,
       });
@@ -1125,13 +1125,13 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
             <div className="bg-muted/50 rounded-lg p-4">
               <div className="flex items-center gap-2">
                 <Mail className="h-5 w-5 text-primary" />
-                <span className="font-medium">Enter University Email for All Participants</span>
+                <span className="font-medium">Enter Bennett University Email for All Participants</span>
               </div>
             </div>
             
             <div className="space-y-4">
               <p className="text-sm text-muted-foreground text-center">
-                All participants must provide their university email address
+                All participants must provide their @bennett.edu.in email address
               </p>
               
               {participants.map((participant, index) => (
@@ -1142,7 +1142,7 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
                   <Input
                     id={`participant-${index}`}
                     type="email"
-                    placeholder="university.edu email address"
+                    placeholder="@bennett.edu.in email address"
                     value={participant.email}
                     onChange={(e) => updateParticipantEmail(index, e.target.value)}
                     className="w-full"
