@@ -798,7 +798,8 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
       'Squash': '/lovable-uploads/de8033c6-2e20-42bf-8b5e-88753e101116.png',
       'Table Tennis': 'https://images.unsplash.com/photo-1609710228159-0fa9bd7c0827?w=400&h=300&fit=crop',
       'Gym': 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop',
-      'Pickleball': '/lovable-uploads/75efefc8-6f39-47ce-b08c-18e3336f2ada.png'
+      'Pickleball': '/lovable-uploads/75efefc8-6f39-47ce-b08c-18e3336f2ada.png',
+      'Kabaddi': '/lovable-uploads/kabaddi-court.png'
     };
     return sportImages[facility.sport] || 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop';
   };
