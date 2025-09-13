@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
@@ -197,6 +197,30 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
   const [showExitConfirm, setShowExitConfirm] = useState(false);
   const [qrCodeUrl, setQrCodeUrl] = useState<string>("");
   
+  // Daily booking limit tracking
+  const getDailyBookingKey = (date: Date) => {
+    return `daily_bookings_${format(date, 'yyyy-MM-dd')}`;
+  };
+
+  const getDailyBookingCount = (date: Date) => {
+    const key = getDailyBookingKey(date);
+    const stored = localStorage.getItem(key);
+    return stored ? JSON.parse(stored).count : 0;
+  };
+
+  const incrementDailyBookingCount = (date: Date) => {
+    const key = getDailyBookingKey(date);
+    const currentCount = getDailyBookingCount(date);
+    localStorage.setItem(key, JSON.stringify({ count: currentCount + 1, date: format(date, 'yyyy-MM-dd') }));
+  };
+
+  const canBookForDay = (date: Date) => {
+    return getDailyBookingCount(date) < 2;
+  };
+
+  const dailyBookingsCount = getDailyBookingCount(selectedDate);
+  const canBookToday = canBookForDay(selectedDate);
+  
   const handleDialogClose = (open: boolean) => {
     if (!open) {
       if (currentStep === 'final-confirmation') {
@@ -293,6 +317,19 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
       return;
     }
 
+    // Check daily booking limit first
+    if (!canBookToday) {
+      const dateDisplay = isSameDay(selectedDate, new Date()) ? "today" : 
+                         isSameDay(selectedDate, addDays(new Date(), 1)) ? "tomorrow" :
+                         format(selectedDate, 'MMM dd, yyyy');
+      toast({
+        title: `Daily booking limit reached`,
+        description: `You can only book 2 slots per day. You have already booked ${dailyBookingsCount}/2 slots for ${dateDisplay}.`,
+        duration: 4000,
+      });
+      return;
+    }
+
     // Check if user already has 4 upcoming bookings
     const upcomingBookings = bookings.filter(booking => booking.status === 'Upcoming');
     if (upcomingBookings.length >= 4) {
@@ -320,6 +357,9 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
 
       // Add the booking to context
       addBooking(bookingData);
+      
+      // Increment daily booking count
+      incrementDailyBookingCount(selectedDate);
       
       // Generate QR code
       generateQRCode();
@@ -489,9 +529,18 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
             {/* Available Time Slots */}
             <div>
               <h3 className="font-medium mb-3">Available Time Slots: Click on available slot to proceed</h3>
+              {!canBookToday && (
+                <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
+                  <p className="text-sm text-destructive font-medium">
+                    Daily booking limit reached ({dailyBookingsCount}/2 slots booked for this day). 
+                    You cannot book more slots for this day even after canceling existing bookings.
+                  </p>
+                </div>
+              )}
               <div className="grid gap-2">
                  {timeSlots.map((slot) => {
-                   const isAvailable = slot.available > 0 && !slot.isExpired;
+                   const isAvailable = slot.available > 0 && !slot.isExpired && canBookToday;
+                   const isExpired = slot.isExpired || slot.unavailableReason === 'expired';
                    
                    return (
                      <div
@@ -502,17 +551,33 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
                             ? 'border-primary bg-primary/5 cursor-pointer'
                              : isAvailable 
                                ? 'border-border hover:border-primary/50 cursor-pointer' 
-                               : 'border-destructive/30 bg-destructive/5 cursor-default'
+                               : isExpired
+                                 ? 'border-muted bg-muted/30 cursor-default opacity-60'
+                                 : 'border-destructive/30 bg-destructive/5 cursor-default'
                         }`}
                        style={{ cursor: isAvailable ? 'pointer' : 'default' }}
                      >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
-                            <Clock className="h-4 w-4 text-foreground" />
-                            <span className="font-medium text-foreground">{slot.time}</span>
+                            <Clock className={`h-4 w-4 ${isExpired ? 'text-muted-foreground' : 'text-foreground'}`} />
+                            <span className={`font-medium ${isExpired ? 'text-muted-foreground' : 'text-foreground'}`}>{slot.time}</span>
                           </div>
                          <div className="flex items-center gap-2">
-                              {slot.isExpired || slot.available === 0 ? (
+                              {isExpired ? (
+                                <Badge 
+                                  className="text-white border-gray-600 font-bold relative z-50"
+                                  style={{ backgroundColor: '#4a5568' }}
+                                >
+                                 Expired
+                               </Badge>
+                              ) : !canBookToday ? (
+                                <Badge 
+                                  className="text-white border-orange-600 font-bold relative z-50"
+                                  style={{ backgroundColor: '#d69e2e' }}
+                                >
+                                  Daily Limit Reached
+                                </Badge>
+                              ) : slot.available === 0 ? (
                                 slot.unavailableReason === 'blocked' ? (
                                    <Badge 
                                      className="text-white border-[#063970] font-bold relative z-50"
