@@ -241,7 +241,7 @@ const YourBookings = ({ isSignedIn }: YourBookingsProps) => {
                      onClick={() => {
                        toast({
                          title: "QR Code Not Available",
-                         description: "QR Code will be available from 1 hr before the event till 20 mins after event starts",
+                         description: "QR Code will be available from 1 hr before the event till 5 mins after event starts",
                          duration: 4000,
                        });
                      }}

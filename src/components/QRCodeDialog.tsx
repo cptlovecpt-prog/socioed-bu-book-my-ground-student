@@ -101,7 +101,7 @@ export const QRCodeDialog = ({ isOpen, onClose, booking, isQRAvailable = true }:
                 {!isQRAvailable && (
                   <div className="absolute inset-0 bg-black/70 rounded-lg flex flex-col items-center justify-center text-white text-center p-4">
                     <div className="text-sm font-medium">QR Code available</div>
-                    <div className="text-sm">1 hr before till 20 mins after event starts</div>
+                    <div className="text-sm">1 hr before till 5 mins after event starts</div>
                   </div>
                 )}
               </div>
@@ -121,7 +121,7 @@ export const QRCodeDialog = ({ isOpen, onClose, booking, isQRAvailable = true }:
             </div>
             <div>
               <span className="text-red-600 font-bold">* </span>
-              <span className="text-red-800">QR Code is only valid from 10 mins before the booked slot to 20 mins after slot starts</span>
+              <span className="text-red-800">QR Code is only valid from 10 mins before the booked slot to 5 mins after slot starts</span>
             </div>
           </div>
           

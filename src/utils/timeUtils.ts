@@ -1,7 +1,7 @@
 // Utility functions for time-based logic
 
 /**
- * Check if QR code is available (1 hour before event start to 20 minutes after event start)
+ * Check if QR code is available (1 hour before event start to 5 minutes after event start)
  * @param eventDate - Event date (Today, Tomorrow, or formatted date)
  * @param eventTime - Event time string (e.g., "14:00 - 16:00")
  * @returns boolean - true if QR code is available
@@ -44,9 +44,9 @@ export const isQRCodeAvailable = (eventDate: string, eventTime: string): boolean
     
     eventDateTime.setHours(hours, minutes, 0, 0);
     
-    // QR code available from 1 hour before event start to 20 minutes after event start
+    // QR code available from 1 hour before event start to 5 minutes after event start
     const qrStartTime = eventDateTime.getTime() - (60 * 60 * 1000); // 1 hour before
-    const qrEndTime = eventDateTime.getTime() + (20 * 60 * 1000);   // 20 minutes after event start
+    const qrEndTime = eventDateTime.getTime() + (5 * 60 * 1000);   // 5 minutes after event start
     const currentTime = now.getTime();
     
     return currentTime >= qrStartTime && currentTime <= qrEndTime;
@@ -97,9 +97,9 @@ export const getQRCodeStatus = (eventDate: string, eventTime: string): string =>
     
     eventDateTime.setHours(hours, minutes, 0, 0);
     
-    // QR code available from 1 hour before to 20 minutes after event start
+    // QR code available from 1 hour before to 5 minutes after event start
     const qrStartTime = new Date(eventDateTime.getTime() - (60 * 60 * 1000));
-    const qrEndTime = new Date(eventDateTime.getTime() + (20 * 60 * 1000));
+    const qrEndTime = new Date(eventDateTime.getTime() + (5 * 60 * 1000));
     const currentTime = now.getTime();
     
     if (currentTime >= qrStartTime.getTime() && currentTime <= qrEndTime.getTime()) {
