@@ -1190,7 +1190,7 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
               
               <div className="space-y-3 text-left">
                 <h4 className="font-semibold text-lg">{facility.name}</h4>
-                <p className="text-muted-foreground">{facility.location} • {getSizeForSport(facility.sport)} sq mtrs.</p>
+                <p className="text-muted-foreground">{facility.location}</p>
               </div>
               
               <div className="grid grid-cols-2 gap-4 pt-4 border-t">
@@ -1213,11 +1213,18 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
               <div className="text-left pt-2">
                 <div className="flex items-center gap-1 text-muted-foreground mb-1">
                   <Users className="h-4 w-4" />
-                  <span className="text-sm">Available Spots</span>
+                  <span className="text-sm">Number of Participants</span>
                 </div>
-                <p className="font-medium">
-                  {selectedTimeSlot ? `${selectedTimeSlot.available}/${selectedTimeSlot.capacity} spots available` : 'Loading...'}
-                </p>
+                <div className="space-y-1">
+                  <p className="font-medium">{participantCount} participant{participantCount > 1 ? 's' : ''}</p>
+                  <div className="space-y-1">
+                    {participants.map((participant, index) => (
+                      <p key={index} className="text-sm text-muted-foreground">
+                        {index + 1}. {participant.email}
+                      </p>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
             
