@@ -285,6 +285,7 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
   const [showOnlyAvailable, setShowOnlyAvailable] = useState(false);
   const [selectedDate, setSelectedDate] = useState<'today' | 'tomorrow'>('today');
   const [facilityAvailability, setFacilityAvailability] = useState<{[key: string]: 'available' | 'full' | 'maintenance'}>({});
+  const [tabs, setTabs] = useState({ activeTab: 'outdoor' });
   const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
   const [pendingFacilityId, setPendingFacilityId] = useState<string | null>(null);
   const { toast } = useToast();
@@ -443,20 +444,52 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
           <Tabs defaultValue="outdoor" className="space-y-4 sm:space-y-6">
             <div className="flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-                <TabsList className="grid w-full grid-cols-2 max-w-md">
-                  <TabsTrigger value="outdoor" className="text-base sm:text-lg font-bold">Sports & Games</TabsTrigger>
-                  <TabsTrigger value="indoor" className="text-base sm:text-lg font-bold">Fitness</TabsTrigger>
-                </TabsList>
+                {/* Sports/Fitness Toggle */}
+                <div className="flex items-center bg-muted/50 rounded-full p-1 min-w-[280px]">
+                  <div className="relative flex w-full">
+                    {/* Background slider */}
+                    <div className={`absolute top-1 bottom-1 rounded-full bg-primary transition-all duration-300 ease-in-out ${
+                        tabs.activeTab === 'outdoor' 
+                          ? 'left-1 right-[calc(50%-2px)]' 
+                          : 'left-[calc(50%-2px)] right-1'
+                      }`}
+                    />
+                    
+                    {/* Sports & Games button */}
+                    <button
+                      onClick={() => setTabs({...tabs, activeTab: 'outdoor'})}
+                      className={`relative z-10 flex-1 h-8 px-4 text-sm font-medium rounded-full transition-colors duration-300 ${
+                        tabs.activeTab === 'outdoor' 
+                          ? 'text-primary-foreground' 
+                          : 'text-muted-foreground hover:text-foreground'
+                      }`}
+                    >
+                      Sports & Games
+                    </button>
+                    
+                    {/* Fitness button */}
+                    <button
+                      onClick={() => setTabs({...tabs, activeTab: 'indoor'})}
+                      className={`relative z-10 flex-1 h-8 px-4 text-sm font-medium rounded-full transition-colors duration-300 ${
+                        tabs.activeTab === 'indoor' 
+                          ? 'text-primary-foreground' 
+                          : 'text-muted-foreground hover:text-foreground'
+                      }`}
+                    >
+                      Fitness
+                    </button>
+                  </div>
+                </div>
                 
                 {/* Date Toggle */}
-                <div className="flex items-center bg-muted/50 rounded-full p-1 min-w-[200px]">
+                <div className="flex items-center bg-muted/50 rounded-full p-1 min-w-[280px]">
                   <div className="relative flex w-full">
                     {/* Background slider */}
                     <div 
                       className={`absolute top-1 bottom-1 rounded-full bg-primary transition-all duration-300 ease-in-out ${
                         selectedDate === 'today' 
-                          ? 'left-1 right-1/2' 
-                          : 'left-1/2 right-1'
+                          ? 'left-1 right-[calc(50%-2px)]' 
+                          : 'left-[calc(50%-2px)] right-1'
                       }`}
                     />
                     
@@ -589,38 +622,33 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
               )}
             </div>
             
-            <TabsContent value="outdoor">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-x-6 sm:gap-y-8 lg:gap-y-12 justify-items-center">
-                {filterFacilities(outdoorFacilities).map((facility) => (
-                  <FacilityCard
-                    key={facility.id}
-                    {...facility}
-                    onBook={handleBooking}
-                    apiStatus={facilityAvailability[facility.id]}
-                  />
-                ))}
-              </div>
-              {filterFacilities(outdoorFacilities).length === 0 && (selectedSports.length > 0 || showOnlyAvailable) && (
-                <div className="text-center py-12">
-                  <p className="text-muted-foreground">No outdoor facilities found matching your filters.</p>
+            <TabsContent value={tabs.activeTab === 'outdoor' ? 'outdoor' : 'indoor'}>
+              {tabs.activeTab === 'outdoor' ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-x-6 sm:gap-y-8 lg:gap-y-12 justify-items-center">
+                  {filterFacilities(outdoorFacilities).map((facility) => (
+                    <FacilityCard
+                      key={facility.id}
+                      {...facility}
+                      onBook={handleBooking}
+                      apiStatus={facilityAvailability[facility.id]}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-x-6 sm:gap-y-8 lg:gap-y-12 justify-items-center">
+                  {filterFacilities(indoorFacilities).map((facility) => (
+                    <FacilityCard
+                      key={facility.id}
+                      {...facility}
+                      onBook={handleBooking}
+                      apiStatus={facilityAvailability[facility.id]}
+                    />
+                  ))}
                 </div>
               )}
-            </TabsContent>
-            
-            <TabsContent value="indoor">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-x-6 sm:gap-y-8 lg:gap-y-12 justify-items-center">
-                {filterFacilities(indoorFacilities).map((facility) => (
-                  <FacilityCard
-                    key={facility.id}
-                    {...facility}
-                    onBook={handleBooking}
-                    apiStatus={facilityAvailability[facility.id]}
-                  />
-                ))}
-              </div>
-              {filterFacilities(indoorFacilities).length === 0 && (selectedSports.length > 0 || showOnlyAvailable) && (
+              {((tabs.activeTab === 'outdoor' ? filterFacilities(outdoorFacilities) : filterFacilities(indoorFacilities)).length === 0 && (selectedSports.length > 0 || showOnlyAvailable)) && (
                 <div className="text-center py-12">
-                  <p className="text-muted-foreground">No indoor facilities found matching your filters.</p>
+                  <p className="text-muted-foreground">No {tabs.activeTab === 'outdoor' ? 'outdoor' : 'indoor'} facilities found matching your filters.</p>
                 </div>
               )}
             </TabsContent>
