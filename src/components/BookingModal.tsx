@@ -209,7 +209,15 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
   const getDailyBookingCount = (date: Date) => {
     const key = getDailyBookingKey(date);
     const stored = localStorage.getItem(key);
-    return stored ? JSON.parse(stored).count : 0;
+    if (!stored) return 0;
+    try {
+      const parsed = JSON.parse(stored);
+      if (typeof parsed === 'number') return parsed; // backward compatibility
+      if (parsed && typeof parsed.count === 'number') return parsed.count;
+      return 0;
+    } catch {
+      return 0;
+    }
   };
 
   const incrementDailyBookingCount = (date: Date) => {
@@ -235,38 +243,38 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
     const initializeDailyBookingCounts = () => {
       const today = new Date();
       const tomorrow = addDays(today, 1);
-      
-      // Count existing bookings for today
-      const todayBookings = bookings.filter(booking => 
-        booking.date === "Today" && booking.status === 'Upcoming'
-      ).length;
-      
-      // Count existing bookings for tomorrow  
-      const tomorrowBookings = bookings.filter(booking => 
-        booking.date === "Tomorrow" && booking.status === 'Upcoming'
-      ).length;
-      
-      // Initialize localStorage if not already set or if it doesn't match
-      const todayStoredCount = getDailyBookingCount(today);
-      const tomorrowStoredCount = getDailyBookingCount(tomorrow);
-      
-      if (todayStoredCount !== todayBookings) {
-        const todayKey = getDailyBookingKey(today);
-        localStorage.setItem(todayKey, JSON.stringify({ count: todayBookings, date: format(today, 'yyyy-MM-dd') }));
-      }
-      
-      if (tomorrowStoredCount !== tomorrowBookings) {
-        const tomorrowKey = getDailyBookingKey(tomorrow);
-        localStorage.setItem(tomorrowKey, JSON.stringify({ count: tomorrowBookings, date: format(tomorrow, 'yyyy-MM-dd') }));
-      }
-    };
-    
-    initializeDailyBookingCounts();
-  }, [bookings]);
 
-  useEffect(() => {
+      const getDateLabel = (date: Date) =>
+        isSameDay(date, today)
+          ? "Today"
+          : isSameDay(date, tomorrow)
+          ? "Tomorrow"
+          : format(date, "MMM dd, yyyy");
+
+      const syncFor = (date: Date) => {
+        const label = getDateLabel(date);
+        const count = bookings.filter(
+          (booking) => booking.date === label && booking.status === "Upcoming"
+        ).length;
+        const key = getDailyBookingKey(date);
+        const storedCount = getDailyBookingCount(date);
+        if (storedCount !== count) {
+          localStorage.setItem(
+            key,
+            JSON.stringify({ count, date: format(date, "yyyy-MM-dd") })
+          );
+        }
+      };
+
+      // Sync today, tomorrow, and the currently selected date (handles stale storage)
+      syncFor(today);
+      syncFor(tomorrow);
+      syncFor(selectedDate);
+    };
+
+    initializeDailyBookingCounts();
     setDailyCount(getDailyBookingCount(selectedDate));
-  }, [selectedDate, isOpen, bookings]);
+  }, [bookings, selectedDate, isOpen]);
 
   const canBookToday = dailyCount < 2;
 
