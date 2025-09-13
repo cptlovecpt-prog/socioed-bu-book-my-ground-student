@@ -240,40 +240,43 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
 
   // Initialize localStorage counts to match existing bookings
   useEffect(() => {
-    const initializeDailyBookingCounts = () => {
-      const today = new Date();
-      const tomorrow = addDays(today, 1);
+    const today = new Date();
+    const tomorrow = addDays(today, 1);
 
-      const getDateLabel = (date: Date) =>
-        isSameDay(date, today)
-          ? "Today"
-          : isSameDay(date, tomorrow)
-          ? "Tomorrow"
-          : format(date, "MMM dd, yyyy");
+    const getDateLabel = (date: Date) =>
+      isSameDay(date, today)
+        ? "Today"
+        : isSameDay(date, tomorrow)
+        ? "Tomorrow"
+        : format(date, "MMM dd, yyyy");
 
-      const syncFor = (date: Date) => {
-        const label = getDateLabel(date);
-        const count = bookings.filter(
-          (booking) => booking.date === label && booking.status === "Upcoming"
-        ).length;
-        const key = getDailyBookingKey(date);
-        const storedCount = getDailyBookingCount(date);
-        if (storedCount !== count) {
-          localStorage.setItem(
-            key,
-            JSON.stringify({ count, date: format(date, "yyyy-MM-dd") })
-          );
-        }
-      };
-
-      // Sync today, tomorrow, and the currently selected date (handles stale storage)
-      syncFor(today);
-      syncFor(tomorrow);
-      syncFor(selectedDate);
+    // Compute the authoritative count from current bookings state
+    const computeCountFor = (date: Date) => {
+      const label = getDateLabel(date);
+      return bookings.filter(
+        (booking) => booking.date === label && booking.status === "Upcoming"
+      ).length;
     };
 
-    initializeDailyBookingCounts();
-    setDailyCount(getDailyBookingCount(selectedDate));
+    // Keep localStorage in sync, but never use it as source of truth
+    const syncFor = (date: Date) => {
+      const count = computeCountFor(date);
+      const key = getDailyBookingKey(date);
+      const storedCount = getDailyBookingCount(date);
+      if (storedCount !== count) {
+        localStorage.setItem(
+          key,
+          JSON.stringify({ count, date: format(date, "yyyy-MM-dd") })
+        );
+      }
+      return count;
+    };
+
+    // Sync and then set the UI count from state-derived value
+    syncFor(today);
+    syncFor(tomorrow);
+    const uiCount = syncFor(selectedDate);
+    setDailyCount(uiCount);
   }, [bookings, selectedDate, isOpen]);
 
   const canBookToday = dailyCount < 2;
@@ -472,12 +475,9 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
         facilitySize: getSizeForSport(facility.sport)
       };
 
-      // Add the booking to context
-      addBooking(bookingData);
-      
-      // Increment daily booking count
+      // Increment daily booking count (kept in storage only for persistence)
       incrementDailyBookingCount(selectedDate);
-      setDailyCount(getDailyBookingCount(selectedDate));
+      setDailyCount((prev) => Math.min(prev + 1, 2));
       // Generate QR code
       generateQRCode();
 
