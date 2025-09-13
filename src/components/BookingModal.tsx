@@ -62,8 +62,8 @@ const sportConfig: { [key: string]: number } = {
   'Basket Court': 12
 };
 
-// Generate 45-minute slots from 6:45 AM to 10:30 PM based on facility schedule
-const generateTimeSlotsForCourt = (selectedDate: Date, facilityCapacity: number, courtNumber: number): TimeSlot[] => {
+// Generate facility-specific slots based on name and location from the schedule
+const generateTimeSlotsForCourt = (selectedDate: Date, facilityCapacity: number, courtNumber: number, facility: { name: string; location: string }): TimeSlot[] => {
   const slots: TimeSlot[] = [];
   let id = 1;
   const currentTime = new Date();
@@ -86,30 +86,244 @@ const generateTimeSlotsForCourt = (selectedDate: Date, facilityCapacity: number,
     return slotDateTime < currentTime;
   };
 
-  // Define all slot timings as per facility schedule (6:45 AM to 10:30 PM)
-  const slotTimings = [
-    { start: [6, 45], end: [7, 30] },   // 06:45 to 07:30
-    { start: [7, 30], end: [8, 15] },   // 07:30 to 08:15
-    { start: [8, 15], end: [9, 0] },    // 08:15 to 09:00
-    { start: [9, 0], end: [9, 45] },    // 09:00 to 09:45
-    { start: [9, 45], end: [10, 30] },  // 09:45 to 10:30
-    { start: [10, 30], end: [11, 15] }, // 10:30 to 11:15
-    { start: [11, 15], end: [12, 0] },  // 11:15 to 12:00
-    { start: [12, 0], end: [12, 45] },  // 12:00 to 12:45
-    { start: [12, 45], end: [13, 30] }, // 12:45 to 13:30
-    { start: [13, 30], end: [14, 15] }, // 13:30 to 14:15
-    { start: [14, 15], end: [15, 0] },  // 14:15 to 15:00
-    { start: [15, 0], end: [15, 45] },  // 15:00 to 15:45
-    { start: [15, 45], end: [16, 30] }, // 15:45 to 16:30
-    { start: [16, 30], end: [17, 15] }, // 16:30 to 17:15
-    { start: [17, 15], end: [18, 0] },  // 17:15 to 18:00
-    { start: [18, 0], end: [18, 45] },  // 18:00 to 18:45
-    { start: [18, 45], end: [19, 30] }, // 18:45 to 19:30
-    { start: [19, 30], end: [20, 15] }, // 19:30 to 20:15
-    { start: [20, 15], end: [21, 0] },  // 20:15 to 21:00
-    { start: [21, 0], end: [21, 45] },  // 21:00 to 21:45
-    { start: [21, 45], end: [22, 30] }, // 21:45 to 22:30
-  ];
+  // Helper function to create time slot objects from hour:minute arrays
+  const createTimeSlot = (start: number[], end: number[]) => ({
+    start,
+    end
+  });
+
+  // Define facility-specific slot timings based on the provided schedule
+  const getFacilitySlotTimings = (facilityName: string, location: string) => {
+    const key = `${facilityName}-${location}`;
+    
+    switch (true) {
+      // Basketball Court - Near Sports Complex (2 courts)
+      case facilityName === 'Basketball Court' && location.includes('Sports Complex'):
+        return [
+          createTimeSlot([6, 0], [7, 30]), createTimeSlot([6, 45], [7, 30]), createTimeSlot([7, 30], [9, 0]),
+          createTimeSlot([8, 15], [9, 0]), createTimeSlot([9, 0], [9, 45]), createTimeSlot([9, 30], [10, 30]),
+          createTimeSlot([10, 30], [11, 15]), createTimeSlot([11, 15], [12, 0]), createTimeSlot([12, 0], [12, 45]),
+          createTimeSlot([12, 45], [13, 30]), createTimeSlot([13, 30], [14, 15]), createTimeSlot([14, 15], [15, 0]),
+          createTimeSlot([15, 0], [15, 45]), createTimeSlot([15, 45], [16, 30]), createTimeSlot([16, 30], [17, 15]),
+          createTimeSlot([17, 15], [18, 0]), createTimeSlot([18, 0], [18, 45]), createTimeSlot([18, 45], [19, 30]),
+          createTimeSlot([19, 30], [20, 15]), createTimeSlot([20, 15], [21, 0]), createTimeSlot([21, 0], [21, 45]),
+          createTimeSlot([21, 45], [22, 30])
+        ];
+
+      // Volleyball Court - Near Sports Complex (2 courts)
+      case facilityName === 'Volleyball Court' && location.includes('Sports Complex'):
+        return [
+          createTimeSlot([6, 0], [7, 30]), createTimeSlot([6, 45], [7, 30]), createTimeSlot([7, 30], [9, 0]),
+          createTimeSlot([8, 15], [9, 0]), createTimeSlot([9, 0], [9, 45]), createTimeSlot([9, 30], [10, 30]),
+          createTimeSlot([10, 30], [11, 15]), createTimeSlot([11, 15], [12, 0]), createTimeSlot([12, 0], [12, 45]),
+          createTimeSlot([12, 45], [13, 30]), createTimeSlot([13, 30], [14, 15]), createTimeSlot([14, 15], [15, 0]),
+          createTimeSlot([15, 0], [15, 45]), createTimeSlot([15, 45], [16, 30]), createTimeSlot([16, 30], [17, 15]),
+          createTimeSlot([17, 15], [18, 0]), createTimeSlot([18, 0], [18, 45]), createTimeSlot([18, 45], [19, 30]),
+          createTimeSlot([19, 30], [20, 15]), createTimeSlot([20, 15], [21, 0]), createTimeSlot([21, 0], [21, 45]),
+          createTimeSlot([21, 45], [22, 30])
+        ];
+
+      // Tennis Court - Near Sports Complex (2 courts)
+      case facilityName === 'Tennis Court' && location.includes('Sports Complex'):
+        return [
+          createTimeSlot([6, 0], [7, 30]), createTimeSlot([6, 45], [7, 30]), createTimeSlot([7, 30], [9, 0]),
+          createTimeSlot([8, 15], [9, 0]), createTimeSlot([9, 0], [9, 45]), createTimeSlot([9, 30], [10, 30]),
+          createTimeSlot([10, 30], [11, 15]), createTimeSlot([11, 15], [12, 0]), createTimeSlot([12, 0], [12, 45]),
+          createTimeSlot([12, 45], [13, 30]), createTimeSlot([13, 30], [14, 15]), createTimeSlot([14, 15], [15, 0]),
+          createTimeSlot([15, 0], [15, 45]), createTimeSlot([15, 45], [16, 30]), createTimeSlot([16, 30], [17, 15]),
+          createTimeSlot([17, 15], [18, 0]), createTimeSlot([18, 0], [18, 45]), createTimeSlot([18, 45], [19, 30]),
+          createTimeSlot([19, 30], [20, 15]), createTimeSlot([20, 15], [21, 0]), createTimeSlot([21, 0], [21, 45]),
+          createTimeSlot([21, 45], [22, 30])
+        ];
+
+      // Badminton Court - Sports Complex (3 courts)
+      case facilityName === 'Badminton Court' && location === 'Sports Complex':
+        return [
+          createTimeSlot([6, 0], [7, 30]), createTimeSlot([6, 45], [7, 30]), createTimeSlot([7, 30], [9, 0]),
+          createTimeSlot([8, 15], [9, 0]), createTimeSlot([9, 0], [9, 45]), createTimeSlot([9, 30], [10, 30]),
+          createTimeSlot([10, 30], [11, 15]), createTimeSlot([11, 15], [12, 0]), createTimeSlot([12, 0], [12, 45]),
+          createTimeSlot([12, 45], [13, 30]), createTimeSlot([13, 30], [14, 15]), createTimeSlot([14, 15], [15, 0]),
+          createTimeSlot([15, 0], [15, 45]), createTimeSlot([15, 45], [16, 30]), createTimeSlot([16, 30], [17, 15]),
+          createTimeSlot([17, 15], [18, 0]), createTimeSlot([18, 0], [18, 45]), createTimeSlot([18, 45], [19, 30]),
+          createTimeSlot([19, 30], [20, 15]), createTimeSlot([20, 15], [21, 0]), createTimeSlot([21, 0], [21, 45]),
+          createTimeSlot([21, 45], [22, 30])
+        ];
+
+      // Squash Court - Sports Complex (3 courts)
+      case facilityName === 'Squash Court' && location === 'Sports Complex':
+        return [
+          createTimeSlot([6, 0], [7, 30]), createTimeSlot([6, 45], [7, 30]), createTimeSlot([7, 30], [9, 0]),
+          createTimeSlot([8, 15], [9, 0]), createTimeSlot([9, 0], [9, 45]), createTimeSlot([9, 30], [10, 30]),
+          createTimeSlot([10, 30], [11, 15]), createTimeSlot([11, 15], [12, 0]), createTimeSlot([12, 0], [12, 45]),
+          createTimeSlot([12, 45], [13, 30]), createTimeSlot([13, 30], [14, 15]), createTimeSlot([14, 15], [15, 0]),
+          createTimeSlot([15, 0], [15, 45]), createTimeSlot([15, 45], [16, 30]), createTimeSlot([16, 30], [17, 15]),
+          createTimeSlot([17, 15], [18, 0]), createTimeSlot([18, 0], [18, 45]), createTimeSlot([18, 45], [19, 30]),
+          createTimeSlot([19, 30], [20, 15]), createTimeSlot([20, 15], [21, 0]), createTimeSlot([21, 0], [21, 45]),
+          createTimeSlot([21, 45], [22, 30])
+        ];
+
+      // Swimming Pool - Sports Complex (1 pool)
+      case facilityName === 'Swimming Pool' && location === 'Sports Complex':
+        return [
+          createTimeSlot([7, 0], [8, 0]), createTimeSlot([8, 0], [9, 0]), createTimeSlot([16, 0], [17, 0]),
+          createTimeSlot([17, 0], [18, 0]), createTimeSlot([18, 0], [19, 0]), createTimeSlot([19, 0], [20, 0]),
+          createTimeSlot([20, 0], [21, 0]), createTimeSlot([21, 0], [22, 0])
+        ];
+
+      // Pickleball Courts - Near H block (4 courts)
+      case facilityName === 'Pickleball Courts' && location.includes('H block'):
+        return [
+          createTimeSlot([6, 0], [8, 45]), createTimeSlot([6, 45], [7, 30]), createTimeSlot([7, 30], [8, 15]),
+          createTimeSlot([8, 15], [9, 0]), createTimeSlot([9, 0], [9, 45]), createTimeSlot([9, 30], [10, 30]),
+          createTimeSlot([10, 30], [11, 15]), createTimeSlot([11, 15], [12, 0]), createTimeSlot([12, 0], [12, 45]),
+          createTimeSlot([12, 45], [13, 30]), createTimeSlot([13, 30], [14, 15]), createTimeSlot([14, 15], [15, 0]),
+          createTimeSlot([15, 0], [15, 45]), createTimeSlot([15, 45], [16, 30]), createTimeSlot([16, 30], [17, 15]),
+          createTimeSlot([17, 15], [18, 0]), createTimeSlot([18, 0], [18, 45]), createTimeSlot([18, 45], [19, 30]),
+          createTimeSlot([19, 30], [20, 15]), createTimeSlot([20, 15], [21, 0]), createTimeSlot([21, 0], [21, 45]),
+          createTimeSlot([21, 45], [22, 30])
+        ];
+
+      // Pickleball Courts - Near Football Ground (6 courts)
+      case facilityName === 'Pickleball Courts' && location.includes('Football Ground'):
+        return [
+          createTimeSlot([6, 0], [8, 45]), createTimeSlot([6, 45], [7, 30]), createTimeSlot([7, 30], [8, 15]),
+          createTimeSlot([8, 15], [9, 0]), createTimeSlot([9, 0], [9, 45]), createTimeSlot([9, 30], [10, 30]),
+          createTimeSlot([10, 30], [11, 15]), createTimeSlot([11, 15], [12, 0]), createTimeSlot([12, 0], [12, 45]),
+          createTimeSlot([12, 45], [13, 30]), createTimeSlot([13, 30], [14, 15]), createTimeSlot([14, 15], [15, 0]),
+          createTimeSlot([15, 0], [15, 45]), createTimeSlot([15, 45], [16, 30]), createTimeSlot([16, 30], [17, 15]),
+          createTimeSlot([17, 15], [18, 0]), createTimeSlot([18, 0], [18, 45]), createTimeSlot([18, 45], [19, 30]),
+          createTimeSlot([19, 30], [20, 15]), createTimeSlot([20, 15], [21, 0]), createTimeSlot([21, 0], [21, 45]),
+          createTimeSlot([21, 45], [22, 30])
+        ];
+
+      // Gym - D6 (2 gyms)
+      case facilityName === 'Gym' && location === 'D6':
+        return [
+          createTimeSlot([7, 30], [8, 0]), createTimeSlot([8, 0], [9, 0]), createTimeSlot([9, 0], [10, 0]),
+          createTimeSlot([10, 0], [11, 0]), createTimeSlot([11, 0], [12, 0]), createTimeSlot([12, 0], [13, 0]),
+          createTimeSlot([13, 0], [14, 0]), createTimeSlot([14, 0], [15, 0]), createTimeSlot([15, 0], [16, 0]),
+          createTimeSlot([16, 0], [17, 0]), createTimeSlot([17, 0], [18, 0]), createTimeSlot([18, 0], [19, 0]),
+          createTimeSlot([19, 0], [20, 0]), createTimeSlot([20, 0], [21, 0]), createTimeSlot([21, 0], [22, 0]),
+          createTimeSlot([22, 0], [23, 0])
+        ];
+
+      // Gym - Sports Complex (1 gym)
+      case facilityName === 'Gym' && location === 'Sports Complex':
+        return [
+          createTimeSlot([6, 0], [7, 30]), createTimeSlot([7, 30], [8, 0]), createTimeSlot([8, 0], [9, 0]),
+          createTimeSlot([9, 0], [10, 0]), createTimeSlot([10, 0], [11, 0]), createTimeSlot([11, 0], [12, 0]),
+          createTimeSlot([12, 0], [13, 0]), createTimeSlot([13, 0], [14, 0]), createTimeSlot([14, 0], [15, 0]),
+          createTimeSlot([15, 0], [16, 0]), createTimeSlot([16, 0], [17, 0]), createTimeSlot([17, 0], [18, 0]),
+          createTimeSlot([18, 0], [19, 0]), createTimeSlot([19, 0], [20, 0]), createTimeSlot([20, 0], [21, 0]),
+          createTimeSlot([21, 0], [22, 0]), createTimeSlot([22, 0], [23, 0])
+        ];
+
+      // Badminton Court - German Hangar (10 courts)
+      case facilityName === 'Badminton Court' && location.includes('German'):
+        return [
+          createTimeSlot([6, 0], [6, 45]), createTimeSlot([6, 45], [7, 30]), createTimeSlot([7, 30], [8, 15]),
+          createTimeSlot([8, 15], [9, 0]), createTimeSlot([9, 0], [9, 45]), createTimeSlot([9, 30], [10, 30]),
+          createTimeSlot([10, 30], [11, 15]), createTimeSlot([11, 15], [12, 0]), createTimeSlot([12, 0], [12, 45]),
+          createTimeSlot([12, 45], [13, 30]), createTimeSlot([13, 30], [14, 15]), createTimeSlot([14, 15], [15, 0]),
+          createTimeSlot([15, 0], [15, 45]), createTimeSlot([15, 45], [16, 30]), createTimeSlot([16, 30], [17, 15]),
+          createTimeSlot([17, 15], [18, 0]), createTimeSlot([18, 0], [18, 45]), createTimeSlot([18, 45], [19, 30]),
+          createTimeSlot([19, 30], [20, 15]), createTimeSlot([20, 15], [21, 0]), createTimeSlot([21, 0], [21, 45]),
+          createTimeSlot([21, 45], [22, 30])
+        ];
+
+      // Badminton Court - CUI-C1 L Block (4 courts)
+      case facilityName === 'Badminton Court' && location.includes('C1'):
+        return [
+          createTimeSlot([6, 0], [6, 45]), createTimeSlot([6, 45], [7, 30]), createTimeSlot([7, 30], [8, 15]),
+          createTimeSlot([8, 15], [9, 0]), createTimeSlot([9, 0], [9, 45]), createTimeSlot([9, 30], [10, 30]),
+          createTimeSlot([10, 30], [11, 15]), createTimeSlot([11, 15], [12, 0]), createTimeSlot([12, 0], [12, 45]),
+          createTimeSlot([12, 45], [13, 30]), createTimeSlot([13, 30], [14, 15]), createTimeSlot([14, 15], [15, 0]),
+          createTimeSlot([15, 0], [15, 45]), createTimeSlot([15, 45], [16, 30]), createTimeSlot([16, 30], [17, 15]),
+          createTimeSlot([17, 15], [18, 0]), createTimeSlot([18, 0], [18, 45]), createTimeSlot([18, 45], [19, 30]),
+          createTimeSlot([19, 30], [20, 15]), createTimeSlot([20, 15], [21, 0]), createTimeSlot([21, 0], [21, 45]),
+          createTimeSlot([21, 45], [22, 30])
+        ];
+
+      // Badminton Court - C & D block (2 courts)
+      case facilityName === 'Badminton Court' && (location.includes('C & D') || location.includes('C&D')):
+        return [
+          createTimeSlot([6, 0], [6, 45]), createTimeSlot([6, 45], [7, 30]), createTimeSlot([7, 30], [8, 15]),
+          createTimeSlot([8, 15], [9, 0]), createTimeSlot([9, 0], [9, 45]), createTimeSlot([9, 30], [10, 30]),
+          createTimeSlot([10, 30], [11, 15]), createTimeSlot([11, 15], [12, 0]), createTimeSlot([12, 0], [12, 45]),
+          createTimeSlot([12, 45], [13, 30]), createTimeSlot([13, 30], [14, 15]), createTimeSlot([14, 15], [15, 0]),
+          createTimeSlot([15, 0], [15, 45]), createTimeSlot([15, 45], [16, 30]), createTimeSlot([16, 30], [17, 15]),
+          createTimeSlot([17, 15], [18, 0]), createTimeSlot([18, 0], [18, 45]), createTimeSlot([18, 45], [19, 30]),
+          createTimeSlot([19, 30], [20, 15]), createTimeSlot([20, 15], [21, 0]), createTimeSlot([21, 0], [21, 45]),
+          createTimeSlot([21, 45], [22, 30])
+        ];
+
+      // Foot Court - C11 C12 L Block (2 courts)
+      case facilityName === 'Foot Court' && location.includes('C11'):
+        return [
+          createTimeSlot([6, 0], [6, 45]), createTimeSlot([6, 45], [7, 30]), createTimeSlot([7, 30], [8, 15]),
+          createTimeSlot([8, 15], [9, 0]), createTimeSlot([9, 0], [9, 45]), createTimeSlot([9, 30], [10, 30]),
+          createTimeSlot([10, 30], [11, 15]), createTimeSlot([11, 15], [12, 0]), createTimeSlot([12, 0], [12, 45]),
+          createTimeSlot([12, 45], [13, 30]), createTimeSlot([13, 30], [14, 15]), createTimeSlot([14, 15], [15, 0]),
+          createTimeSlot([15, 0], [15, 45]), createTimeSlot([15, 45], [16, 30]), createTimeSlot([16, 30], [17, 15]),
+          createTimeSlot([17, 15], [18, 0]), createTimeSlot([18, 0], [18, 45]), createTimeSlot([18, 45], [19, 30]),
+          createTimeSlot([19, 30], [20, 15]), createTimeSlot([20, 15], [21, 0]), createTimeSlot([21, 0], [21, 45]),
+          createTimeSlot([21, 45], [22, 30])
+        ];
+
+      // Table Tennis - Sports Complex (6 courts)
+      case facilityName === 'Table Tennis' && location === 'Sports Complex':
+        return [
+          createTimeSlot([6, 0], [6, 45]), createTimeSlot([6, 45], [7, 30]), createTimeSlot([7, 30], [8, 15]),
+          createTimeSlot([8, 15], [9, 0]), createTimeSlot([9, 0], [9, 45]), createTimeSlot([9, 30], [10, 30]),
+          createTimeSlot([10, 30], [11, 15]), createTimeSlot([11, 15], [12, 0]), createTimeSlot([12, 0], [12, 45]),
+          createTimeSlot([12, 45], [13, 30]), createTimeSlot([13, 30], [14, 15]), createTimeSlot([14, 15], [15, 0]),
+          createTimeSlot([15, 0], [15, 45]), createTimeSlot([15, 45], [16, 30]), createTimeSlot([16, 30], [17, 15]),
+          createTimeSlot([17, 15], [18, 0]), createTimeSlot([18, 0], [18, 45]), createTimeSlot([18, 45], [19, 30]),
+          createTimeSlot([19, 30], [20, 15]), createTimeSlot([20, 15], [21, 0]), createTimeSlot([21, 0], [21, 45]),
+          createTimeSlot([21, 45], [22, 30])
+        ];
+
+      // Kabaddi Court - Sports Complex (1 court)
+      case facilityName === 'Kabaddi Court' && location === 'Sports Complex':
+        return [
+          createTimeSlot([6, 0], [6, 45]), createTimeSlot([6, 45], [7, 30]), createTimeSlot([7, 30], [8, 15]),
+          createTimeSlot([8, 15], [9, 0]), createTimeSlot([9, 0], [9, 45]), createTimeSlot([9, 30], [10, 30]),
+          createTimeSlot([10, 30], [11, 15]), createTimeSlot([11, 15], [12, 0]), createTimeSlot([12, 0], [12, 45]),
+          createTimeSlot([12, 45], [13, 30]), createTimeSlot([13, 30], [14, 15]), createTimeSlot([14, 15], [15, 0]),
+          createTimeSlot([15, 0], [15, 45]), createTimeSlot([15, 45], [16, 30]), createTimeSlot([16, 30], [17, 15]),
+          createTimeSlot([17, 15], [18, 0]), createTimeSlot([18, 0], [18, 45]), createTimeSlot([18, 45], [19, 30]),
+          createTimeSlot([19, 30], [20, 15]), createTimeSlot([20, 15], [21, 0]), createTimeSlot([21, 0], [21, 45]),
+          createTimeSlot([21, 45], [22, 30])
+        ];
+
+      // Taekwondo Court - Sports Complex (1 court)
+      case facilityName === 'Taekwondo Court' && location === 'Sports Complex':
+        return [
+          createTimeSlot([6, 0], [6, 45]), createTimeSlot([6, 45], [7, 30]), createTimeSlot([7, 30], [8, 15]),
+          createTimeSlot([8, 15], [9, 0]), createTimeSlot([9, 0], [9, 45]), createTimeSlot([9, 30], [10, 30]),
+          createTimeSlot([10, 30], [11, 15]), createTimeSlot([11, 15], [12, 0]), createTimeSlot([12, 0], [12, 45]),
+          createTimeSlot([12, 45], [13, 30]), createTimeSlot([13, 30], [14, 15]), createTimeSlot([14, 15], [15, 0]),
+          createTimeSlot([15, 0], [15, 45]), createTimeSlot([15, 45], [16, 30]), createTimeSlot([16, 30], [17, 15]),
+          createTimeSlot([17, 15], [18, 0]), createTimeSlot([18, 0], [18, 45]), createTimeSlot([18, 45], [19, 30]),
+          createTimeSlot([19, 30], [20, 15]), createTimeSlot([20, 15], [21, 0]), createTimeSlot([21, 0], [21, 45]),
+          createTimeSlot([21, 45], [22, 30])
+        ];
+
+      // Default fallback - generic schedule
+      default:
+        return [
+          createTimeSlot([6, 45], [7, 30]), createTimeSlot([7, 30], [8, 15]), createTimeSlot([8, 15], [9, 0]),
+          createTimeSlot([9, 0], [9, 45]), createTimeSlot([9, 45], [10, 30]), createTimeSlot([10, 30], [11, 15]),
+          createTimeSlot([11, 15], [12, 0]), createTimeSlot([12, 0], [12, 45]), createTimeSlot([12, 45], [13, 30]),
+          createTimeSlot([13, 30], [14, 15]), createTimeSlot([14, 15], [15, 0]), createTimeSlot([15, 0], [15, 45]),
+          createTimeSlot([15, 45], [16, 30]), createTimeSlot([16, 30], [17, 15]), createTimeSlot([17, 15], [18, 0]),
+          createTimeSlot([18, 0], [18, 45]), createTimeSlot([18, 45], [19, 30]), createTimeSlot([19, 30], [20, 15]),
+          createTimeSlot([20, 15], [21, 0]), createTimeSlot([21, 0], [21, 45]), createTimeSlot([21, 45], [22, 30])
+        ];
+    }
+  };
+
+  const slotTimings = getFacilitySlotTimings(facility.name, facility.location);
 
   slotTimings.forEach((timing, index) => {
     const startTime = new Date();
@@ -350,7 +564,7 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
     resetModal();
   };
   
-  const timeSlots = selectedCourt ? generateTimeSlotsForCourt(selectedDate, facility ? sportConfig[facility.sport] || 10 : 10, selectedCourt) : [];
+  const timeSlots = selectedCourt && facility ? generateTimeSlotsForCourt(selectedDate, facility ? sportConfig[facility.sport] || 10 : 10, selectedCourt, facility) : [];
   const maxParticipants = facility ? sportConfig[facility.sport] || 10 : 10;
   const availableCourts = facility ? getAvailableCourts(facility) : 1;
 
