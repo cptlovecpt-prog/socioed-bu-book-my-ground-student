@@ -62,7 +62,7 @@ const sportConfig: { [key: string]: number } = {
   'Basket Court': 12
 };
 
-// Generate 45-minute slots for morning (6:30 AM - 9:30 AM) and evening (5:30 PM - 10:00 PM) per court
+// Generate 45-minute slots from 6:45 AM to 10:30 PM based on facility schedule
 const generateTimeSlotsForCourt = (selectedDate: Date, facilityCapacity: number, courtNumber: number): TimeSlot[] => {
   const slots: TimeSlot[] = [];
   let id = 1;
@@ -86,64 +86,36 @@ const generateTimeSlotsForCourt = (selectedDate: Date, facilityCapacity: number,
     return slotDateTime < currentTime;
   };
 
-  // Morning slots: 6:30 AM to 9:30 AM
-  const morningStart = new Date();
-  morningStart.setHours(6, 30, 0, 0);
-  
-  for (let i = 0; i < 4; i++) {
-    const startTime = new Date(morningStart);
-    startTime.setMinutes(startTime.getMinutes() + (i * 45));
-    const endTime = new Date(startTime);
-    endTime.setMinutes(endTime.getMinutes() + 45);
-    
-    // Check if slot is expired
-    const isExpired = isSlotExpired(startTime, selectedDate);
-    
-    // Create different slot states based on seeded random for consistency
-    const random = seededRandom(dateSeed + id);
-    let available: number;
-    let unavailableReason: 'expired' | 'booked' | 'blocked' | 'maintenance' | undefined;
-    
-    // If slot is expired, set available to 0
-    if (isExpired) {
-      available = 0;
-      unavailableReason = 'expired';
-    } else if (random < 0.3) {
-      available = facilityCapacity; // Fully available
-    } else if (random < 0.6) {
-      // Partially available - generate X where X < facilityCapacity
-      available = Math.floor(seededRandom(dateSeed + id + 1000) * (facilityCapacity - 1)) + 1;
-    } else if (random < 0.8) {
-      available = 0; // Slot unavailable - booked
-      unavailableReason = 'booked';
-    } else if (random < 0.9) {
-      available = 0; // Blocked by admin
-      unavailableReason = 'blocked';
-    } else {
-      available = 0; // Down for maintenance
-      unavailableReason = 'maintenance';
-    }
-    
-    slots.push({
-      id: `court-${courtNumber}-slot-${id}`,
-      time: `${format(startTime, 'h:mm a')} - ${format(endTime, 'h:mm a')}`,
-      available: available,
-      capacity: facilityCapacity,
-      isExpired: isExpired,
-      unavailableReason: unavailableReason
-    });
-    id++;
-  }
+  // Define all slot timings as per facility schedule (6:45 AM to 10:30 PM)
+  const slotTimings = [
+    { start: [6, 45], end: [7, 30] },   // 06:45 to 07:30
+    { start: [7, 30], end: [8, 15] },   // 07:30 to 08:15
+    { start: [8, 15], end: [9, 0] },    // 08:15 to 09:00
+    { start: [9, 0], end: [9, 45] },    // 09:00 to 09:45
+    { start: [9, 45], end: [10, 30] },  // 09:45 to 10:30
+    { start: [10, 30], end: [11, 15] }, // 10:30 to 11:15
+    { start: [11, 15], end: [12, 0] },  // 11:15 to 12:00
+    { start: [12, 0], end: [12, 45] },  // 12:00 to 12:45
+    { start: [12, 45], end: [13, 30] }, // 12:45 to 13:30
+    { start: [13, 30], end: [14, 15] }, // 13:30 to 14:15
+    { start: [14, 15], end: [15, 0] },  // 14:15 to 15:00
+    { start: [15, 0], end: [15, 45] },  // 15:00 to 15:45
+    { start: [15, 45], end: [16, 30] }, // 15:45 to 16:30
+    { start: [16, 30], end: [17, 15] }, // 16:30 to 17:15
+    { start: [17, 15], end: [18, 0] },  // 17:15 to 18:00
+    { start: [18, 0], end: [18, 45] },  // 18:00 to 18:45
+    { start: [18, 45], end: [19, 30] }, // 18:45 to 19:30
+    { start: [19, 30], end: [20, 15] }, // 19:30 to 20:15
+    { start: [20, 15], end: [21, 0] },  // 20:15 to 21:00
+    { start: [21, 0], end: [21, 45] },  // 21:00 to 21:45
+    { start: [21, 45], end: [22, 30] }, // 21:45 to 22:30
+  ];
 
-  // Evening slots: 5:30 PM to 10:00 PM
-  const eveningStart = new Date();
-  eveningStart.setHours(17, 30, 0, 0);
-  
-  for (let i = 0; i < 6; i++) {
-    const startTime = new Date(eveningStart);
-    startTime.setMinutes(startTime.getMinutes() + (i * 45));
-    const endTime = new Date(startTime);
-    endTime.setMinutes(endTime.getMinutes() + 45);
+  slotTimings.forEach((timing, index) => {
+    const startTime = new Date();
+    startTime.setHours(timing.start[0], timing.start[1], 0, 0);
+    const endTime = new Date();
+    endTime.setHours(timing.end[0], timing.end[1], 0, 0);
     
     // Check if slot is expired
     const isExpired = isSlotExpired(startTime, selectedDate);
@@ -182,7 +154,7 @@ const generateTimeSlotsForCourt = (selectedDate: Date, facilityCapacity: number,
       unavailableReason: unavailableReason
     });
     id++;
-  }
+  });
 
   return slots;
 };
