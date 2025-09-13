@@ -464,7 +464,7 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
                           : 'text-muted-foreground hover:text-foreground'
                       }`}
                     >
-                      Sports & Games
+                      Sports/ Games
                     </button>
                     
                     {/* Fitness button */}
