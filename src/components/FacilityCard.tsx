@@ -50,23 +50,34 @@ export const FacilityCard = ({
     }
   };
 
-  const getSizeForSport = (sport: string) => {
-    const sizes: { [key: string]: number } = {
-      'Football': 8968,
-      'Cricket': 7400,
-      'Volleyball': 960,
-      'Tennis': 1338,
-      'Badminton': 480,
-      'Squash': 187,
-      'Basketball': 536,
-      'Swimming': 1474,
-      'Pickleball': 736,
-      'Gym': 382,
-      'Padel': 832,
-      'Table Tennis': 1200,
-      'Chess': 1048
+  const getCourtsForSport = (sport: string, facilityName: string) => {
+    // Map facility name and sport to court count based on Excel data
+    const courtMap: { [key: string]: number } = {
+      'Basketball Court': 2,
+      'Half Basketball Court': 2,
+      'Volleyball Court': 2,
+      'Tennis Court': 2,
+      'Badminton Court': 3, // Default, will be overridden by location
+      'Squash Court': 3,
+      'Swimming Pool': 1,
+      'Pickleball Courts': 10,
+      'Gym': 1,
+      'Padel Court': 2,
+      'Table Tennis': 6,
+      'Kabaddi Court': 1,
+      'Chess Room': 1,
+      'Football Ground': 1,
+      'Cricket Ground': 1
     };
-    return sizes[sport] || 500;
+    
+    // Special handling for facilities with multiple locations
+    if (facilityName === 'Badminton Court') {
+      if (location.includes('German')) return 10;
+      if (location.includes('C10-C11')) return 3;
+      return 3; // Sports Complex default
+    }
+    
+    return courtMap[facilityName] || 1;
   };
 
   return (
@@ -114,10 +125,10 @@ export const FacilityCard = ({
         </div>
       </Card>
       
-      {/* Sport name and size below card */}
+      {/* Sport name and courts below card */}
       <div className="mt-2 sm:mt-3 space-y-1 text-center sm:text-left">
         <p className="text-base sm:text-lg font-semibold text-foreground">{sport}</p>
-        <p className="text-xs sm:text-sm text-muted-foreground">{getSizeForSport(sport)} sq mtrs.</p>
+        <p className="text-xs sm:text-sm text-muted-foreground">{getCourtsForSport(sport, name)} {getCourtsForSport(sport, name) === 1 ? 'court' : 'courts'}</p>
       </div>
     </div>
   );
