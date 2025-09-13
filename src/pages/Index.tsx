@@ -13,7 +13,7 @@ import Footer from "@/components/Footer";
 import YourBookings from "@/components/YourBookings";
 import SignInModal from "@/components/SignInModal";
 import { useToast } from "@/hooks/use-toast";
-import { SPORT_IMAGES } from "@/constants/images";
+import { SPORT_IMAGES, getSportImage } from "@/constants/images";
 import { addDays } from "date-fns";
 
 interface IndexProps {
@@ -260,7 +260,7 @@ const outdoorFacilities = [
     available: 10,
     location: "Sports Complex",
     nextSlot: "16:00 - 18:00",
-    image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop",
+    image: getSportImage("Kabaddi"),
     status: 'available' as const,
     rating: 4.1,
     votes: 845

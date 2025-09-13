@@ -20,6 +20,7 @@ export const SPORT_IMAGES = {
   PADEL: "/lovable-uploads/30c311d0-0531-4989-b2cf-446fa8a581ed.png",
   SQUASH: "/lovable-uploads/de8033c6-2e20-42bf-8b5e-88753e101116.png",
   PICKLEBALL: "/lovable-uploads/75efefc8-6f39-47ce-b08c-18e3336f2ada.png",
+  KABADDI: "/lovable-uploads/kabaddi-new.webp",
   
   // Fallback images from Unsplash
   BADMINTON: "https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=400&h=300&fit=crop",
