@@ -64,8 +64,8 @@ const Navigation = ({ isSignedIn, setIsSignedIn, userData, setUserData, onOpenSi
         <div className="flex justify-between items-center h-16 sm:h-20">
           {/* Logo and Name */}
           <div className="flex items-center space-x-2 sm:space-x-3 cursor-pointer" onClick={navigateToHome}>
-            <img src={LOGO_IMAGE} alt="Book My Ground" className="h-8 sm:h-12 w-auto" />
-            <span className="text-lg sm:text-xl font-bold hover:text-primary transition-colors">Book My Ground</span>
+            <img src={LOGO_IMAGE} alt="Courtside" className="h-16 sm:h-24 w-auto" />
+            <span className="text-lg sm:text-xl font-bold hover:text-primary transition-colors">Courtside</span>
           </div>
 
           {/* Right side controls */}

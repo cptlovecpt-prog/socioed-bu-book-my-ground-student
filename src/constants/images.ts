@@ -2,7 +2,7 @@
 // TODO: Convert these to actual imports when images are moved to assets
 
 // Logo and branding
-export const LOGO_IMAGE = "/lovable-uploads/923283f5-8027-43fb-b25c-080ee8310656.png";
+export const LOGO_IMAGE = "/assets/courtside-logo.png";
 
 // Hero carousel images
 export const HERO_IMAGES = {
