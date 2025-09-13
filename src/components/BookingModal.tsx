@@ -254,10 +254,9 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
     const computeCountFor = (date: Date) => {
       const label = getDateLabel(date);
       return bookings.filter(
-        (booking) => booking.date === label && booking.status === "Upcoming"
+        (booking) => booking.date === label && booking.status !== "Cancelled"
       ).length;
     };
-
     // Keep localStorage in sync, but never use it as source of truth
     const syncFor = (date: Date) => {
       const count = computeCountFor(date);
@@ -474,6 +473,9 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
         participants: `${participantCount} participant${participantCount > 1 ? 's' : ''}`,
         facilitySize: getSizeForSport(facility.sport)
       };
+
+      // Add the booking to context (authoritative source of truth)
+      addBooking(bookingData);
 
       // Increment daily booking count (kept in storage only for persistence)
       incrementDailyBookingCount(selectedDate);
