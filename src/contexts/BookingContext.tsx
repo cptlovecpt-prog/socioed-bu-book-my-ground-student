@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
+import { format } from 'date-fns';
 
 export interface Booking {
   id: string;
@@ -124,9 +125,55 @@ export const BookingProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const cancelBooking = (id: string) => {
-    setBookings(prev => prev.map(booking => 
-      booking.id === id ? { ...booking, status: 'Cancelled' as const } : booking
-    ));
+    setBookings(prev => prev.map(booking => {
+      if (booking.id === id) {
+        // Free up a booking slot when cancelled
+        const bookingDate = parseBookingDate(booking.date);
+        if (bookingDate) {
+          decrementDailyBookingCount(bookingDate);
+        }
+        return { ...booking, status: 'Cancelled' as const };
+      }
+      return booking;
+    }));
+  };
+
+  // Helper function to parse booking date
+  const parseBookingDate = (dateStr: string): Date | null => {
+    const today = new Date();
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    
+    if (dateStr === 'Today') {
+      return today;
+    } else if (dateStr === 'Tomorrow') {
+      return tomorrow;
+    } else {
+      // Try to parse other date formats like "Dec 12"
+      try {
+        const currentYear = new Date().getFullYear();
+        const parsedDate = new Date(`${dateStr}, ${currentYear}`);
+        return isNaN(parsedDate.getTime()) ? null : parsedDate;
+      } catch {
+        return null;
+      }
+    }
+  };
+
+  // Helper function to decrement daily booking count
+  const decrementDailyBookingCount = (date: Date) => {
+    const getDailyBookingKey = (date: Date) => {
+      return `daily_bookings_${format(date, 'yyyy-MM-dd')}`;
+    };
+    
+    const key = getDailyBookingKey(date);
+    const stored = localStorage.getItem(key);
+    if (stored) {
+      const currentCount = JSON.parse(stored).count || 0;
+      if (currentCount > 0) {
+        localStorage.setItem(key, JSON.stringify({ count: currentCount - 1, date: format(date, 'yyyy-MM-dd') }));
+      }
+    }
   };
 
   return (

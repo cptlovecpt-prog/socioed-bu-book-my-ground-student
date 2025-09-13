@@ -214,6 +214,14 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
     localStorage.setItem(key, JSON.stringify({ count: currentCount + 1, date: format(date, 'yyyy-MM-dd') }));
   };
 
+  const decrementDailyBookingCount = (date: Date) => {
+    const key = getDailyBookingKey(date);
+    const currentCount = getDailyBookingCount(date);
+    if (currentCount > 0) {
+      localStorage.setItem(key, JSON.stringify({ count: currentCount - 1, date: format(date, 'yyyy-MM-dd') }));
+    }
+  };
+
   const canBookForDay = (date: Date) => {
     return getDailyBookingCount(date) < 2;
   };
