@@ -25,6 +25,49 @@ interface IndexProps {
 
 const indoorFacilities = [
   {
+    id: "indoor-4",
+    name: "Gym",
+    sport: "Gym",
+    capacity: 40,
+    available: 25,
+    location: "DG",
+    nextSlot: "06:00 - 22:00",
+    image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop",
+    status: 'available' as const,
+    rating: 4.6,
+    votes: 308
+  },
+  {
+    id: "indoor-5",
+    name: "Gym",
+    sport: "Gym",
+    capacity: 40,
+    available: 30,
+    location: "K block",
+    nextSlot: "06:00 - 22:00",
+    image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop",
+    status: 'available' as const,
+    rating: 4.5,
+    votes: 382
+  },
+  {
+    id: "outdoor-6",
+    name: "Swimming Pool",
+    sport: "Swimming",
+    capacity: 35,
+    available: 0,
+    location: "K block",
+    nextSlot: "10:00 - 12:00",
+    image: "https://images.unsplash.com/photo-1530549387789-4c1017266635?w=400&h=300&fit=crop",
+    status: 'maintenance' as const,
+    rating: 4.9,
+    votes: 1474,
+    maintenanceMessage: "This facility is unavailable till Nov 20, 2025 due to maintenance activities"
+  }
+];
+
+const outdoorFacilities = [
+  {
     id: "indoor-1",
     name: "Badminton Court",
     sport: "Badminton",
@@ -62,32 +105,6 @@ const indoorFacilities = [
     status: 'available' as const,
     rating: 4.4,
     votes: 536
-  },
-  {
-    id: "indoor-4",
-    name: "Gym",
-    sport: "Gym",
-    capacity: 40,
-    available: 25,
-    location: "DG",
-    nextSlot: "06:00 - 22:00",
-    image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop",
-    status: 'available' as const,
-    rating: 4.6,
-    votes: 308
-  },
-  {
-    id: "indoor-5",
-    name: "Gym",
-    sport: "Gym",
-    capacity: 40,
-    available: 30,
-    location: "K block",
-    nextSlot: "06:00 - 22:00",
-    image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop",
-    status: 'available' as const,
-    rating: 4.5,
-    votes: 382
   },
   {
     id: "indoor-6",
@@ -141,10 +158,7 @@ const indoorFacilities = [
     rating: 4.5,
     votes: 1200,
     maintenanceMessage: "This facility is unavailable till Dec 15, 2025 due to maintenance activities"
-  }
-];
-
-const outdoorFacilities = [
+  },
   {
     id: "outdoor-1",
     name: "Football Ground",
@@ -209,20 +223,6 @@ const outdoorFacilities = [
     status: 'full' as const,
     rating: 4.6,
     votes: 1338
-  },
-  {
-    id: "outdoor-6",
-    name: "Swimming Pool",
-    sport: "Swimming",
-    capacity: 35,
-    available: 0,
-    location: "K block",
-    nextSlot: "10:00 - 12:00",
-    image: "https://images.unsplash.com/photo-1530549387789-4c1017266635?w=400&h=300&fit=crop",
-    status: 'maintenance' as const,
-    rating: 4.9,
-    votes: 1474,
-    maintenanceMessage: "This facility is unavailable till Nov 20, 2025 due to maintenance activities"
   },
   {
     id: "outdoor-7",
