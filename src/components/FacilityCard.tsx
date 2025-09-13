@@ -36,7 +36,8 @@ export const FacilityCard = ({
   apiStatus
 }: FacilityCardProps) => {
   // Use API status if provided, otherwise fall back to original status
-  const actualStatus = apiStatus || status;
+  // If no slots are available, force status to 'full' (Not Available)
+  const actualStatus = available === 0 ? 'full' : (apiStatus || status);
 
   const getStatusBadge = () => {
     switch (actualStatus) {
