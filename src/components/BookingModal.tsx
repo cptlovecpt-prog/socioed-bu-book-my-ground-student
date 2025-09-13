@@ -62,14 +62,14 @@ const sportConfig: { [key: string]: number } = {
   'Basket Court': 12
 };
 
-// Generate 45-minute slots for morning (6:30 AM - 9:30 AM) and evening (5:30 PM - 10:00 PM)
-const generateTimeSlots = (selectedDate: Date, facilityCapacity: number): TimeSlot[] => {
+// Generate 45-minute slots for morning (6:30 AM - 9:30 AM) and evening (5:30 PM - 10:00 PM) per court
+const generateTimeSlotsForCourt = (selectedDate: Date, facilityCapacity: number, courtNumber: number): TimeSlot[] => {
   const slots: TimeSlot[] = [];
   let id = 1;
   const currentTime = new Date();
   
-  // Create a seed based on the selected date to ensure consistent availability for each date
-  const dateSeed = selectedDate.getFullYear() * 10000 + selectedDate.getMonth() * 100 + selectedDate.getDate();
+  // Create a seed based on the selected date and court to ensure consistent availability for each court
+  const dateSeed = selectedDate.getFullYear() * 10000 + selectedDate.getMonth() * 100 + selectedDate.getDate() + courtNumber * 1000;
   
   // Simple seeded random function to ensure consistency
   const seededRandom = (seed: number) => {
@@ -125,7 +125,7 @@ const generateTimeSlots = (selectedDate: Date, facilityCapacity: number): TimeSl
     }
     
     slots.push({
-      id: id.toString(),
+      id: `court-${courtNumber}-slot-${id}`,
       time: `${format(startTime, 'h:mm a')} - ${format(endTime, 'h:mm a')}`,
       available: available,
       capacity: facilityCapacity,
@@ -174,7 +174,7 @@ const generateTimeSlots = (selectedDate: Date, facilityCapacity: number): TimeSl
     }
     
     slots.push({
-      id: id.toString(),
+      id: `court-${courtNumber}-slot-${id}`,
       time: `${format(startTime, 'h:mm a')} - ${format(endTime, 'h:mm a')}`,
       available: available,
       capacity: facilityCapacity,
@@ -187,9 +187,40 @@ const generateTimeSlots = (selectedDate: Date, facilityCapacity: number): TimeSl
   return slots;
 };
 
+// Get available courts for the facility
+const getAvailableCourts = (facility: { name: string; sport: string; location: string }) => {
+  const courtMap: { [key: string]: number } = {
+    'Basketball Court': 2,
+    'Half Basketball Court': 2,
+    'Volleyball Court': 2,
+    'Tennis Court': 2,
+    'Badminton Court': 3, // Default, will be overridden by location
+    'Squash Court': 3,
+    'Swimming Pool': 1,
+    'Pickleball Courts': 10,
+    'Gym': 1,
+    'Padel Court': 2,
+    'Table Tennis': 6,
+    'Kabaddi Court': 1,
+    'Chess Room': 1,
+    'Football Ground': 1,
+    'Cricket Ground': 1
+  };
+  
+  // Special handling for facilities with multiple locations
+  if (facility.name === 'Badminton Court') {
+    if (facility.location.includes('German')) return 10;
+    if (facility.location.includes('C10-C11')) return 3;
+    return 3; // Sports Complex default
+  }
+  
+  return courtMap[facility.name] || 1;
+};
+
 export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDate }: BookingModalProps) => {
   const [currentStep, setCurrentStep] = useState<BookingStep>('slot-selection');
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
+  const [selectedCourt, setSelectedCourt] = useState<number | null>(null);
   const [participantCount, setParticipantCount] = useState<number>(1);
   const [participants, setParticipants] = useState<ParticipantData[]>([{ enrollmentId: '' }]);
   const [sendEmailConfirmation, setSendEmailConfirmation] = useState<boolean>(false);
@@ -342,8 +373,9 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
     resetModal();
   };
   
-  const timeSlots = generateTimeSlots(selectedDate, facility ? sportConfig[facility.sport] || 10 : 10);
+  const timeSlots = selectedCourt ? generateTimeSlotsForCourt(selectedDate, facility ? sportConfig[facility.sport] || 10 : 10, selectedCourt) : [];
   const maxParticipants = facility ? sportConfig[facility.sport] || 10 : 10;
+  const availableCourts = facility ? getAvailableCourts(facility) : 1;
 
   const handleSlotSelect = async (slotId: string) => {
     const selectedTimeSlot = timeSlots.find(s => s.id === slotId);
@@ -524,6 +556,7 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
   const resetModal = () => {
     setCurrentStep('slot-selection');
     setSelectedSlot(null);
+    setSelectedCourt(null);
     setParticipantCount(1);
     setParticipants([{ enrollmentId: '' }]);
     setSendEmailConfirmation(false);
@@ -614,13 +647,13 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
   const getStepInfo = () => {
     switch (currentStep) {
       case 'slot-selection':
-        return { current: 1, total: 2, label: 'Select Time Slot' };
+        return { current: 1, total: 2, label: 'Select Court & Time Slot' };
       case 'booking-confirmation':
         return { current: 2, total: 2, label: 'Confirm Booking' };
       case 'final-confirmation':
         return { current: 2, total: 2, label: 'Confirmed' };
       default:
-        return { current: 1, total: 2, label: 'Select Time Slot' };
+        return { current: 1, total: 2, label: 'Select Court & Time Slot' };
     }
   };
 
@@ -645,9 +678,9 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
               </div>
             </div>
             
-            {/* Available Time Slots */}
+            {/* Available Courts */}
             <div>
-              <h3 className="font-medium mb-3">Available Time Slots: Click on available slot to proceed</h3>
+              <h3 className="font-medium mb-3">Available Courts: Select a court to view time slots</h3>
               {!canBookToday && (
                 <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
                   <p className="text-sm text-destructive font-medium">
@@ -655,100 +688,137 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
                   </p>
                 </div>
               )}
-              <div className="grid gap-2">
-                 {timeSlots.map((slot) => {
-                    const isAvailable = slot.available > 0 && !slot.isExpired && canBookToday;
-                    const isExpired = slot.isExpired || slot.unavailableReason === 'expired';
-                    const isToday = isSameDay(selectedDate, new Date());
-                    const isTomorrow = isSameDay(selectedDate, addDays(new Date(), 1));
-                    const isConsecutive = (isToday || isTomorrow) && isConsecutiveSlot(slot.time);
-                    
-                    return (
-                      <div
-                        key={slot.id}
-                        onClick={() => (isAvailable && !isConsecutive) && handleSlotSelect(slot.id)}
-                         className={`p-3 rounded-lg border transition-all ${
-                           selectedSlot === slot.id
-                             ? 'border-primary bg-primary/5 cursor-pointer'
-                              : isAvailable && !isConsecutive
-                                ? 'border-border hover:border-primary/50 cursor-pointer' 
-                                : isExpired
-                                  ? 'border-muted bg-muted/30 cursor-default opacity-60'
-                                  : isConsecutive
-                                    ? 'border-destructive/30 bg-destructive/5 cursor-not-allowed'
-                                    : 'border-destructive/30 bg-destructive/5 cursor-default'
-                         }`}
-                        style={{ cursor: (isAvailable && !isConsecutive) ? 'pointer' : isConsecutive ? 'not-allowed' : 'default' }}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <Clock className={`h-4 w-4 ${isExpired ? 'text-muted-foreground' : 'text-foreground'}`} />
-                            <span className={`font-medium ${isExpired ? 'text-muted-foreground' : 'text-foreground'}`}>{slot.time}</span>
+              <div className="grid gap-2 mb-6">
+                {Array.from({ length: availableCourts }, (_, index) => {
+                  const courtNumber = index + 1;
+                  const isSelected = selectedCourt === courtNumber;
+                  
+                  return (
+                    <div
+                      key={courtNumber}
+                      onClick={() => setSelectedCourt(courtNumber)}
+                      className={`p-3 rounded-lg border transition-all cursor-pointer ${
+                        isSelected
+                          ? 'border-primary bg-primary/5'
+                          : 'border-border hover:border-primary/50'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                            <span className="font-semibold text-primary">{courtNumber}</span>
                           </div>
-                         <div className="flex items-center gap-2">
-                               {isExpired ? (
-                                 <Badge 
-                                   className="text-white border-gray-600 font-bold relative z-50"
-                                   style={{ backgroundColor: '#4a5568' }}
-                                 >
-                                  Expired
-                                </Badge>
-                               ) : !canBookToday ? (
-                                 <Badge 
-                                   className="text-white border-orange-600 font-bold relative z-50"
-                                   style={{ backgroundColor: '#d69e2e' }}
-                                 >
-                                   Daily Limit Reached
-                                 </Badge>
-                               ) : isConsecutive ? (
-                                 <Badge 
-                                   className="text-white border-red-600 font-bold relative z-50"
-                                   style={{ backgroundColor: '#dc2626' }}
-                                 >
-                                   Consecutive Slot Blocked
-                                 </Badge>
-                               ) : slot.available === 0 ? (
-                                slot.unavailableReason === 'blocked' ? (
-                                   <Badge 
-                                     className="text-white border-[#063970] font-bold relative z-50"
-                                     style={{ backgroundColor: '#063970' }}
-                                   >
-                                    Blocked by Admin
-                                  </Badge>
-                                ) : slot.unavailableReason === 'maintenance' ? (
-                                   <Badge 
-                                     className="text-white border-[#873e23] font-bold relative z-50"
-                                     style={{ backgroundColor: '#873e23' }}
-                                   >
-                                    Down for Maintenance
-                                  </Badge>
-                                ) : (
-                                  <Badge 
-                                    className="slot-unavailable"
-                                  >
-                                    No Spots Available
-                                  </Badge>
-                                )
-                             ) : slot.available === slot.capacity ? (
-                               <Badge 
-                                 className="facility-available"
-                               >
-                                 {slot.available}/{slot.capacity} Spots Available
-                               </Badge>
-                             ) : (
-                                <Badge 
-                                  className="slot-partial"
-                                >
-                                 {slot.available}/{slot.capacity} Spots Available
-                               </Badge>
-                             )}
-                         </div>
-                       </div>
-                     </div>
+                          <span className="font-medium">Court {courtNumber}</span>
+                        </div>
+                        <Badge className="facility-available">
+                          Available
+                        </Badge>
+                      </div>
+                    </div>
                   );
                 })}
               </div>
             </div>
+            
+            {/* Available Time Slots for Selected Court */}
+            {selectedCourt && (
+              <div>
+                <h3 className="font-medium mb-3">Available Time Slots for Court {selectedCourt}</h3>
+                <div className="grid gap-2">
+                   {timeSlots.map((slot) => {
+                      const isAvailable = slot.available > 0 && !slot.isExpired && canBookToday;
+                      const isExpired = slot.isExpired || slot.unavailableReason === 'expired';
+                      const isToday = isSameDay(selectedDate, new Date());
+                      const isTomorrow = isSameDay(selectedDate, addDays(new Date(), 1));
+                      const isConsecutive = (isToday || isTomorrow) && isConsecutiveSlot(slot.time);
+                      
+                      return (
+                        <div
+                          key={slot.id}
+                          onClick={() => (isAvailable && !isConsecutive) && handleSlotSelect(slot.id)}
+                           className={`p-3 rounded-lg border transition-all ${
+                             selectedSlot === slot.id
+                               ? 'border-primary bg-primary/5 cursor-pointer'
+                                : isAvailable && !isConsecutive
+                                  ? 'border-border hover:border-primary/50 cursor-pointer' 
+                                  : isExpired
+                                    ? 'border-muted bg-muted/30 cursor-default opacity-60'
+                                    : isConsecutive
+                                      ? 'border-destructive/30 bg-destructive/5 cursor-not-allowed'
+                                      : 'border-destructive/30 bg-destructive/5 cursor-default'
+                           }`}
+                          style={{ cursor: (isAvailable && !isConsecutive) ? 'pointer' : isConsecutive ? 'not-allowed' : 'default' }}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <Clock className={`h-4 w-4 ${isExpired ? 'text-muted-foreground' : 'text-foreground'}`} />
+                              <span className={`font-medium ${isExpired ? 'text-muted-foreground' : 'text-foreground'}`}>{slot.time}</span>
+                            </div>
+                           <div className="flex items-center gap-2">
+                                 {isExpired ? (
+                                   <Badge 
+                                     className="text-white border-gray-600 font-bold relative z-50"
+                                     style={{ backgroundColor: '#4a5568' }}
+                                   >
+                                    Expired
+                                  </Badge>
+                                 ) : !canBookToday ? (
+                                   <Badge 
+                                     className="text-white border-orange-600 font-bold relative z-50"
+                                     style={{ backgroundColor: '#d69e2e' }}
+                                   >
+                                     Daily Limit Reached
+                                   </Badge>
+                                 ) : isConsecutive ? (
+                                   <Badge 
+                                     className="text-white border-red-600 font-bold relative z-50"
+                                     style={{ backgroundColor: '#dc2626' }}
+                                   >
+                                     Consecutive Slot Blocked
+                                   </Badge>
+                                 ) : slot.available === 0 ? (
+                                  slot.unavailableReason === 'blocked' ? (
+                                     <Badge 
+                                       className="text-white border-[#063970] font-bold relative z-50"
+                                       style={{ backgroundColor: '#063970' }}
+                                     >
+                                      Blocked by Admin
+                                    </Badge>
+                                  ) : slot.unavailableReason === 'maintenance' ? (
+                                     <Badge 
+                                       className="text-white border-[#873e23] font-bold relative z-50"
+                                       style={{ backgroundColor: '#873e23' }}
+                                     >
+                                      Down for Maintenance
+                                    </Badge>
+                                  ) : (
+                                    <Badge 
+                                      className="slot-unavailable"
+                                    >
+                                      No Spots Available
+                                    </Badge>
+                                  )
+                               ) : slot.available === slot.capacity ? (
+                                 <Badge 
+                                   className="facility-available"
+                                 >
+                                   {slot.available}/{slot.capacity} Spots Available
+                                 </Badge>
+                               ) : (
+                                  <Badge 
+                                    className="slot-partial"
+                                  >
+                                   {slot.available}/{slot.capacity} Spots Available
+                                 </Badge>
+                               )}
+                           </div>
+                         </div>
+                       </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         );
 
