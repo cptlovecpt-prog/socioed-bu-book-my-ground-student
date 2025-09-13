@@ -603,8 +603,7 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
               {!canBookToday && (
                 <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
                   <p className="text-sm text-destructive font-medium">
-                    Daily booking limit reached ({dailyBookingsCount}/2 slots booked for this day). 
-                    You cannot book more slots for this day even after canceling existing bookings.
+                    Daily booking limit reached ({dailyBookingsCount}/2 slots booked for this day).
                   </p>
                 </div>
               )}
