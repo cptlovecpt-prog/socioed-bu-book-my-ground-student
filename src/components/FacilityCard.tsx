@@ -16,6 +16,7 @@ interface FacilityCardProps {
   votes: number;
   onBook: (facilityId: string) => void;
   maintenanceMessage?: string;
+  selectedDate?: 'today' | 'tomorrow' | null;
 }
 
 export const FacilityCard = ({ 
@@ -31,10 +32,36 @@ export const FacilityCard = ({
   rating,
   votes,
   onBook,
-  maintenanceMessage
+  maintenanceMessage,
+  selectedDate
 }: FacilityCardProps) => {
+  // Generate different availability based on selected date and facility ID
+  const getAvailabilityForDate = () => {
+    if (status === 'maintenance') {
+      return 'maintenance';
+    }
+    
+    if (!selectedDate) {
+      return status; // Default to original status if no date selected
+    }
+    
+    // Create deterministic availability based on facility ID and selected date
+    const hash = id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const dateMultiplier = selectedDate === 'today' ? 1 : 2;
+    const availabilityScore = (hash * dateMultiplier) % 10;
+    
+    // 70% chance of being available, 30% chance of being full
+    if (availabilityScore < 7) {
+      return 'available';
+    } else {
+      return 'full';
+    }
+  };
+
+  const actualStatus = getAvailabilityForDate();
+
   const getStatusBadge = () => {
-    switch (status) {
+    switch (actualStatus) {
       case 'available':
         return <Badge className="facility-available">Available</Badge>;
       case 'full':
@@ -67,10 +94,10 @@ export const FacilityCard = ({
     <div className="w-full max-w-[278px] mx-auto">
       <Card 
         className={`booking-card group w-full h-[300px] sm:h-[350px] lg:h-[417px] overflow-hidden bg-card dark:bg-card relative ${
-          status === 'available' ? 'cursor-pointer' : 'cursor-default'
+          actualStatus === 'available' ? 'cursor-pointer' : 'cursor-default'
         }`} 
-        onClick={status === 'available' ? () => onBook(id) : undefined}
-        style={{ cursor: status === 'available' ? 'pointer' : 'default' }}
+        onClick={actualStatus === 'available' ? () => onBook(id) : undefined}
+        style={{ cursor: actualStatus === 'available' ? 'pointer' : 'default' }}
       >
         <div className="relative h-full">
           <div 
@@ -78,11 +105,11 @@ export const FacilityCard = ({
             style={{ backgroundImage: `url(${image})` }}
           />
           {/* Gray overlay for full status */}
-          {status === 'full' && (
+          {actualStatus === 'full' && (
             <div className="absolute inset-0 bg-gray-500/90 z-10" />
           )}
           {/* Gray overlay for maintenance status */}
-          {status === 'maintenance' && (
+          {actualStatus === 'maintenance' && (
             <div className="absolute inset-0 bg-gray-500/90 z-10" />
           )}
           {/* Drop shadow overlay for text visibility */}
@@ -93,7 +120,7 @@ export const FacilityCard = ({
           </div>
           
           {/* Maintenance message */}
-          {status === 'maintenance' && maintenanceMessage && (
+          {actualStatus === 'maintenance' && maintenanceMessage && (
             <div className="absolute inset-0 flex items-center justify-center z-30 p-4">
               <p className="text-center font-bold leading-relaxed" style={{ color: '#000000' }}>
                 {maintenanceMessage}

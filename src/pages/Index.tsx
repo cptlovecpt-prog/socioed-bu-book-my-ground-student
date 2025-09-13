@@ -549,6 +549,7 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
                     key={facility.id}
                     {...facility}
                     onBook={handleBooking}
+                    selectedDate={selectedDate}
                   />
                 ))}
               </div>
@@ -566,6 +567,7 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
                     key={facility.id}
                     {...facility}
                     onBook={handleBooking}
+                    selectedDate={selectedDate}
                   />
                 ))}
               </div>
