@@ -282,6 +282,7 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [selectedSports, setSelectedSports] = useState<string[]>([]);
   const [showOnlyAvailable, setShowOnlyAvailable] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<'today' | 'tomorrow' | null>(null);
   const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
   const [pendingFacilityId, setPendingFacilityId] = useState<string | null>(null);
   const { toast } = useToast();
@@ -302,6 +303,7 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
   const clearFilters = () => {
     setSelectedSports([]);
     setShowOnlyAvailable(false);
+    setSelectedDate(null);
   };
 
   const filterFacilities = (facilities: Array<{
@@ -328,6 +330,13 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
     // Filter by availability
     if (showOnlyAvailable) {
       filtered = filtered.filter(facility => facility.status === 'available');
+    }
+    
+    // Filter by date (for demo purposes, we'll show all facilities since this is a mock)
+    // In a real application, you would filter based on actual availability for the selected date
+    if (selectedDate) {
+      // For now, just maintain the current results as this is demo data
+      // In production, you would filter based on actual booking availability for today/tomorrow
     }
     
     return filtered;
@@ -392,10 +401,32 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
           
           <Tabs defaultValue="outdoor" className="space-y-4 sm:space-y-6">
             <div className="flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-              <TabsList className="grid w-full grid-cols-2 max-w-md">
-                <TabsTrigger value="outdoor" className="text-base sm:text-lg font-bold">Sports & Games</TabsTrigger>
-                <TabsTrigger value="indoor" className="text-base sm:text-lg font-bold">Fitness</TabsTrigger>
-              </TabsList>
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+                <TabsList className="grid w-full grid-cols-2 max-w-md">
+                  <TabsTrigger value="outdoor" className="text-base sm:text-lg font-bold">Sports & Games</TabsTrigger>
+                  <TabsTrigger value="indoor" className="text-base sm:text-lg font-bold">Fitness</TabsTrigger>
+                </TabsList>
+                
+                {/* Date Toggle */}
+                <div className="flex items-center gap-1 bg-muted/50 rounded-lg p-1">
+                  <Button
+                    variant={selectedDate === 'today' ? 'default' : 'ghost'}
+                    size="sm"
+                    onClick={() => setSelectedDate(selectedDate === 'today' ? null : 'today')}
+                    className="h-8 px-3 text-sm"
+                  >
+                    Today
+                  </Button>
+                  <Button
+                    variant={selectedDate === 'tomorrow' ? 'default' : 'ghost'}
+                    size="sm"
+                    onClick={() => setSelectedDate(selectedDate === 'tomorrow' ? null : 'tomorrow')}
+                    className="h-8 px-3 text-sm"
+                  >
+                    Tomorrow
+                  </Button>
+                </div>
+              </div>
               
               {/* Filters */}
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
@@ -431,7 +462,7 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
                         <h4 className="font-medium">Filter by Sports</h4>
-                        {(selectedSports.length > 0 || showOnlyAvailable) && (
+                        {(selectedSports.length > 0 || showOnlyAvailable || selectedDate) && (
                           <Button
                             variant="ghost"
                             size="sm"
@@ -467,9 +498,20 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
             
             {/* Filter Tags */}
             <div className="flex flex-wrap items-center gap-2 min-h-[28px]">
-              {(selectedSports.length > 0 || showOnlyAvailable) && (
+              {(selectedSports.length > 0 || showOnlyAvailable || selectedDate) && (
                 <>
                   <span className="text-sm text-muted-foreground">Active filters:</span>
+                  {selectedDate && (
+                    <span className="inline-flex items-center gap-1 bg-secondary text-secondary-foreground text-xs px-2 py-1 rounded-md">
+                      {selectedDate === 'today' ? 'Today' : 'Tomorrow'}
+                      <button
+                        onClick={() => setSelectedDate(null)}
+                        className="hover:bg-secondary/80 rounded-full p-0.5"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </span>
+                  )}
                   {showOnlyAvailable && (
                     <span className="inline-flex items-center gap-1 bg-secondary text-secondary-foreground text-xs px-2 py-1 rounded-md">
                       Show only available
