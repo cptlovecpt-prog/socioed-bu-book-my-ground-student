@@ -196,6 +196,7 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
   const [shareToken] = useState("BK-" + Math.random().toString(36).substr(2, 8).toUpperCase());
   const [showExitConfirm, setShowExitConfirm] = useState(false);
   const [qrCodeUrl, setQrCodeUrl] = useState<string>("");
+  const [dailyCount, setDailyCount] = useState<number>(0);
   
   const { toast } = useToast();
   const { addBooking, bookings } = useBookings();
@@ -263,8 +264,11 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
     initializeDailyBookingCounts();
   }, [bookings]);
 
-  const dailyBookingsCount = getDailyBookingCount(selectedDate);
-  const canBookToday = canBookForDay(selectedDate);
+  useEffect(() => {
+    setDailyCount(getDailyBookingCount(selectedDate));
+  }, [selectedDate, isOpen, bookings]);
+
+  const canBookToday = dailyCount < 2;
 
   // Get existing bookings for the selected date
   const getExistingBookingsForDate = (date: Date) => {
@@ -429,7 +433,7 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
                          format(selectedDate, 'MMM dd, yyyy');
       toast({
         title: `Daily booking limit reached`,
-        description: `You can only book 2 slots per day. You have already booked ${dailyBookingsCount}/2 slots for ${dateDisplay}.`,
+        description: `You can only book 2 slots per day. You have already booked ${dailyCount}/2 slots for ${dateDisplay}.`,
         duration: 4000,
       });
       return;
@@ -465,7 +469,7 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
       
       // Increment daily booking count
       incrementDailyBookingCount(selectedDate);
-      
+      setDailyCount(getDailyBookingCount(selectedDate));
       // Generate QR code
       generateQRCode();
 
@@ -637,7 +641,7 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
               {!canBookToday && (
                 <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
                   <p className="text-sm text-destructive font-medium">
-                    Daily booking limit reached ({dailyBookingsCount}/2 slots booked for this day).
+                    Daily booking limit reached ({dailyCount}/2 slots booked for this day).
                   </p>
                 </div>
               )}
