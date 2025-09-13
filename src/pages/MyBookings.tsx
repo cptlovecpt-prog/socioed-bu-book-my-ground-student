@@ -12,6 +12,8 @@ import { useToast } from "@/hooks/use-toast";
 import { addDays } from "date-fns";
 import { isQRCodeAvailable } from "@/utils/timeUtils";
 import { getBookingStatus, isCancellationAllowed, getActiveBookingsCount, isBookingUpcoming } from "@/utils/bookingUtils";
+import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
 
 
 // Utility function to convert 24-hour time to AM/PM format
@@ -500,8 +502,8 @@ const MyBookings = ({ isSignedIn, setIsSignedIn, userData, setUserData }: MyBook
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Keep Booking</AlertDialogCancel>
-              <AlertDialogAction onClick={handleConfirmCancel}>
+              <AlertDialogCancel className={cn(buttonVariants(), "mt-2 sm:mt-0")}>Keep Booking</AlertDialogCancel>
+              <AlertDialogAction className={cn(buttonVariants({ variant: "outline" }))} onClick={handleConfirmCancel}>
                 Yes, Cancel Booking
               </AlertDialogAction>
             </AlertDialogFooter>

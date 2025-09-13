@@ -10,6 +10,8 @@ import { useToast } from "@/hooks/use-toast";
 import { addDays } from "date-fns";
 import { isQRCodeAvailable } from "@/utils/timeUtils";
 import { isBookingUpcoming, isCancellationAllowed } from "@/utils/bookingUtils";
+import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
 
 interface YourBookingsProps {
   isSignedIn: boolean;
@@ -314,8 +316,8 @@ const YourBookings = ({ isSignedIn }: YourBookingsProps) => {
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Keep Booking</AlertDialogCancel>
-              <AlertDialogAction onClick={handleConfirmCancel}>
+              <AlertDialogCancel className={cn(buttonVariants(), "mt-2 sm:mt-0")}>Keep Booking</AlertDialogCancel>
+              <AlertDialogAction className={cn(buttonVariants({ variant: "outline" }))} onClick={handleConfirmCancel}>
                 Yes, Cancel Booking
               </AlertDialogAction>
             </AlertDialogFooter>
