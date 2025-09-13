@@ -197,6 +197,9 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
   const [showExitConfirm, setShowExitConfirm] = useState(false);
   const [qrCodeUrl, setQrCodeUrl] = useState<string>("");
   
+  const { toast } = useToast();
+  const { addBooking, bookings } = useBookings();
+  
   // Daily booking limit tracking
   const getDailyBookingKey = (date: Date) => {
     return `daily_bookings_${format(date, 'yyyy-MM-dd')}`;
@@ -225,6 +228,40 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
   const canBookForDay = (date: Date) => {
     return getDailyBookingCount(date) < 2;
   };
+
+  // Initialize localStorage counts to match existing bookings
+  useEffect(() => {
+    const initializeDailyBookingCounts = () => {
+      const today = new Date();
+      const tomorrow = addDays(today, 1);
+      
+      // Count existing bookings for today
+      const todayBookings = bookings.filter(booking => 
+        booking.date === "Today" && booking.status === 'Upcoming'
+      ).length;
+      
+      // Count existing bookings for tomorrow  
+      const tomorrowBookings = bookings.filter(booking => 
+        booking.date === "Tomorrow" && booking.status === 'Upcoming'
+      ).length;
+      
+      // Initialize localStorage if not already set or if it doesn't match
+      const todayStoredCount = getDailyBookingCount(today);
+      const tomorrowStoredCount = getDailyBookingCount(tomorrow);
+      
+      if (todayStoredCount !== todayBookings) {
+        const todayKey = getDailyBookingKey(today);
+        localStorage.setItem(todayKey, JSON.stringify({ count: todayBookings, date: format(today, 'yyyy-MM-dd') }));
+      }
+      
+      if (tomorrowStoredCount !== tomorrowBookings) {
+        const tomorrowKey = getDailyBookingKey(tomorrow);
+        localStorage.setItem(tomorrowKey, JSON.stringify({ count: tomorrowBookings, date: format(tomorrow, 'yyyy-MM-dd') }));
+      }
+    };
+    
+    initializeDailyBookingCounts();
+  }, [bookings]);
 
   const dailyBookingsCount = getDailyBookingCount(selectedDate);
   const canBookToday = canBookForDay(selectedDate);
@@ -290,9 +327,6 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
     setShowExitConfirm(false);
     resetModal();
   };
-  
-  const { toast } = useToast();
-  const { addBooking, bookings } = useBookings();
   
   const timeSlots = generateTimeSlots(selectedDate, facility ? sportConfig[facility.sport] || 10 : 10);
   const maxParticipants = facility ? sportConfig[facility.sport] || 10 : 10;
