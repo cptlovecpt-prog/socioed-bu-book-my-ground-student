@@ -269,7 +269,7 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
     return getDailyBookingCount(date) < 2;
   };
 
-  // Initialize localStorage counts to match existing bookings
+  // Initialize localStorage counts to match existing bookings and auto-select first court
   useEffect(() => {
     const today = new Date();
     const tomorrow = addDays(today, 1);
@@ -307,7 +307,12 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
     syncFor(tomorrow);
     const uiCount = syncFor(selectedDate);
     setDailyCount(uiCount);
-  }, [bookings, selectedDate, isOpen]);
+
+    // Auto-select first court when modal opens
+    if (isOpen && !selectedCourt && facility) {
+      setSelectedCourt(1);
+    }
+  }, [bookings, selectedDate, isOpen, selectedCourt, facility]);
 
   const canBookToday = dailyCount < 2;
 
@@ -678,9 +683,8 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
               </div>
             </div>
             
-            {/* Available Courts */}
+            {/* Available Courts - Horizontal Tabs */}
             <div>
-              <h3 className="font-medium mb-3">Available Courts: Select a court to view time slots</h3>
               {!canBookToday && (
                 <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
                   <p className="text-sm text-destructive font-medium">
@@ -688,33 +692,23 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
                   </p>
                 </div>
               )}
-              <div className="grid gap-2 mb-6">
+              <div className="flex gap-1 mb-6 border-b">
                 {Array.from({ length: availableCourts }, (_, index) => {
                   const courtNumber = index + 1;
                   const isSelected = selectedCourt === courtNumber;
                   
                   return (
-                    <div
+                    <button
                       key={courtNumber}
                       onClick={() => setSelectedCourt(courtNumber)}
-                      className={`p-3 rounded-lg border transition-all cursor-pointer ${
+                      className={`px-4 py-2 text-sm font-medium rounded-t-lg border-b-2 transition-all ${
                         isSelected
-                          ? 'border-primary bg-primary/5'
-                          : 'border-border hover:border-primary/50'
+                          ? 'border-primary text-primary bg-primary/5'
+                          : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted'
                       }`}
                     >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                            <span className="font-semibold text-primary">{courtNumber}</span>
-                          </div>
-                          <span className="font-medium">Court {courtNumber}</span>
-                        </div>
-                        <Badge className="facility-available">
-                          Available
-                        </Badge>
-                      </div>
-                    </div>
+                      Court {courtNumber}
+                    </button>
                   );
                 })}
               </div>
