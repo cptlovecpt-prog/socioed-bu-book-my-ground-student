@@ -14,6 +14,7 @@ import YourBookings from "@/components/YourBookings";
 import SignInModal from "@/components/SignInModal";
 import { useToast } from "@/hooks/use-toast";
 import { SPORT_IMAGES } from "@/constants/images";
+import { addDays } from "date-fns";
 
 interface IndexProps {
   isSignedIn: boolean;
@@ -583,13 +584,7 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
         onClose={() => setIsBookingModalOpen(false)}
         facility={selectedFacility}
         isSignedIn={isSignedIn}
-      />
-      
-      <BookingModal
-        isOpen={isBookingModalOpen}
-        onClose={() => setIsBookingModalOpen(false)}
-        facility={selectedFacility}
-        isSignedIn={isSignedIn}
+        selectedDate={selectedDate === 'today' ? new Date() : selectedDate === 'tomorrow' ? addDays(new Date(), 1) : new Date()}
       />
       
       <SignInModal

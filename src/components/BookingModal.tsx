@@ -26,12 +26,13 @@ interface ParticipantData {
   enrollmentId: string;
 }
 
-type BookingStep = 'date-slot-selection' | 'booking-confirmation' | 'final-confirmation';
+type BookingStep = 'slot-selection' | 'booking-confirmation' | 'final-confirmation';
 
 interface BookingModalProps {
   isOpen: boolean;
   onClose: () => void;
   isSignedIn: boolean;
+  selectedDate: Date;
   facility: {
     id: string;
     name: string;
@@ -186,9 +187,8 @@ const generateTimeSlots = (selectedDate: Date, facilityCapacity: number): TimeSl
   return slots;
 };
 
-export const BookingModal = ({ isOpen, onClose, facility, isSignedIn }: BookingModalProps) => {
-  const [currentStep, setCurrentStep] = useState<BookingStep>('date-slot-selection');
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDate }: BookingModalProps) => {
+  const [currentStep, setCurrentStep] = useState<BookingStep>('slot-selection');
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [participantCount, setParticipantCount] = useState<number>(1);
   const [participants, setParticipants] = useState<ParticipantData[]>([{ enrollmentId: '' }]);
@@ -217,54 +217,6 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn }: BookingM
   
   const timeSlots = generateTimeSlots(selectedDate, facility ? sportConfig[facility.sport] || 10 : 10);
   const maxParticipants = facility ? sportConfig[facility.sport] || 10 : 10;
-
-  // Generate dates for the next week initially
-  const [dateRange, setDateRange] = useState(() => {
-    const dates = [];
-    for (let i = 0; i < 7; i++) {
-      dates.push(addDays(new Date(), i));
-    }
-    return dates;
-  });
-
-  const canNavigateForward = dateRange[dateRange.length - 1] < addDays(new Date(), 59);
-  const canNavigateBackward = dateRange[0] > new Date();
-
-  const navigateDatesForward = () => {
-    if (canNavigateForward) {
-      const newDates = [];
-      for (let i = 7; i < 14; i++) {
-        const date = addDays(dateRange[0], i);
-        if (date <= addDays(new Date(), 59)) {
-          newDates.push(date);
-        }
-      }
-      if (newDates.length > 0) {
-        setDateRange(newDates);
-      }
-    }
-  };
-
-  const navigateDatesBackward = () => {
-    if (canNavigateBackward) {
-      const newDates = [];
-      const startDate = addDays(dateRange[0], -7);
-      for (let i = 0; i < 7; i++) {
-        const date = addDays(startDate, i);
-        if (date >= new Date()) {
-          newDates.push(date);
-        }
-      }
-      if (newDates.length > 0) {
-        setDateRange(newDates);
-      }
-    }
-  };
-
-  const handleDateSelect = (date: Date) => {
-    setSelectedDate(date);
-    // Don't change step, just update the selected date and show slots
-  };
 
   const handleSlotSelect = async (slotId: string) => {
     setSelectedSlot(slotId);
@@ -411,8 +363,7 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn }: BookingM
   };
 
   const resetModal = () => {
-    setCurrentStep('date-slot-selection');
-    setSelectedDate(new Date());
+    setCurrentStep('slot-selection');
     setSelectedSlot(null);
     setParticipantCount(1);
     setParticipants([{ enrollmentId: '' }]);
@@ -472,7 +423,7 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn }: BookingM
   const handleGoBack = () => {
     switch (currentStep) {
       case 'booking-confirmation':
-        setCurrentStep('date-slot-selection');
+        setCurrentStep('slot-selection');
         break;
       default:
         break;
@@ -503,14 +454,14 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn }: BookingM
 
   const getStepInfo = () => {
     switch (currentStep) {
-      case 'date-slot-selection':
-        return { current: 1, total: 2, label: 'Select Date & Time' };
+      case 'slot-selection':
+        return { current: 1, total: 2, label: 'Select Time Slot' };
       case 'booking-confirmation':
         return { current: 2, total: 2, label: 'Confirm Booking' };
       case 'final-confirmation':
         return { current: 2, total: 2, label: 'Confirmed' };
       default:
-        return { current: 1, total: 2, label: 'Select Date & Time' };
+        return { current: 1, total: 2, label: 'Select Time Slot' };
     }
   };
 
@@ -520,50 +471,18 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn }: BookingM
 
   const renderStepContent = () => {
     switch (currentStep) {
-      case 'date-slot-selection':
+      case 'slot-selection':
+        const dateDisplay = isSameDay(selectedDate, new Date()) ? "Today" : 
+                           isSameDay(selectedDate, addDays(new Date(), 1)) ? "Tomorrow" :
+                           format(selectedDate, 'MMM dd, yyyy');
+        
         return (
           <div className="space-y-6">
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={navigateDatesBackward}
-                  disabled={!canNavigateBackward}
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-                
-                <div className="flex-1 grid grid-cols-7 gap-1">
-                  {dateRange.map((date) => (
-                    <Button
-                      key={date.toISOString()}
-                      variant={isSameDay(date, selectedDate) ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => handleDateSelect(date)}
-                      className="flex flex-col p-2 h-auto"
-                    >
-                      <span className="text-xs font-medium">
-                        {format(date, 'EEE')}
-                      </span>
-                      <span className="text-sm">
-                        {format(date, 'dd')}
-                      </span>
-                      <span className="text-xs">
-                        {format(date, 'MMM')}
-                      </span>
-                    </Button>
-                  ))}
-                </div>
-                
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={navigateDatesForward}
-                  disabled={!canNavigateForward}
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
+            {/* Show selected date */}
+            <div className="bg-muted/50 rounded-lg p-4">
+              <div className="flex items-center gap-2">
+                <Calendar className="h-5 w-5 text-primary" />
+                <span className="font-medium">Booking for {dateDisplay}</span>
               </div>
             </div>
             
