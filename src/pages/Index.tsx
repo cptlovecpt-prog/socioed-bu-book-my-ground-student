@@ -67,6 +67,20 @@ const indoorFacilities = [
 ];
 
 const outdoorFacilities = [
+  // Racket Sports First
+  {
+    id: "outdoor-7",
+    name: "Pickleball Courts",
+    sport: "Pickleball",
+    capacity: 40,
+    available: 30,
+    location: "Near Football Ground",
+    nextSlot: "08:00 - 10:00",
+    image: SPORT_IMAGES.PICKLEBALL,
+    status: 'available' as const,
+    rating: 4.3,
+    votes: 736
+  },
   {
     id: "indoor-1",
     name: "Badminton Court",
@@ -79,32 +93,6 @@ const outdoorFacilities = [
     status: 'available' as const,
     rating: 4.3,
     votes: 480
-  },
-  {
-    id: "indoor-2",
-    name: "Squash Court",
-    sport: "Squash",
-    capacity: 6,
-    available: 0,
-    location: "Sports Complex",
-    nextSlot: "12:00 - 14:00",
-    image: SPORT_IMAGES.SQUASH,
-    status: 'full' as const,
-    rating: 4.2,
-    votes: 187
-  },
-  {
-    id: "indoor-3",
-    name: "Basketball Court",
-    sport: "Basketball",
-    capacity: 20,
-    available: 15,
-    location: "Near Sports Complex",
-    nextSlot: "09:00 - 18:00",
-    image: SPORT_IMAGES.BASKETBALL,
-    status: 'available' as const,
-    rating: 4.4,
-    votes: 536
   },
   {
     id: "indoor-6",
@@ -120,30 +108,43 @@ const outdoorFacilities = [
     votes: 1120
   },
   {
-    id: "indoor-7",
-    name: "Padel Court",
-    sport: "Padel",
-    capacity: 8,
-    available: 0,
-    location: "C11-C12 Block",
-    nextSlot: "14:00 - 16:00",
-    image: SPORT_IMAGES.PADEL,
-    status: 'full' as const,
-    rating: 4.1,
-    votes: 832
+    id: "outdoor-8",
+    name: "Badminton Court",
+    sport: "Badminton",
+    capacity: 12,
+    available: 8,
+    location: "C10-C11 Block",
+    nextSlot: "16:00 - 18:00",
+    image: "https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=400&h=300&fit=crop",
+    status: 'available' as const,
+    rating: 4.2,
+    votes: 261
   },
   {
-    id: "indoor-8",
-    name: "Kabaddi Court",
-    sport: "Kabaddi",
-    capacity: 14,
-    available: 10,
+    id: "outdoor-5",
+    name: "Tennis Court",
+    sport: "Tennis",
+    capacity: 8,
+    available: 0,
+    location: "Near Sports Complex",
+    nextSlot: "18:00 - 20:00",
+    image: SPORT_IMAGES.TENNIS,
+    status: 'full' as const,
+    rating: 4.6,
+    votes: 1338
+  },
+  {
+    id: "indoor-2",
+    name: "Squash Court",
+    sport: "Squash",
+    capacity: 6,
+    available: 0,
     location: "Sports Complex",
-    nextSlot: "16:00 - 18:00",
-    image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop",
-    status: 'available' as const,
-    rating: 4.1,
-    votes: 845
+    nextSlot: "12:00 - 14:00",
+    image: SPORT_IMAGES.SQUASH,
+    status: 'full' as const,
+    rating: 4.2,
+    votes: 187
   },
   {
     id: "indoor-9",
@@ -159,6 +160,20 @@ const outdoorFacilities = [
     votes: 1200,
     maintenanceMessage: "This facility is unavailable till Dec 15, 2025 due to maintenance activities"
   },
+  {
+    id: "indoor-7",
+    name: "Padel Court",
+    sport: "Padel",
+    capacity: 8,
+    available: 0,
+    location: "C11-C12 Block",
+    nextSlot: "14:00 - 16:00",
+    image: SPORT_IMAGES.PADEL,
+    status: 'full' as const,
+    rating: 4.1,
+    votes: 832
+  },
+  // Other Sports
   {
     id: "outdoor-1",
     name: "Football Ground",
@@ -186,6 +201,19 @@ const outdoorFacilities = [
     votes: 7400
   },
   {
+    id: "indoor-3",
+    name: "Basketball Court",
+    sport: "Basketball",
+    capacity: 20,
+    available: 15,
+    location: "Near Sports Complex",
+    nextSlot: "09:00 - 18:00",
+    image: SPORT_IMAGES.BASKETBALL,
+    status: 'available' as const,
+    rating: 4.4,
+    votes: 536
+  },
+  {
     id: "outdoor-3",
     name: "Basketball Court",
     sport: "Basketball",
@@ -197,6 +225,19 @@ const outdoorFacilities = [
     status: 'full' as const,
     rating: 4.5,
     votes: 1292
+  },
+  {
+    id: "outdoor-10",
+    name: "Half Basketball Court",
+    sport: "Basketball",
+    capacity: 12,
+    available: 10,
+    location: "C & D block",
+    nextSlot: "14:00 - 16:00",
+    image: SPORT_IMAGES.BASKETBALL,
+    status: 'available' as const,
+    rating: 4.4,
+    votes: 480
   },
   {
     id: "outdoor-4",
@@ -212,56 +253,17 @@ const outdoorFacilities = [
     votes: 960
   },
   {
-    id: "outdoor-5",
-    name: "Tennis Court",
-    sport: "Tennis",
-    capacity: 8,
-    available: 0,
-    location: "Near Sports Complex",
-    nextSlot: "18:00 - 20:00",
-    image: SPORT_IMAGES.TENNIS,
-    status: 'full' as const,
-    rating: 4.6,
-    votes: 1338
-  },
-  {
-    id: "outdoor-7",
-    name: "Pickleball Courts",
-    sport: "Pickleball",
-    capacity: 40,
-    available: 30,
-    location: "Near Football Ground",
-    nextSlot: "08:00 - 10:00",
-    image: SPORT_IMAGES.PICKLEBALL,
-    status: 'available' as const,
-    rating: 4.3,
-    votes: 736
-  },
-  {
-    id: "outdoor-8",
-    name: "Badminton Court",
-    sport: "Badminton",
-    capacity: 12,
-    available: 8,
-    location: "C10-C11 Block",
-    nextSlot: "16:00 - 18:00",
-    image: "https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=400&h=300&fit=crop",
-    status: 'available' as const,
-    rating: 4.2,
-    votes: 261
-  },
-  {
-    id: "outdoor-10",
-    name: "Half Basketball Court",
-    sport: "Basketball",
-    capacity: 12,
+    id: "indoor-8",
+    name: "Kabaddi Court",
+    sport: "Kabaddi",
+    capacity: 14,
     available: 10,
-    location: "C & D block",
-    nextSlot: "14:00 - 16:00",
-    image: SPORT_IMAGES.BASKETBALL,
+    location: "Sports Complex",
+    nextSlot: "16:00 - 18:00",
+    image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop",
     status: 'available' as const,
-    rating: 4.4,
-    votes: 480
+    rating: 4.1,
+    votes: 845
   }
 ];
 
