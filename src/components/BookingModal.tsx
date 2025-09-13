@@ -1099,23 +1099,6 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
                   </Button>
                 </div>
               </div>
-              
-              <div className="flex gap-3 pt-4">
-                <Button 
-                  onClick={handleGoBack}
-                  variant="outline"
-                  className="flex-1 h-12 text-lg font-semibold"
-                >
-                  Back
-                </Button>
-                <Button 
-                  onClick={() => setCurrentStep('participant-details')}
-                  className="flex-1 bg-gradient-primary h-12 text-lg font-semibold"
-                  disabled={participantCount < minParticipants || participantCount > maxParticipants}
-                >
-                  Next: Add Details
-                </Button>
-              </div>
             </div>
           </div>
         );
@@ -1150,22 +1133,6 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
                   />
                 </div>
               ))}
-              
-              <div className="flex gap-3 pt-4">
-                <Button 
-                  onClick={handleGoBack}
-                  variant="outline"
-                  className="flex-1 h-12 text-lg font-semibold"
-                >
-                  Back
-                </Button>
-                <Button 
-                  onClick={handleParticipantDetailsNext}
-                  className="flex-1 bg-gradient-primary h-12 text-lg font-semibold"
-                >
-                  Review Booking
-                </Button>
-              </div>
             </div>
           </div>
         );
@@ -1226,22 +1193,6 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
                   </div>
                 </div>
               </div>
-            </div>
-            
-            <div className="flex gap-3">
-              <Button 
-                onClick={handleGoBack}
-                variant="outline"
-                className="flex-1 h-12 text-lg font-semibold"
-              >
-                Back
-              </Button>
-              <Button 
-                onClick={handleConfirmBooking}
-                className="flex-1 bg-gradient-primary h-12 text-lg font-semibold"
-              >
-                Confirm Booking
-              </Button>
             </div>
           </div>
         );
@@ -1320,6 +1271,71 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
     }
   };
 
+  const renderActionButtons = () => {
+    switch (currentStep) {
+      case 'participant-selection':
+        return (
+          <div className="flex gap-3">
+            <Button 
+              onClick={handleGoBack}
+              variant="outline"
+              className="flex-1 h-12 text-lg font-semibold"
+            >
+              Back
+            </Button>
+            <Button 
+              onClick={() => setCurrentStep('participant-details')}
+              className="flex-1 bg-gradient-primary h-12 text-lg font-semibold"
+              disabled={participantCount < minParticipants || participantCount > maxParticipants}
+            >
+              Next: Add Details
+            </Button>
+          </div>
+        );
+
+      case 'participant-details':
+        return (
+          <div className="flex gap-3">
+            <Button 
+              onClick={handleGoBack}
+              variant="outline"
+              className="flex-1 h-12 text-lg font-semibold"
+            >
+              Back
+            </Button>
+            <Button 
+              onClick={handleParticipantDetailsNext}
+              className="flex-1 bg-gradient-primary h-12 text-lg font-semibold"
+            >
+              Review Booking
+            </Button>
+          </div>
+        );
+
+      case 'booking-confirmation':
+        return (
+          <div className="flex gap-3">
+            <Button 
+              onClick={handleGoBack}
+              variant="outline"
+              className="flex-1 h-12 text-lg font-semibold"
+            >
+              Back
+            </Button>
+            <Button 
+              onClick={handleConfirmBooking}
+              className="flex-1 bg-gradient-primary h-12 text-lg font-semibold"
+            >
+              Confirm Booking
+            </Button>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
   return (
     <>
       <Dialog open={isOpen} onOpenChange={handleDialogClose}>
@@ -1336,9 +1352,16 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
             {renderStepContent()}
           </div>
           
+          {/* Fixed Action Buttons */}
+          {currentStep !== 'slot-selection' && currentStep !== 'final-confirmation' && (
+            <div className="shrink-0 border-t pt-4 px-1">
+              {renderActionButtons()}
+            </div>
+          )}
+          
           {/* Progress Indicator */}
           {currentStep !== 'final-confirmation' && (
-            <div className="border-t pt-4 mt-4">
+            <div className="shrink-0 border-t pt-4 mt-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-muted-foreground">Booking Progress</span>
                 <span className="text-sm font-medium">{stepInfo.current}/{stepInfo.total}</span>
