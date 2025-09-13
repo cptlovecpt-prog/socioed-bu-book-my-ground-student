@@ -575,7 +575,15 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
     if (!selectedTimeSlot) return;
 
     setSelectedSlot(slotId);
-    setCurrentStep('participant-selection');
+    
+    // Skip participant selection for gym and swimming
+    if (facility?.sport === 'Gym' || facility?.sport === 'Swimming') {
+      setParticipantCount(1);
+      setParticipants([{ enrollmentId: '', email: 'user@university.edu', name: '' }]);
+      setCurrentStep('booking-confirmation');
+    } else {
+      setCurrentStep('participant-selection');
+    }
   };
 
   const handleParticipantCountChange = (count: number) => {
@@ -833,7 +841,12 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
         setCurrentStep('participant-selection');
         break;
       case 'booking-confirmation':
-        setCurrentStep('participant-details');
+        // For gym and swimming, go back to slot selection directly
+        if (facility?.sport === 'Gym' || facility?.sport === 'Swimming') {
+          setCurrentStep('slot-selection');
+        } else {
+          setCurrentStep('participant-details');
+        }
         break;
       default:
         break;
@@ -863,19 +876,30 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
   };
 
   const getStepInfo = () => {
+    const isGymOrSwimming = facility?.sport === 'Gym' || facility?.sport === 'Swimming';
+    const totalSteps = isGymOrSwimming ? 3 : 5;
+    
     switch (currentStep) {
       case 'slot-selection':
-        return { current: 1, total: 5, label: 'Select Court & Time Slot' };
+        return { current: 1, total: totalSteps, label: 'Select Court & Time Slot' };
       case 'participant-selection':
         return { current: 2, total: 5, label: 'Number of Participants' };
       case 'participant-details':
         return { current: 3, total: 5, label: 'Participant Details' };
       case 'booking-confirmation':
-        return { current: 4, total: 5, label: 'Confirm Booking' };
+        return { 
+          current: isGymOrSwimming ? 2 : 4, 
+          total: totalSteps, 
+          label: 'Confirm Booking' 
+        };
       case 'final-confirmation':
-        return { current: 5, total: 5, label: 'Confirmed' };
+        return { 
+          current: isGymOrSwimming ? 3 : 5, 
+          total: totalSteps, 
+          label: 'Confirmed' 
+        };
       default:
-        return { current: 1, total: 5, label: 'Select Court & Time Slot' };
+        return { current: 1, total: totalSteps, label: 'Select Court & Time Slot' };
     }
   };
 
