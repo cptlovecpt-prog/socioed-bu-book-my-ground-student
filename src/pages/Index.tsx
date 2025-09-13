@@ -441,7 +441,7 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
         <div className="max-w-6xl mx-auto">
           <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-6 sm:mb-8">Book Your Slot</h2>
           
-          <Tabs defaultValue="outdoor" className="space-y-4 sm:space-y-6">
+          <Tabs value={tabs.activeTab} onValueChange={(value) => setTabs({...tabs, activeTab: value as 'outdoor' | 'indoor'})} className="space-y-4 sm:space-y-6">
             <div className="flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
                 {/* Sports/Fitness Toggle */}
@@ -622,33 +622,38 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
               )}
             </div>
             
-            <TabsContent value={tabs.activeTab === 'outdoor' ? 'outdoor' : 'indoor'}>
-              {tabs.activeTab === 'outdoor' ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-x-6 sm:gap-y-8 lg:gap-y-12 justify-items-center">
-                  {filterFacilities(outdoorFacilities).map((facility) => (
-                    <FacilityCard
-                      key={facility.id}
-                      {...facility}
-                      onBook={handleBooking}
-                      apiStatus={facilityAvailability[facility.id]}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-x-6 sm:gap-y-8 lg:gap-y-12 justify-items-center">
-                  {filterFacilities(indoorFacilities).map((facility) => (
-                    <FacilityCard
-                      key={facility.id}
-                      {...facility}
-                      onBook={handleBooking}
-                      apiStatus={facilityAvailability[facility.id]}
-                    />
-                  ))}
+            <TabsContent value="outdoor">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-x-6 sm:gap-y-8 lg:gap-y-12 justify-items-center">
+                {filterFacilities(outdoorFacilities).map((facility) => (
+                  <FacilityCard
+                    key={facility.id}
+                    {...facility}
+                    onBook={handleBooking}
+                    apiStatus={facilityAvailability[facility.id]}
+                  />
+                ))}
+              </div>
+              {(filterFacilities(outdoorFacilities).length === 0 && (selectedSports.length > 0 || showOnlyAvailable)) && (
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground">No outdoor facilities found matching your filters.</p>
                 </div>
               )}
-              {((tabs.activeTab === 'outdoor' ? filterFacilities(outdoorFacilities) : filterFacilities(indoorFacilities)).length === 0 && (selectedSports.length > 0 || showOnlyAvailable)) && (
+            </TabsContent>
+            
+            <TabsContent value="indoor">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-x-6 sm:gap-y-8 lg:gap-y-12 justify-items-center">
+                {filterFacilities(indoorFacilities).map((facility) => (
+                  <FacilityCard
+                    key={facility.id}
+                    {...facility}
+                    onBook={handleBooking}
+                    apiStatus={facilityAvailability[facility.id]}
+                  />
+                ))}
+              </div>
+              {(filterFacilities(indoorFacilities).length === 0 && (selectedSports.length > 0 || showOnlyAvailable)) && (
                 <div className="text-center py-12">
-                  <p className="text-muted-foreground">No {tabs.activeTab === 'outdoor' ? 'outdoor' : 'indoor'} facilities found matching your filters.</p>
+                  <p className="text-muted-foreground">No indoor facilities found matching your filters.</p>
                 </div>
               )}
             </TabsContent>
