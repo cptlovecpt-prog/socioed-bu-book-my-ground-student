@@ -112,15 +112,15 @@ export const FacilityCard = ({
           {/* Maintenance message */}
           {actualStatus === 'maintenance' && maintenanceMessage && (
             <div className="absolute inset-0 flex items-center justify-center z-30 p-4">
-              <p className="text-center font-bold leading-relaxed" style={{ color: '#000000' }}>
+              <p className="text-center font-bold leading-relaxed text-white drop-shadow-lg bg-black/60 p-4 rounded-lg">
                 {maintenanceMessage}
               </p>
             </div>
           )}
           
           <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4 space-y-1 text-white z-30">
-            <p className="text-xs sm:text-sm text-white/90">{capacity} persons</p>
-            <p className="text-xs sm:text-sm text-white/90">{location}</p>
+            <p className="text-xs sm:text-sm text-white/95 font-medium drop-shadow-md">{capacity} persons</p>
+            <p className="text-xs sm:text-sm text-white/95 font-medium drop-shadow-md">{location}</p>
           </div>
         </div>
       </Card>
@@ -128,7 +128,7 @@ export const FacilityCard = ({
       {/* Sport name and courts below card */}
       <div className="mt-2 sm:mt-3 space-y-1 text-center sm:text-left">
         <p className="text-base sm:text-lg font-semibold text-foreground">{sport}</p>
-        <p className="text-xs sm:text-sm text-muted-foreground">{getCourtsForSport(sport, name)} {getCourtsForSport(sport, name) === 1 ? 'court' : 'courts'}</p>
+        <p className="text-xs sm:text-sm text-muted-foreground font-medium">{getCourtsForSport(sport, name)} {getCourtsForSport(sport, name) === 1 ? 'court' : 'courts'}</p>
       </div>
     </div>
   );

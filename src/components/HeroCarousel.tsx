@@ -94,13 +94,13 @@ const HeroCarousel = () => {
                   alt={slide.title}
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/40" />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-black/50" />
                 <div className="absolute inset-0 flex items-end justify-center pb-20 text-center text-white px-4">
                   <div className="w-full max-w-4xl">
-                    <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold leading-tight mb-2 sm:mb-4">
+                    <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold leading-tight mb-2 sm:mb-4 text-white drop-shadow-lg">
                       {slide.title}
                     </h1>
-                    <p className="text-sm sm:text-lg md:text-xl text-gray-200 max-w-2xl mx-auto">
+                    <p className="text-sm sm:text-lg md:text-xl text-white/95 max-w-2xl mx-auto drop-shadow-md">
                       {slide.description}
                     </p>
                   </div>

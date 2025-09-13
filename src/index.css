@@ -23,10 +23,13 @@
     --secondary-foreground: 222.2 84% 4.9%;
 
     --muted: 210 40% 96%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted-foreground: 215.4 16.3% 35%;
 
     --accent: 48 85% 66%;
     --accent-foreground: 222.2 84% 4.9%;
+    
+    --highlight: 88 75% 45%;
+    --highlight-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
@@ -73,17 +76,20 @@
     --popover-foreground: 210 40% 98%;
 
     --primary: 88 45% 58%;
-    --primary-foreground: 222.2 84% 4.9%;
+    --primary-foreground: 0 0% 100%;
     --primary-glow: 88 55% 68%;
 
     --secondary: 48 85% 66%;
     --secondary-foreground: 222.2 84% 4.9%;
 
     --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted-foreground: 215 20.2% 75%;
 
     --accent: 48 75% 56%;
-    --accent-foreground: 210 40% 98%;
+    --accent-foreground: 0 0% 100%;
+    
+    --highlight: 88 75% 45%;
+    --highlight-foreground: 0 0% 100%;
 
     --destructive: 0 62% 50%;
     --destructive-foreground: 210 40% 98%;
@@ -110,6 +116,24 @@
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
+  }
+  
+  /* High contrast text utilities */
+  .text-high-contrast {
+    @apply text-foreground;
+  }
+  
+  .text-high-contrast-muted {
+    @apply text-muted-foreground;
+  }
+  
+  .text-highlight {
+    color: hsl(var(--highlight));
+  }
+  
+  .bg-highlight {
+    background-color: hsl(var(--highlight));
+    color: hsl(var(--highlight-foreground));
   }
 }
 
