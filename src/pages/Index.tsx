@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -283,10 +283,55 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [selectedSports, setSelectedSports] = useState<string[]>([]);
   const [showOnlyAvailable, setShowOnlyAvailable] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<'today' | 'tomorrow' | null>(null);
+  const [selectedDate, setSelectedDate] = useState<'today' | 'tomorrow'>('today');
+  const [facilityAvailability, setFacilityAvailability] = useState<{[key: string]: 'available' | 'full' | 'maintenance'}>({});
   const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
   const [pendingFacilityId, setPendingFacilityId] = useState<string | null>(null);
   const { toast } = useToast();
+
+  // Placeholder API function to fetch facility availability
+  const fetchFacilityAvailability = async (date: 'today' | 'tomorrow') => {
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    // Generate deterministic availability based on date and facility ID
+    const availability: {[key: string]: 'available' | 'full' | 'maintenance'} = {};
+    const allFacilities = [...indoorFacilities, ...outdoorFacilities];
+    
+    allFacilities.forEach(facility => {
+      if (facility.status === 'maintenance') {
+        availability[facility.id] = 'maintenance';
+      } else {
+        const hash = facility.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+        const dateMultiplier = date === 'today' ? 1 : 2;
+        const availabilityScore = (hash * dateMultiplier) % 10;
+        
+        // 70% chance of being available, 30% chance of being full
+        availability[facility.id] = availabilityScore < 7 ? 'available' : 'full';
+      }
+    });
+    
+    return availability;
+  };
+
+  // Fetch availability when component mounts or date changes
+  useEffect(() => {
+    const loadAvailability = async () => {
+      try {
+        const availability = await fetchFacilityAvailability(selectedDate);
+        setFacilityAvailability(availability);
+      } catch (error) {
+        console.error('Failed to fetch facility availability:', error);
+        toast({
+          title: "Error loading availability",
+          description: "Please try again later.",
+          variant: "destructive"
+        });
+      }
+    };
+
+    loadAvailability();
+  }, [selectedDate, toast]);
 
   const allSports = [
     "Football", "Cricket", "Basketball", "Volleyball", "Tennis", 
@@ -304,7 +349,6 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
   const clearFilters = () => {
     setSelectedSports([]);
     setShowOnlyAvailable(false);
-    setSelectedDate(null);
   };
 
   const filterFacilities = (facilities: Array<{
@@ -328,16 +372,12 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
       filtered = filtered.filter(facility => selectedSports.includes(facility.sport));
     }
     
-    // Filter by availability
+    // Filter by availability using API data
     if (showOnlyAvailable) {
-      filtered = filtered.filter(facility => facility.status === 'available');
-    }
-    
-    // Filter by date (for demo purposes, we'll show all facilities since this is a mock)
-    // In a real application, you would filter based on actual availability for the selected date
-    if (selectedDate) {
-      // For now, just maintain the current results as this is demo data
-      // In production, you would filter based on actual booking availability for today/tomorrow
+      filtered = filtered.filter(facility => {
+        const apiStatus = facilityAvailability[facility.id];
+        return apiStatus === 'available';
+      });
     }
     
     return filtered;
@@ -409,23 +449,41 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
                 </TabsList>
                 
                 {/* Date Toggle */}
-                <div className="flex items-center gap-1 bg-muted/50 rounded-lg p-1">
-                  <Button
-                    variant={selectedDate === 'today' ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => setSelectedDate(selectedDate === 'today' ? null : 'today')}
-                    className="h-8 px-3 text-sm"
-                  >
-                    Today
-                  </Button>
-                  <Button
-                    variant={selectedDate === 'tomorrow' ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => setSelectedDate(selectedDate === 'tomorrow' ? null : 'tomorrow')}
-                    className="h-8 px-3 text-sm"
-                  >
-                    Tomorrow
-                  </Button>
+                <div className="flex items-center bg-muted/50 rounded-full p-1 min-w-[200px]">
+                  <div className="relative flex w-full">
+                    {/* Background slider */}
+                    <div 
+                      className={`absolute top-1 bottom-1 rounded-full bg-primary transition-all duration-300 ease-in-out ${
+                        selectedDate === 'today' 
+                          ? 'left-1 right-1/2' 
+                          : 'left-1/2 right-1'
+                      }`}
+                    />
+                    
+                    {/* Today button */}
+                    <button
+                      onClick={() => setSelectedDate('today')}
+                      className={`relative z-10 flex-1 h-8 px-4 text-sm font-medium rounded-full transition-colors duration-300 ${
+                        selectedDate === 'today' 
+                          ? 'text-primary-foreground' 
+                          : 'text-muted-foreground hover:text-foreground'
+                      }`}
+                    >
+                      Today
+                    </button>
+                    
+                    {/* Tomorrow button */}
+                    <button
+                      onClick={() => setSelectedDate('tomorrow')}
+                      className={`relative z-10 flex-1 h-8 px-4 text-sm font-medium rounded-full transition-colors duration-300 ${
+                        selectedDate === 'tomorrow' 
+                          ? 'text-primary-foreground' 
+                          : 'text-muted-foreground hover:text-foreground'
+                      }`}
+                    >
+                      Tomorrow
+                    </button>
+                  </div>
                 </div>
               </div>
               
@@ -499,20 +557,9 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
             
             {/* Filter Tags */}
             <div className="flex flex-wrap items-center gap-2 min-h-[28px]">
-              {(selectedSports.length > 0 || showOnlyAvailable || selectedDate) && (
+              {(selectedSports.length > 0 || showOnlyAvailable) && (
                 <>
                   <span className="text-sm text-muted-foreground">Active filters:</span>
-                  {selectedDate && (
-                    <span className="inline-flex items-center gap-1 bg-secondary text-secondary-foreground text-xs px-2 py-1 rounded-md">
-                      {selectedDate === 'today' ? 'Today' : 'Tomorrow'}
-                      <button
-                        onClick={() => setSelectedDate(null)}
-                        className="hover:bg-secondary/80 rounded-full p-0.5"
-                      >
-                        <X className="h-3 w-3" />
-                      </button>
-                    </span>
-                  )}
                   {showOnlyAvailable && (
                     <span className="inline-flex items-center gap-1 bg-secondary text-secondary-foreground text-xs px-2 py-1 rounded-md">
                       Show only available
@@ -549,7 +596,7 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
                     key={facility.id}
                     {...facility}
                     onBook={handleBooking}
-                    selectedDate={selectedDate}
+                    apiStatus={facilityAvailability[facility.id]}
                   />
                 ))}
               </div>
@@ -567,7 +614,7 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
                     key={facility.id}
                     {...facility}
                     onBook={handleBooking}
-                    selectedDate={selectedDate}
+                    apiStatus={facilityAvailability[facility.id]}
                   />
                 ))}
               </div>
@@ -586,7 +633,7 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
         onClose={() => setIsBookingModalOpen(false)}
         facility={selectedFacility}
         isSignedIn={isSignedIn}
-        selectedDate={selectedDate === 'today' ? new Date() : selectedDate === 'tomorrow' ? addDays(new Date(), 1) : new Date()}
+        selectedDate={selectedDate === 'today' ? new Date() : addDays(new Date(), 1)}
       />
       
       <SignInModal

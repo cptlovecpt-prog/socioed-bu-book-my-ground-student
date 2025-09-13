@@ -16,7 +16,7 @@ interface FacilityCardProps {
   votes: number;
   onBook: (facilityId: string) => void;
   maintenanceMessage?: string;
-  selectedDate?: 'today' | 'tomorrow' | null;
+  apiStatus?: 'available' | 'full' | 'maintenance';
 }
 
 export const FacilityCard = ({ 
@@ -33,32 +33,10 @@ export const FacilityCard = ({
   votes,
   onBook,
   maintenanceMessage,
-  selectedDate
+  apiStatus
 }: FacilityCardProps) => {
-  // Generate different availability based on selected date and facility ID
-  const getAvailabilityForDate = () => {
-    if (status === 'maintenance') {
-      return 'maintenance';
-    }
-    
-    if (!selectedDate) {
-      return status; // Default to original status if no date selected
-    }
-    
-    // Create deterministic availability based on facility ID and selected date
-    const hash = id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    const dateMultiplier = selectedDate === 'today' ? 1 : 2;
-    const availabilityScore = (hash * dateMultiplier) % 10;
-    
-    // 70% chance of being available, 30% chance of being full
-    if (availabilityScore < 7) {
-      return 'available';
-    } else {
-      return 'full';
-    }
-  };
-
-  const actualStatus = getAvailabilityForDate();
+  // Use API status if provided, otherwise fall back to original status
+  const actualStatus = apiStatus || status;
 
   const getStatusBadge = () => {
     switch (actualStatus) {
