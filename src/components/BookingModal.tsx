@@ -692,25 +692,27 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
                   </p>
                 </div>
               )}
-              <div className="flex gap-1 mb-6 border-b">
-                {Array.from({ length: availableCourts }, (_, index) => {
-                  const courtNumber = index + 1;
-                  const isSelected = selectedCourt === courtNumber;
-                  
-                  return (
-                    <button
-                      key={courtNumber}
-                      onClick={() => setSelectedCourt(courtNumber)}
-                      className={`px-4 py-2 text-sm font-medium rounded-t-lg border-b-2 transition-all ${
-                        isSelected
-                          ? 'border-primary text-primary bg-primary/5'
-                          : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted'
-                      }`}
-                    >
-                      Court {courtNumber}
-                    </button>
-                  );
-                })}
+              <div className={`mb-6 border-b ${availableCourts > 8 ? 'overflow-x-auto' : ''}`}>
+                <div className="flex gap-1 min-w-max">
+                  {Array.from({ length: availableCourts }, (_, index) => {
+                    const courtNumber = index + 1;
+                    const isSelected = selectedCourt === courtNumber;
+                    
+                    return (
+                      <button
+                        key={courtNumber}
+                        onClick={() => setSelectedCourt(courtNumber)}
+                        className={`px-4 py-2 text-sm font-medium rounded-t-lg border-b-2 transition-all whitespace-nowrap ${
+                          isSelected
+                            ? 'border-primary text-primary bg-primary/5'
+                            : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted'
+                        }`}
+                      >
+                        Court {courtNumber}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             </div>
             
