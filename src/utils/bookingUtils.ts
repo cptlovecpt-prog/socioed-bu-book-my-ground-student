@@ -147,7 +147,7 @@ export const getActiveBookingsCount = (bookings: any[]): number => {
 };
 
 /**
- * Check if cancellation is allowed (more than 1 hour before event start)
+ * Check if cancellation is allowed (up to 5 minutes after event start)
  * @param eventDate - Event date
  * @param eventTime - Event time string  
  * @returns boolean - true if cancellation is allowed
@@ -189,9 +189,10 @@ export const isCancellationAllowed = (eventDate: string, eventTime: string): boo
       bookingDate.setHours(hours, minutes, 0, 0);
     }
     
-    // Check if current time is more than 1 hour before booking time
-    const oneHourBeforeBooking = addHours(bookingDate, -1);
-    return isBefore(now, oneHourBeforeBooking);
+    // Allow cancellation up to 5 minutes after event start
+    const fiveMinutesAfterStart = addHours(bookingDate, 0);
+    fiveMinutesAfterStart.setMinutes(fiveMinutesAfterStart.getMinutes() + 5);
+    return isBefore(now, fiveMinutesAfterStart);
   } catch (error) {
     console.error('Error parsing booking time:', error);
     return true; // Allow cancellation if parsing fails to be safe

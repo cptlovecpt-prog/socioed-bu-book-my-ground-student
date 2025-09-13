@@ -61,18 +61,7 @@ export const BookingProvider = ({ children }: { children: ReactNode }) => {
       image: "/lovable-uploads/fdffe92f-f5b1-4ab3-9e26-bf822ff29b7e.png",
       facilitySize: 1338
     },
-    {
-      id: "BK-DEF456",
-      facilityName: "Swimming Pool",
-      sport: "Swimming",
-      date: "Dec 12",
-      time: "08:00 - 10:00",
-      location: "N block",
-      participants: "12/35 joined",
-      status: "Upcoming",
-      image: "https://images.unsplash.com/photo-1530549387789-4c1017266635?w=400&h=300&fit=crop",
-      facilitySize: 1474
-    },
+    // Removed future booking beyond tomorrow as per requirement
     {
       id: "BK-EXP001",
       facilityName: "Basketball Court",
