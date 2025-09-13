@@ -228,6 +228,53 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
 
   const dailyBookingsCount = getDailyBookingCount(selectedDate);
   const canBookToday = canBookForDay(selectedDate);
+
+  // Get existing bookings for the selected date
+  const getExistingBookingsForDate = (date: Date) => {
+    const dateStr = isSameDay(date, new Date()) ? "Today" : 
+                   isSameDay(date, addDays(new Date(), 1)) ? "Tomorrow" :
+                   format(date, 'MMM dd, yyyy');
+    
+    return bookings.filter(booking => 
+      booking.date === dateStr && 
+      (booking.status === 'Upcoming' || booking.status === 'Completed')
+    );
+  };
+
+  // Check if two time slots are consecutive
+  const areConsecutiveSlots = (slot1Time: string, slot2Time: string) => {
+    // Parse time from "6:30 am - 7:15 am" format
+    const parseTime = (timeRange: string) => {
+      const startTime = timeRange.split(' - ')[0].trim();
+      let [time, period] = startTime.split(' ');
+      let [hours, minutes] = time.split(':').map(Number);
+      
+      if (period?.toLowerCase() === 'pm' && hours !== 12) {
+        hours += 12;
+      } else if (period?.toLowerCase() === 'am' && hours === 12) {
+        hours = 0;
+      }
+      
+      return hours * 60 + minutes; // Convert to minutes
+    };
+
+    const slot1End = parseTime(slot1Time) + 45; // 45 minute slots
+    const slot2Start = parseTime(slot2Time);
+    const slot1Start = parseTime(slot1Time);
+    const slot2End = parseTime(slot2Time) + 45;
+
+    // Check if slots are consecutive (one ends when the other starts)
+    return slot1End === slot2Start || slot2End === slot1Start;
+  };
+
+  // Check if a slot is consecutive to existing bookings
+  const isConsecutiveSlot = (slotTime: string) => {
+    const existingBookings = getExistingBookingsForDate(selectedDate);
+    
+    return existingBookings.some(booking => 
+      areConsecutiveSlots(booking.time, slotTime)
+    );
+  };
   
   const handleDialogClose = (open: boolean) => {
     if (!open) {
@@ -251,6 +298,22 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
   const maxParticipants = facility ? sportConfig[facility.sport] || 10 : 10;
 
   const handleSlotSelect = async (slotId: string) => {
+    const selectedTimeSlot = timeSlots.find(s => s.id === slotId);
+    if (!selectedTimeSlot) return;
+
+    // Check if this is a consecutive slot for today/tomorrow
+    const isToday = isSameDay(selectedDate, new Date());
+    const isTomorrow = isSameDay(selectedDate, addDays(new Date(), 1));
+    
+    if ((isToday || isTomorrow) && isConsecutiveSlot(selectedTimeSlot.time)) {
+      toast({
+        title: "Alert",
+        description: "Consecutive slot booking is not allowed, please book any other slot of your choice",
+        duration: 4000,
+      });
+      return;
+    }
+    
     setSelectedSlot(slotId);
     
     // Update availability after selection (API call placeholder)
@@ -547,45 +610,57 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
               )}
               <div className="grid gap-2">
                  {timeSlots.map((slot) => {
-                   const isAvailable = slot.available > 0 && !slot.isExpired && canBookToday;
-                   const isExpired = slot.isExpired || slot.unavailableReason === 'expired';
-                   
-                   return (
-                     <div
-                       key={slot.id}
-                       onClick={() => isAvailable && handleSlotSelect(slot.id)}
-                        className={`p-3 rounded-lg border transition-all ${
-                          selectedSlot === slot.id
-                            ? 'border-primary bg-primary/5 cursor-pointer'
-                             : isAvailable 
-                               ? 'border-border hover:border-primary/50 cursor-pointer' 
-                               : isExpired
-                                 ? 'border-muted bg-muted/30 cursor-default opacity-60'
-                                 : 'border-destructive/30 bg-destructive/5 cursor-default'
-                        }`}
-                       style={{ cursor: isAvailable ? 'pointer' : 'default' }}
-                     >
+                    const isAvailable = slot.available > 0 && !slot.isExpired && canBookToday;
+                    const isExpired = slot.isExpired || slot.unavailableReason === 'expired';
+                    const isToday = isSameDay(selectedDate, new Date());
+                    const isTomorrow = isSameDay(selectedDate, addDays(new Date(), 1));
+                    const isConsecutive = (isToday || isTomorrow) && isConsecutiveSlot(slot.time);
+                    
+                    return (
+                      <div
+                        key={slot.id}
+                        onClick={() => (isAvailable && !isConsecutive) && handleSlotSelect(slot.id)}
+                         className={`p-3 rounded-lg border transition-all ${
+                           selectedSlot === slot.id
+                             ? 'border-primary bg-primary/5 cursor-pointer'
+                              : isAvailable && !isConsecutive
+                                ? 'border-border hover:border-primary/50 cursor-pointer' 
+                                : isExpired
+                                  ? 'border-muted bg-muted/30 cursor-default opacity-60'
+                                  : isConsecutive
+                                    ? 'border-destructive/30 bg-destructive/5 cursor-not-allowed'
+                                    : 'border-destructive/30 bg-destructive/5 cursor-default'
+                         }`}
+                        style={{ cursor: (isAvailable && !isConsecutive) ? 'pointer' : isConsecutive ? 'not-allowed' : 'default' }}
+                      >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
                             <Clock className={`h-4 w-4 ${isExpired ? 'text-muted-foreground' : 'text-foreground'}`} />
                             <span className={`font-medium ${isExpired ? 'text-muted-foreground' : 'text-foreground'}`}>{slot.time}</span>
                           </div>
                          <div className="flex items-center gap-2">
-                              {isExpired ? (
-                                <Badge 
-                                  className="text-white border-gray-600 font-bold relative z-50"
-                                  style={{ backgroundColor: '#4a5568' }}
-                                >
-                                 Expired
-                               </Badge>
-                              ) : !canBookToday ? (
-                                <Badge 
-                                  className="text-white border-orange-600 font-bold relative z-50"
-                                  style={{ backgroundColor: '#d69e2e' }}
-                                >
-                                  Daily Limit Reached
+                               {isExpired ? (
+                                 <Badge 
+                                   className="text-white border-gray-600 font-bold relative z-50"
+                                   style={{ backgroundColor: '#4a5568' }}
+                                 >
+                                  Expired
                                 </Badge>
-                              ) : slot.available === 0 ? (
+                               ) : !canBookToday ? (
+                                 <Badge 
+                                   className="text-white border-orange-600 font-bold relative z-50"
+                                   style={{ backgroundColor: '#d69e2e' }}
+                                 >
+                                   Daily Limit Reached
+                                 </Badge>
+                               ) : isConsecutive ? (
+                                 <Badge 
+                                   className="text-white border-red-600 font-bold relative z-50"
+                                   style={{ backgroundColor: '#dc2626' }}
+                                 >
+                                   Consecutive Slot Blocked
+                                 </Badge>
+                               ) : slot.available === 0 ? (
                                 slot.unavailableReason === 'blocked' ? (
                                    <Badge 
                                      className="text-white border-[#063970] font-bold relative z-50"
