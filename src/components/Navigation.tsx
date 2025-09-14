@@ -66,6 +66,14 @@ const Navigation = ({ isSignedIn, setIsSignedIn, userData, setUserData, onOpenSi
           <img src={LOGO_IMAGE} alt="Courtside" className="h-16 sm:h-20 w-auto" />
         </div>
 
+        {/* Center - Brand Name */}
+        <div className="hidden md:flex flex-1 justify-center">
+          <div className="font-inter text-center">
+            <span className="font-bold text-lg text-foreground">COURTSIDE</span>
+            <span className="font-normal text-lg text-muted-foreground">- Play for Fun, Workout for Fitness</span>
+          </div>
+        </div>
+
         {/* Right side controls - Extreme Right */}
         <div className="flex items-center space-x-2 sm:space-x-3 pr-3 sm:pr-6">
           {/* Dark mode toggle */}

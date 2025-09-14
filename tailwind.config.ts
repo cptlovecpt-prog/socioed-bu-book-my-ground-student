@@ -63,6 +63,9 @@ export default {
           foreground: "hsl(var(--highlight-foreground))",
         },
       },
+      fontFamily: {
+        inter: ['Inter', 'sans-serif'],
+      },
       backgroundImage: {
         'gradient-hero': 'var(--gradient-hero)',
         'gradient-primary': 'var(--gradient-primary)',
