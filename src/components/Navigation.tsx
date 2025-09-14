@@ -61,16 +61,12 @@ const Navigation = ({ isSignedIn, setIsSignedIn, userData, setUserData, onOpenSi
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="flex justify-between items-center h-16 sm:h-20 w-full">
-        {/* Logo - Extreme Left */}
+        {/* Logo and Brand Text - Left Side */}
         <div className="flex items-center cursor-pointer pl-3 sm:pl-6" onClick={navigateToHome}>
-          <img src={LOGO_IMAGE} alt="Courtside" className="h-16 sm:h-20 w-auto" />
-        </div>
-
-        {/* Center - Brand Name */}
-        <div className="hidden md:flex flex-1 justify-center">
-          <div className="font-inter text-center">
-            <span className="font-bold text-lg text-foreground">COURTSIDE</span>
-            <span className="font-normal text-lg text-muted-foreground">- Play for Fun, Workout for Fitness</span>
+          <img src={LOGO_IMAGE} alt="Courtside" className="h-12 sm:h-16 w-auto" />
+          <div className="ml-3 sm:ml-4 font-archivo-narrow">
+            <span className="font-bold text-xl sm:text-2xl text-foreground">COURTSIDE</span>
+            <span className="font-normal text-xl sm:text-2xl text-muted-foreground">- Play for Fun, Workout for Fitness</span>
           </div>
         </div>
 

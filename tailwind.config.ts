@@ -65,6 +65,7 @@ export default {
       },
       fontFamily: {
         inter: ['Inter', 'sans-serif'],
+        'archivo-narrow': ['Archivo Narrow', 'sans-serif'],
       },
       backgroundImage: {
         'gradient-hero': 'var(--gradient-hero)',
