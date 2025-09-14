@@ -40,7 +40,7 @@ const Footer = ({ isSignedIn }: FooterProps) => {
           <div className="grid md:grid-cols-3 gap-8">
             {/* Company Section */}
             <div>
-              <h3 className="text-lg font-semibold text-foreground mb-3">Book My Ground</h3>
+              <h3 className="text-lg font-semibold text-foreground mb-3">Courtside</h3>
               <p className="text-muted-foreground text-sm max-w-xs">
                 Playing sports made easy for enthusiasts
               </p>
@@ -104,7 +104,7 @@ const Footer = ({ isSignedIn }: FooterProps) => {
           {/* Copyright */}
           <div className="mt-12 pt-6 border-t border-border">
             <p className="text-sm text-muted-foreground text-center">
-              © 2025 Book My Ground. All rights reserved.
+              © 2025 Courtside. All rights reserved.
             </p>
           </div>
         </div>
@@ -114,7 +114,7 @@ const Footer = ({ isSignedIn }: FooterProps) => {
       <Dialog open={isAboutUsOpen} onOpenChange={setIsAboutUsOpen}>
         <DialogContent className="max-w-2xl max-h-[80vh]">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold">About Book My Ground</DialogTitle>
+            <DialogTitle className="text-2xl font-bold">About Courtside</DialogTitle>
             <p className="text-muted-foreground text-sm leading-relaxed">
               We're transforming sports facility booking through innovative technology that enhances playing experiences for both facility managers and sports enthusiasts.
             </p>
@@ -204,7 +204,7 @@ const Footer = ({ isSignedIn }: FooterProps) => {
               <section>
                 <h3 className="text-lg font-semibold text-foreground mb-3">Contact Us</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">
-                  If you have any questions about this Privacy Policy, please contact us at privacy@socioed.com.
+                  If you have any questions about this Privacy Policy, please contact us at privacy@courtside.com.
                 </p>
               </section>
             </div>
@@ -226,7 +226,7 @@ const Footer = ({ isSignedIn }: FooterProps) => {
               <section>
                 <h3 className="text-lg font-semibold text-foreground mb-3">Acceptance of Terms</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">
-                  By accessing and using SocioEd, you accept and agree to be bound by the terms and provision of this agreement.
+                  By accessing and using Courtside, you accept and agree to be bound by the terms and provision of this agreement.
                 </p>
               </section>
 
@@ -234,7 +234,7 @@ const Footer = ({ isSignedIn }: FooterProps) => {
               <section>
                 <h3 className="text-lg font-semibold text-foreground mb-3">Use License</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">
-                  Permission is granted to temporarily download one copy of SocioEd materials for personal, non-commercial transitory viewing only.
+                  Permission is granted to temporarily download one copy of Courtside materials for personal, non-commercial transitory viewing only.
                 </p>
               </section>
 
@@ -242,7 +242,7 @@ const Footer = ({ isSignedIn }: FooterProps) => {
               <section>
                 <h3 className="text-lg font-semibold text-foreground mb-3">Disclaimer</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">
-                  The materials on SocioEd are provided on an "as is" basis. SocioEd makes no warranties, expressed or implied.
+                  The materials on Courtside are provided on an "as is" basis. Courtside makes no warranties, expressed or implied.
                 </p>
               </section>
 
@@ -250,7 +250,7 @@ const Footer = ({ isSignedIn }: FooterProps) => {
               <section>
                 <h3 className="text-lg font-semibold text-foreground mb-3">Limitations</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">
-                  In no event shall SocioEd or its suppliers be liable for any damages arising out of the use or inability to use the materials.
+                  In no event shall Courtside or its suppliers be liable for any damages arising out of the use or inability to use the materials.
                 </p>
               </section>
 
@@ -258,7 +258,7 @@ const Footer = ({ isSignedIn }: FooterProps) => {
               <section>
                 <h3 className="text-lg font-semibold text-foreground mb-3">Contact Information</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">
-                  If you have any questions about these Terms of Service, please contact us at legal@socioed.com.
+                  If you have any questions about these Terms of Service, please contact us at legal@courtside.com.
                 </p>
               </section>
             </div>
