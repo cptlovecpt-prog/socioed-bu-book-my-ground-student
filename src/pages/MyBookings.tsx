@@ -249,7 +249,7 @@ const MyBookings = ({ isSignedIn, setIsSignedIn, userData, setUserData }: MyBook
                       
                       <div className="flex items-center gap-2">
                         <Building className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-sm">{booking.facilitySize} sq mtrs.</span>
+                        <span className="text-sm">{booking.courtNumber}</span>
                       </div>
                     </div>
 

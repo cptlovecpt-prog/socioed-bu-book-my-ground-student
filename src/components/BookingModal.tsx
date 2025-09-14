@@ -723,7 +723,8 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
         time: selectedTimeSlot.time,
         image: getSportImage(facility.sport),
         participants: `${participantCount} participant${participantCount > 1 ? 's' : ''}`,
-        facilitySize: getSizeForSport(facility.sport)
+        facilitySize: getSizeForSport(facility.sport),
+        courtNumber: `Court ${Math.floor(Math.random() * 5) + 1}`
       };
 
       // Add the booking to context (authoritative source of truth)

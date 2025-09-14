@@ -12,6 +12,7 @@ export interface Booking {
   status: 'Upcoming' | 'Completed' | 'Cancelled';
   participants: string;
   facilitySize: number;
+  courtNumber: string;
 }
 
 interface BookingContextType {
@@ -47,7 +48,8 @@ export const BookingProvider = ({ children }: { children: ReactNode }) => {
       participants: "18/22 joined",
       status: "Upcoming",
       image: "/lovable-uploads/3a13d82d-5544-4379-a3e4-a65a065f42f8.png",
-      facilitySize: 8968
+      facilitySize: 8968,
+      courtNumber: "Court 1"
     },
     {
       id: "BK-XYZ789",
@@ -59,7 +61,8 @@ export const BookingProvider = ({ children }: { children: ReactNode }) => {
       participants: "3/8 joined",
       status: "Upcoming",
       image: "/lovable-uploads/fdffe92f-f5b1-4ab3-9e26-bf822ff29b7e.png",
-      facilitySize: 1338
+      facilitySize: 1338,
+      courtNumber: "Court 2"
     },
     // Removed future booking beyond tomorrow as per requirement
     {
@@ -72,7 +75,8 @@ export const BookingProvider = ({ children }: { children: ReactNode }) => {
       participants: "8/20 joined",
       status: "Completed",
       image: "/lovable-uploads/8ba8443e-fd66-4b90-842c-e8cea7b3b146.png",
-      facilitySize: 536
+      facilitySize: 536,
+      courtNumber: "Court A"
     },
     {
       id: "BK-EXP002",
@@ -84,7 +88,8 @@ export const BookingProvider = ({ children }: { children: ReactNode }) => {
       participants: "6/12 joined",
       status: "Completed",
       image: "https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=400&h=300&fit=crop",
-      facilitySize: 480
+      facilitySize: 480,
+      courtNumber: "Court 3"
     },
     {
       id: "BK-EXP003",
@@ -96,7 +101,8 @@ export const BookingProvider = ({ children }: { children: ReactNode }) => {
       participants: "4/6 joined",
       status: "Completed",
       image: "/lovable-uploads/de8033c6-2e20-42bf-8b5e-88753e101116.png",
-      facilitySize: 187
+      facilitySize: 187,
+      courtNumber: "Court B"
     }
   ]);
 
