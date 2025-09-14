@@ -9,6 +9,7 @@ import { useState } from "react";
 import Index from "./pages/Index";
 import MyBookings from "./pages/MyBookings";
 import NotFound from "./pages/NotFound";
+import CookieConsent from "@/components/CookieConsent";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ const App = () => {
           <BookingProvider>
             <Toaster />
             <Sonner />
+            <CookieConsent />
             <BrowserRouter>
               <Routes>
                 <Route 
