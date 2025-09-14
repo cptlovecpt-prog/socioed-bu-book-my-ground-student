@@ -28,8 +28,8 @@
     --accent: 48 85% 66%;
     --accent-foreground: 222.2 84% 4.9%;
     
-    --highlight: 74 78% 47%;
-    --highlight-foreground: 0 0% 0%;
+    --highlight: 81 70% 47%; /* #abd41b */
+    --highlight-foreground: 0 0% 0%; /* #000000 - Black text for highlight buttons */
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
@@ -88,8 +88,8 @@
     --accent: 48 75% 56%;
     --accent-foreground: 0 0% 100%;
     
-    --highlight: 74 78% 47%;
-    --highlight-foreground: 0 0% 0%;
+    --highlight: 81 70% 47%; /* #abd41b */
+    --highlight-foreground: 0 0% 0%; /* #000000 - Black text for highlight buttons */
 
     --destructive: 0 62% 50%;
     --destructive-foreground: 210 40% 98%;
