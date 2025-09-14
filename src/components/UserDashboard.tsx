@@ -86,7 +86,7 @@ export const UserDashboard = () => {
           <Card key={booking.id} className="booking-card">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-lg">{booking.facility}</CardTitle>
+                <CardTitle className="text-lg uppercase">{booking.facility}</CardTitle>
                 {getStatusBadge(booking.status)}
               </div>
               <p className="text-sm text-muted-foreground">{booking.sport}</p>
