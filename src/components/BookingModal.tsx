@@ -724,7 +724,7 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
         image: getSportImage(facility.sport),
         participants: `${participantCount} participant${participantCount > 1 ? 's' : ''}`,
         facilitySize: getSizeForSport(facility.sport),
-        courtNumber: `Court ${Math.floor(Math.random() * 5) + 1}`
+        courtNumber: `Court ${selectedCourt}`
       };
 
       // Add the booking to context (authoritative source of truth)
@@ -1232,7 +1232,7 @@ export const BookingModal = ({ isOpen, onClose, facility, isSignedIn, selectedDa
             {/* Facility details - left aligned */}
             <div className="text-left space-y-2 mb-6">
               <h3 className="text-lg font-medium">{facility.name}</h3>
-              <p className="text-sm text-muted-foreground">Near {facility.location} • {getSizeForSport(facility.sport)} sq mtrs.</p>
+              <p className="text-sm text-muted-foreground">Near {facility.location} • Court {selectedCourt}</p>
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
