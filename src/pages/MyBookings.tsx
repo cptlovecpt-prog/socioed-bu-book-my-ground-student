@@ -212,7 +212,7 @@ const MyBookings = ({ isSignedIn, setIsSignedIn, userData, setUserData }: MyBook
                     <div className="flex justify-between items-start mb-4">
                       <div>
                         <div className="flex items-center gap-3 mb-2">
-                          <h3 className="text-2xl sm:text-3xl font-oswald font-light uppercase">{booking.facilityName}</h3>
+                          <h3 className="text-2xl sm:text-3xl font-oswald font-normal uppercase">{booking.facilityName}</h3>
                           <Badge 
                             variant="secondary" 
                             className={
