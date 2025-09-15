@@ -64,8 +64,9 @@ export default {
         },
       },
       fontFamily: {
-        sans: ['Roboto Condensed', 'sans-serif'],
+        sans: ['Roboto Flex', 'sans-serif'],
         'roboto-condensed': ['Roboto Condensed', 'sans-serif'],
+        'roboto-flex': ['Roboto Flex', 'sans-serif'],
         'oswald': ['Oswald', 'sans-serif'],
       },
       backgroundImage: {
