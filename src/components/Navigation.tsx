@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Moon, Sun, User, Menu, ChevronDown } from "lucide-react";
-import { useTheme } from "next-themes";
+import { User, Menu, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
@@ -18,14 +17,9 @@ interface NavigationProps {
 }
 
 const Navigation = ({ isSignedIn, setIsSignedIn, userData, setUserData, onOpenSignInModal }: NavigationProps) => {
-  const { theme, setTheme } = useTheme();
   const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
   const [isHelpSupportModalOpen, setIsHelpSupportModalOpen] = useState(false);
   const navigate = useNavigate();
-
-  const toggleTheme = () => {
-    setTheme(theme === "dark" ? "light" : "dark");
-  };
 
   const handleSignIn = (data: { name: string; email: string }) => {
     setUserData(data);
@@ -71,20 +65,6 @@ const Navigation = ({ isSignedIn, setIsSignedIn, userData, setUserData, onOpenSi
 
         {/* Right side controls - Extreme Right */}
         <div className="flex items-center space-x-2 sm:space-x-3 pr-3 sm:pr-6">
-          {/* Dark mode toggle */}
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={toggleTheme}
-            className="w-9 h-9"
-          >
-            {theme === "dark" ? (
-              <Sun className="h-4 w-4" />
-            ) : (
-              <Moon className="h-4 w-4" />
-            )}
-          </Button>
-
           {/* User sign-in/profile */}
           {isSignedIn ? (
             <DropdownMenu>
