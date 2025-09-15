@@ -2,7 +2,7 @@
 // TODO: Convert these to actual imports when images are moved to assets
 
 // Logo and branding
-export const LOGO_IMAGE = "/assets/courtside-logo-final.png";
+export const LOGO_IMAGE = "/assets/courtside-logo-new.png";
 
 // Hero carousel images
 export const HERO_IMAGES = {
