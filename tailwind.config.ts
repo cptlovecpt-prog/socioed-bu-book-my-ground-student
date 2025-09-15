@@ -66,7 +66,7 @@ export default {
       fontFamily: {
         sans: ['Roboto Condensed', 'sans-serif'],
         'roboto-condensed': ['Roboto Condensed', 'sans-serif'],
-        'anton': ['Anton', 'sans-serif'],
+        'oswald': ['Oswald', 'sans-serif'],
       },
       backgroundImage: {
         'gradient-hero': 'var(--gradient-hero)',
