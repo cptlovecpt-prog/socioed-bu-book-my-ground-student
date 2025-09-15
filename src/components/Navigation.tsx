@@ -59,7 +59,7 @@ const Navigation = ({ isSignedIn, setIsSignedIn, userData, setUserData, onOpenSi
   };
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <nav className="sticky top-0 z-50 w-full border-b bg-gradient-nav">
       <div className="flex justify-between items-center h-16 sm:h-20 w-full">
         {/* Logo and Brand Text - Left Side */}
         <div className="flex items-center cursor-pointer" onClick={navigateToHome}>
