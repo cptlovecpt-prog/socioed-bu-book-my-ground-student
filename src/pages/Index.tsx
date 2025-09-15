@@ -529,9 +529,9 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
                 {/* Sports Filter */}
                 <Popover>
                   <PopoverTrigger asChild>
-                    <Button variant="outline" className="flex items-center gap-2 w-full sm:w-auto font-bold text-white">
-                      <Filter className="h-4 w-4 text-white" />
-                      <span className="text-white">Filter</span>
+                    <Button variant="outline" className="flex items-center gap-2 w-full sm:w-auto font-bold">
+                      <Filter className="h-4 w-4" />
+                      Filter
                       {selectedSports.length > 0 && (
                         <span className="bg-primary text-primary-foreground rounded-full px-2 py-0.5 text-xs">
                           {selectedSports.length}
