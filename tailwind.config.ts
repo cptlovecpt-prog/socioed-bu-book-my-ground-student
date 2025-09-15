@@ -64,8 +64,8 @@ export default {
         },
       },
       fontFamily: {
-        inter: ['Inter', 'sans-serif'],
-        'archivo-narrow': ['Archivo Narrow', 'sans-serif'],
+        sans: ['Roboto Condensed', 'sans-serif'],
+        'roboto-condensed': ['Roboto Condensed', 'sans-serif'],
       },
       backgroundImage: {
         'gradient-hero': 'var(--gradient-hero)',
