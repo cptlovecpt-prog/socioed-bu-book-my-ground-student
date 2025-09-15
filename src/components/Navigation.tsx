@@ -65,7 +65,7 @@ const Navigation = ({ isSignedIn, setIsSignedIn, userData, setUserData, onOpenSi
         <div className="flex items-center cursor-pointer pl-3 sm:pl-6" onClick={navigateToHome}>
           <img src={LOGO_IMAGE} alt="Courtside" className="h-12 sm:h-16 w-auto" />
           <div className="ml-3 sm:ml-4 font-anton">
-            <span className="font-bold text-3xl sm:text-4xl text-foreground">COURTSIDE | Play Hard Stay Fit</span>
+            <span className="text-3xl sm:text-4xl text-foreground">COURTSIDE | Play Hard Stay Fit</span>
           </div>
         </div>
 

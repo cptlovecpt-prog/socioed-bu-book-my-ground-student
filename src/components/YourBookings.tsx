@@ -215,7 +215,7 @@ const YourBookings = ({ isSignedIn }: YourBookingsProps) => {
               
               {/* Booking Details */}
               <div className="flex-1 min-w-0 p-4">
-                <h3 className="text-3xl sm:text-4xl font-anton font-bold text-foreground truncate uppercase">{currentBooking.facilityName}</h3>
+                <h3 className="text-3xl sm:text-4xl font-anton text-foreground truncate uppercase">{currentBooking.facilityName}</h3>
                 <p className="text-sm text-muted-foreground">{currentBooking.location}</p>
                 <p className="text-sm text-muted-foreground">{currentBooking.participants} • {currentBooking.courtNumber}</p>
                 <p className="text-sm text-muted-foreground">{currentBooking.date} • {convertTo12HourFormat(currentBooking.time)}</p>

@@ -86,7 +86,7 @@ export const UserDashboard = () => {
           <Card key={booking.id} className="booking-card">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-3xl sm:text-4xl font-anton font-bold uppercase">{booking.facility}</CardTitle>
+                <CardTitle className="text-3xl sm:text-4xl font-anton uppercase">{booking.facility}</CardTitle>
                 {getStatusBadge(booking.status)}
               </div>
               <p className="text-sm text-muted-foreground">{booking.sport}</p>
