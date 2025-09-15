@@ -127,7 +127,7 @@ export const FacilityCard = ({
       
       {/* Sport name and courts below card */}
       <div className="mt-2 sm:mt-3 space-y-1 text-center sm:text-left">
-        <p className="text-base sm:text-lg font-semibold text-foreground uppercase">{sport}</p>
+        <p className="text-3xl sm:text-4xl font-anton font-bold text-foreground uppercase">{sport}</p>
         <p className="text-xs sm:text-sm text-muted-foreground font-medium">{getCourtsForSport(sport, name)} {getCourtsForSport(sport, name) === 1 ? 'court' : 'courts'}</p>
       </div>
     </div>

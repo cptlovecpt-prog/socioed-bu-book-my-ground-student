@@ -64,9 +64,8 @@ const Navigation = ({ isSignedIn, setIsSignedIn, userData, setUserData, onOpenSi
         {/* Logo and Brand Text - Left Side */}
         <div className="flex items-center cursor-pointer pl-3 sm:pl-6" onClick={navigateToHome}>
           <img src={LOGO_IMAGE} alt="Courtside" className="h-12 sm:h-16 w-auto" />
-          <div className="ml-3 sm:ml-4 font-archivo-narrow">
-            <span className="font-bold text-xl sm:text-2xl text-foreground">COURTSIDE</span>
-            <span className="font-normal text-xl sm:text-2xl text-muted-foreground">- Play for Fun, Workout for Fitness</span>
+          <div className="ml-3 sm:ml-4 font-anton">
+            <span className="font-bold text-3xl sm:text-4xl text-foreground">COURTSIDE | Play Hard Stay Fit</span>
           </div>
         </div>
 
