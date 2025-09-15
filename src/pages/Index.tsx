@@ -434,7 +434,7 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
             <div className="flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
                 {/* Sports/Fitness Toggle */}
-                <div className="flex items-center bg-muted/50 rounded-full p-1 min-w-[280px]">
+                <div className="flex items-center bg-[hsl(var(--toggle-unselected))] rounded-full p-1 min-w-[280px]">
                   <div className="relative flex w-full">
                     {/* Background slider */}
                     <div className={`absolute top-1 bottom-1 rounded-full bg-primary transition-all duration-300 ease-in-out ${
@@ -471,7 +471,7 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
                 </div>
                 
                 {/* Date Toggle */}
-                <div className="flex items-center bg-muted/50 rounded-full p-1 min-w-[280px]">
+                <div className="flex items-center bg-[hsl(var(--toggle-unselected))] rounded-full p-1 min-w-[280px]">
                   <div className="relative flex w-full">
                     {/* Background slider */}
                     <div 
