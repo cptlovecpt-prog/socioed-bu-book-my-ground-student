@@ -447,7 +447,7 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
                     {/* Sports & Games button */}
                     <button
                       onClick={() => setTabs({...tabs, activeTab: 'outdoor'})}
-                      className={`relative z-10 flex-1 h-8 px-4 text-sm font-medium rounded-full transition-colors duration-300 ${
+                      className={`relative z-10 flex-1 h-8 px-4 text-sm font-bold rounded-full transition-colors duration-300 ${
                         tabs.activeTab === 'outdoor' 
                           ? 'text-primary-foreground' 
                           : 'text-muted-foreground hover:text-foreground'
@@ -459,7 +459,7 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
                     {/* Fitness button */}
                     <button
                       onClick={() => setTabs({...tabs, activeTab: 'indoor'})}
-                      className={`relative z-10 flex-1 h-8 px-4 text-sm font-medium rounded-full transition-colors duration-300 ${
+                      className={`relative z-10 flex-1 h-8 px-4 text-sm font-bold rounded-full transition-colors duration-300 ${
                         tabs.activeTab === 'indoor' 
                           ? 'text-primary-foreground' 
                           : 'text-muted-foreground hover:text-foreground'
@@ -485,7 +485,7 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
                     {/* Today button */}
                     <button
                       onClick={() => setSelectedDate('today')}
-                      className={`relative z-10 flex-1 h-8 px-4 text-sm font-medium rounded-full transition-colors duration-300 ${
+                      className={`relative z-10 flex-1 h-8 px-4 text-sm font-bold rounded-full transition-colors duration-300 ${
                         selectedDate === 'today' 
                           ? 'text-primary-foreground' 
                           : 'text-muted-foreground hover:text-foreground'
@@ -497,7 +497,7 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
                     {/* Tomorrow button */}
                     <button
                       onClick={() => setSelectedDate('tomorrow')}
-                      className={`relative z-10 flex-1 h-8 px-4 text-sm font-medium rounded-full transition-colors duration-300 ${
+                      className={`relative z-10 flex-1 h-8 px-4 text-sm font-bold rounded-full transition-colors duration-300 ${
                         selectedDate === 'tomorrow' 
                           ? 'text-primary-foreground' 
                           : 'text-muted-foreground hover:text-foreground'
@@ -520,7 +520,7 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
                   />
                   <label 
                     htmlFor="show-available" 
-                    className="text-sm font-medium text-foreground"
+                    className="text-sm font-bold text-foreground"
                   >
                     Show only available
                   </label>
@@ -529,7 +529,7 @@ const Index = ({ isSignedIn, setIsSignedIn, userData, setUserData }: IndexProps)
                 {/* Sports Filter */}
                 <Popover>
                   <PopoverTrigger asChild>
-                    <Button variant="outline" className="flex items-center gap-2 w-full sm:w-auto">
+                    <Button variant="outline" className="flex items-center gap-2 w-full sm:w-auto font-bold">
                       <Filter className="h-4 w-4" />
                       Filter
                       {selectedSports.length > 0 && (

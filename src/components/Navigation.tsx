@@ -65,7 +65,7 @@ const Navigation = ({ isSignedIn, setIsSignedIn, userData, setUserData, onOpenSi
         <div className="flex items-center cursor-pointer" onClick={navigateToHome}>
           <img src={LOGO_IMAGE} alt="Courtside" className="h-16 sm:h-20 w-auto" />
           <div className="ml-3 sm:ml-4 font-oswald font-medium">
-            <span className="text-3xl sm:text-4xl text-foreground"> | Play Hard Stay Fit</span>
+            <span className="text-3xl sm:text-4xl text-foreground"> | Play Hard . Stay Fit</span>
           </div>
         </div>
 
@@ -109,11 +109,11 @@ const Navigation = ({ isSignedIn, setIsSignedIn, userData, setUserData, onOpenSi
             <Button
               variant="outline"
               onClick={triggerSignInModal}
-              className="flex items-center space-x-1 sm:space-x-2 text-sm sm:text-base"
+              className="flex items-center space-x-1 sm:space-x-2 text-sm sm:text-base font-bold"
             >
               <User className="h-4 w-4" />
-              <span className="hidden sm:inline">Sign In</span>
-              <span className="sm:hidden">Sign</span>
+              <span className="hidden sm:inline font-bold">Sign In</span>
+              <span className="sm:hidden font-bold">Sign</span>
             </Button>
           )}
 
